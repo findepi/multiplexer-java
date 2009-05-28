@@ -1,0 +1,47 @@
+<project name="JMX" default="all" basedir=".">
+
+  <property name="src" location="src" />
+  <property name="build" location="bin" />
+
+  <path id="project.build.path">
+    <pathelement location="${build}" />
+    <pathelement location="/usr/share/java/protobuf.jar" />
+  </path>
+
+  <target name="all" depends="make-constants">
+  </target>
+
+  <!-- make-constants that compiles multiplexer.rules into
+  ${src}/multiplexer/constants/Peers.java and
+  ${src}/multiplexer/constants/Types.java files -->
+  <target name="make-constants.check">
+    <condition property="make-constants.run">
+      <not>
+        <and>
+          <uptodate srcfile="multiplexer.rules"
+                    targetfile="${src}/multiplexer/constants/Peers.java" />
+          <uptodate srcfile="multiplexer.rules"
+                    targetfile="${src}/multiplexer/constants/Types.java" />
+        </and>
+      </not>
+    </condition>
+  </target>
+  <target name="make-constants"
+          depends="make-constants.check"
+          if="make-constants.run">
+    <javac srcdir="${src}"
+           destdir="${build}"
+           classpathref="project.build.path"
+           includes="multiplexer/build/CompileConstants.java"
+           verbose="true" />
+    <mkdir dir="${src}/multiplexer/constants" />
+    <java classname="multiplexer.build.CompileConstants" failonerror="true">
+      <arg value="multiplexer.rules" />
+      <arg value="${src}" />
+      <arg value="multiplexer/constants/Peers.java" />
+      <arg value="multiplexer/constants/Types.java" />
+      <classpath refid="project.build.path" />
+    </java>
+  </target>
+
+</project>
