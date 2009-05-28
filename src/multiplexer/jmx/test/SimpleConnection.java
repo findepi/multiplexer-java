@@ -8,10 +8,13 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.zip.CRC32;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.ByteString.Output;
 
 import multiplexer.Multiplexer.MultiplexerMessage;
 import multiplexer.Multiplexer.WelcomeMessage;
@@ -87,6 +90,7 @@ public class SimpleConnection {
 		final int PYTHON_TEST_SERVER = 106;
 		final int CONNECTION_WELCOME = 2;
 		final int MULTIPLEXER = 1;
+		final int PYTHON_TEST_REQUEST = 110;
 		
 		SimpleConnection c = new SimpleConnection(new InetSocketAddress("localhost", 1980));
 		
@@ -105,16 +109,25 @@ public class SimpleConnection {
 	    c.peer_id = peer.getId();
 
 	    // send a stupid search_query
-//	    query = "this is a search query with null (\x00) bytes and other " + "".join(chr(i) for i in range(256)) + " bytes"
-//	    print "sending sample search query"
-//	    id = c.send_message(query, types.SEARCH_QUERY)
-//	    print "waiting for sample search query"
-//	    msg = c.receive_message()
-//	    print "validating sample search query"
-//	    assert msg.id == id
-//	    assert msg.type == types.SEARCH_QUERY
-//	    assert msg.message == query
-//	    
+	    ArrayList<Byte> sq = new ArrayList<Byte>(); 
+	    for (byte d: "this is a search query with null (\\x00) bytes and other ".getBytes())
+	    	sq.add(d);    
+	    for (int i = Byte.MIN_VALUE; i <= Byte.MAX_VALUE; i++)
+	    	sq.add((byte)i);
+	    
+	    Output sqo = ByteString.newOutput();
+	    for (byte d: sq)
+	    	sqo.write(d);
+	    
+	    System.out.println("sending sample search query");
+	    long id = c.send_message(sqo.toByteString(), PYTHON_TEST_REQUEST);
+	    System.out.println("waiting for sample search query");
+	    mxmsg = c.receive_message();
+	    System.out.println("validating sample search query");
+	    assert mxmsg.getId() == id;
+	    assert mxmsg.getType() == PYTHON_TEST_REQUEST;
+	    assert mxmsg.getMessage() == sqo.toByteString();
+	    
 //	    # send a large search_query
 //	    query = open("/dev/urandom", "r").read(1024 * 1024)
 //	    print "sending large search query"
