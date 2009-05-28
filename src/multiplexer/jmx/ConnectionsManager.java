@@ -1,4 +1,4 @@
-package org.mx.jmx;
+package multiplexer.jmx;
 
 class ConnectionsManager {
 
