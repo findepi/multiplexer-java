@@ -126,7 +126,7 @@ public class SimpleConnection {
 	    System.out.println("validating sample search query");
 	    assert mxmsg.getId() == id;
 	    assert mxmsg.getType() == PYTHON_TEST_REQUEST;
-	    assert mxmsg.getMessage() == sqo.toByteString();
+	    assert mxmsg.getMessage().equals(sqo.toByteString());
 	    
 //	    # send a large search_query
 //	    query = open("/dev/urandom", "r").read(1024 * 1024)
