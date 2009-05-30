@@ -4,5 +4,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/PROTOBUF"/>
+	<classpathentry kind="lib" path="libs/netty-3.1.0.BETA3.jar" sourcepath="libs/netty-3.1.0.BETA3-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
