@@ -1,10 +1,16 @@
 package multiplexer.jmx.test.netty;
 
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 import multiplexer.Multiplexer;
@@ -22,6 +28,7 @@ import org.jboss.netty.handler.codec.protobuf.ProtobufDecoder;
 import org.jboss.netty.handler.codec.protobuf.ProtobufEncoder;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.ByteString.Output;
 
 public class SimpleNettyConnection {
 
@@ -30,6 +37,7 @@ public class SimpleNettyConnection {
 	private final long instanceId;
 	private boolean connected = false;
 	private boolean connecting = false;
+	BlockingQueue<MultiplexerMessage> queue = new LinkedBlockingQueue<MultiplexerMessage>();
 
 	private SocketChannel channel;
 
@@ -38,14 +46,14 @@ public class SimpleNettyConnection {
 	}
 
 	public SimpleNettyConnection(ChannelFactory factory, SocketAddress address)
-		throws InterruptedException {
+			throws InterruptedException {
 
 		this();
 		asyncConnect(factory, address).await();
 	}
 
 	public ChannelFuture asyncConnect(ChannelFactory factory,
-		SocketAddress address) {
+			SocketAddress address) {
 		assert !connected;
 		assert !connecting;
 		connecting = true;
@@ -58,24 +66,26 @@ public class SimpleNettyConnection {
 		ChannelPipeline pipeline = bootstrap.getPipeline();
 
 		// Encoders
-		pipeline.addLast("rawMessageEncoder", new RawMessageCodecs.RawMessageEncoder());
+		pipeline.addLast("rawMessageEncoder",
+				new RawMessageCodecs.RawMessageEncoder());
 		pipeline.addLast("multiplexerMessageEncoder", new ProtobufEncoder());
 
 		// Decoders
-		pipeline.addLast("rawMessageDecoder", new RawMessageCodecs.RawMessageFrameDecoder());
+		pipeline.addLast("rawMessageDecoder",
+				new RawMessageCodecs.RawMessageFrameDecoder());
 		pipeline.addLast("multiplexerMessageDecoder", new ProtobufDecoder(
-			Multiplexer.MultiplexerMessage.getDefaultInstance()));
+				Multiplexer.MultiplexerMessage.getDefaultInstance()));
 
 		// Protocol handler
 		pipeline.addLast("multiplexerProtocolHandler",
-			new MultiplexerProtocolHandler());
+				new MultiplexerProtocolHandler(this));
 
 		ChannelFuture connectOperation = bootstrap.connect(address);
 		connectOperation.addListener(new ChannelFutureListener() {
 
 			@Override
 			public void operationComplete(ChannelFuture future)
-				throws Exception {
+					throws Exception {
 
 				System.err.println("connected");
 				assert future.isDone();
@@ -104,10 +114,10 @@ public class SimpleNettyConnection {
 	}
 
 	public SendingResult sendMessage(ByteString message, int type)
-		throws IOException {
+			throws IOException {
 		MultiplexerMessage mxmsg = MultiplexerMessage.newBuilder().setId(
-			new Random().nextLong()).setFrom(getInstanceId()).setType(type)
-			.setMessage(message).build();
+				new Random().nextLong()).setFrom(getInstanceId()).setType(type)
+				.setMessage(message).build();
 
 		return new SendingResult(channel.write(mxmsg), mxmsg.getId());
 	}
@@ -135,7 +145,10 @@ public class SimpleNettyConnection {
 	// System.out.println("received "+body.length+" bytes ("+mxmsg.getMessage().size()+" meaningful)");
 	// return mxmsg;
 	// }
-	
+
+	public MultiplexerMessage receive_message() throws InterruptedException {
+		return queue.take();
+	}
 
 	private void close() {
 		channel.close().awaitUninterruptibly();
@@ -147,7 +160,7 @@ public class SimpleNettyConnection {
 	 * @throws InterruptedException
 	 */
 	public static void main(String[] args) throws IOException,
-		InterruptedException {
+			InterruptedException {
 
 		final int PYTHON_TEST_SERVER = 106;
 		final int CONNECTION_WELCOME = 2;
@@ -155,65 +168,64 @@ public class SimpleNettyConnection {
 		final int PYTHON_TEST_REQUEST = 110;
 
 		ChannelFactory factory = new NioClientSocketChannelFactory(Executors
-			.newCachedThreadPool(), Executors.newCachedThreadPool());
+				.newCachedThreadPool(), Executors.newCachedThreadPool());
 		SimpleNettyConnection c = new SimpleNettyConnection(factory,
-			new InetSocketAddress("localhost", 1980));
+				new InetSocketAddress("192.168.1.130", 1980));
 
 		// send out invitation
 		System.out.println("sending welcome message");
 		ByteString message = WelcomeMessage.newBuilder().setType(
-			PYTHON_TEST_SERVER).setId(c.getInstanceId()).build().toByteString();
+				PYTHON_TEST_SERVER).setId(c.getInstanceId()).build()
+				.toByteString();
 		c.sendMessage(message, CONNECTION_WELCOME).future.await();
-		
-		
+
+		// receive the invitation
+		System.out.println("waiting for welcome message");
+		MultiplexerMessage mxmsg = c.receive_message();
+		System.out.println("validating welcome message");
+		assert mxmsg.getType() == CONNECTION_WELCOME;
+		WelcomeMessage peer = WelcomeMessage.newBuilder().mergeFrom(
+				mxmsg.getMessage()).build();
+		assert peer.getType() == MULTIPLEXER;
+		peer.getId();
+
+		// send a stupid search_query
+		ArrayList<Byte> sq = new ArrayList<Byte>();
+		for (byte d : "this is a search query with null (\\x00) bytes and other "
+				.getBytes())
+			sq.add(d);
+		for (int i = Byte.MIN_VALUE; i <= Byte.MAX_VALUE; i++)
+			sq.add((byte) i);
+
+		Output sqo = ByteString.newOutput();
+		for (byte d : sq)
+			sqo.write(d);
+
+		System.out.println("sending sample search query");
+		long id = c.sendMessage(sqo.toByteString(), PYTHON_TEST_REQUEST).messageId;
+		System.out.println("waiting for sample search query");
+		mxmsg = c.receive_message();
+		System.out.println("validating sample search query");
+		assert mxmsg.getId() == id;
+		assert mxmsg.getType() == PYTHON_TEST_REQUEST;
+		assert mxmsg.getMessage().equals(sqo.toByteString());
+
+		// send a large search_query
+		System.out.println("before seed");
+		byte[] random = new SecureRandom().generateSeed(100);
+		System.out.println("after seed");
+		ByteString query = ByteString.copyFrom(random);
+		System.out.println("sending large search query");
+		id = c.sendMessage(query, PYTHON_TEST_REQUEST).messageId;
+		System.out.println("waiting for large search query");
+		mxmsg = c.receive_message();
+		System.out.println("validating large search query");
+		assert mxmsg.getId() == id;
+		assert mxmsg.getType() == PYTHON_TEST_REQUEST;
+		assert mxmsg.getMessage().equals(sqo.toByteString());
+
 		c.close();
 		factory.releaseExternalResources();
-
-		// // receive the invitation
-		// System.out.println("waiting for welcome message");
-		// MultiplexerMessage mxmsg = c.receive_message();
-		// System.out.println("validating welcome message");
-		// assert mxmsg.getType() == CONNECTION_WELCOME;
-		// WelcomeMessage peer =
-		// WelcomeMessage.newBuilder().mergeFrom(mxmsg.getMessage()).build();
-		// assert peer.getType() == MULTIPLEXER;
-		// peer.getId();
-		//
-		// // send a stupid search_query
-		// ArrayList<Byte> sq = new ArrayList<Byte>();
-		// for (byte d:
-		// "this is a search query with null (\\x00) bytes and other ".getBytes())
-		// sq.add(d);
-		// for (int i = Byte.MIN_VALUE; i <= Byte.MAX_VALUE; i++)
-		// sq.add((byte)i);
-		//	    
-		// Output sqo = ByteString.newOutput();
-		// for (byte d: sq)
-		// sqo.write(d);
-		//	    
-		// System.out.println("sending sample search query");
-		// long id = c.sendMessage(sqo.toByteString(),
-		// PYTHON_TEST_REQUEST).messageId;
-		// System.out.println("waiting for sample search query");
-		// mxmsg = c.receive_message();
-		// System.out.println("validating sample search query");
-		// assert mxmsg.getId() == id;
-		// assert mxmsg.getType() == PYTHON_TEST_REQUEST;
-		// assert mxmsg.getMessage().equals(sqo.toByteString());
-
-		// # send a large search_query
-		// query = open("/dev/urandom", "r").read(1024 * 1024)
-		// print "sending large search query"
-		// id = c.send_message(query, types.SEARCH_QUERY)
-		// print "waiting for large search query"
-		// msg = c.receive_message()
-		// print "validating large search query"
-		// assert msg.id == id
-		// assert msg.type == types.SEARCH_QUERY
-		// assert msg.message == query
-
 	}
 
 }
-
-
