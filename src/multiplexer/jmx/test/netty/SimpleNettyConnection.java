@@ -170,7 +170,7 @@ public class SimpleNettyConnection {
 		ChannelFactory factory = new NioClientSocketChannelFactory(Executors
 				.newCachedThreadPool(), Executors.newCachedThreadPool());
 		SimpleNettyConnection c = new SimpleNettyConnection(factory,
-				new InetSocketAddress("192.168.1.130", 1980));
+				new InetSocketAddress("localhost", 1980));
 
 		// send out invitation
 		System.out.println("sending welcome message");
