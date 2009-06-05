@@ -1,7 +1,5 @@
 package multiplexer.jmx.test.netty;
 
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -16,6 +14,7 @@ import java.util.logging.Logger;
 import multiplexer.Multiplexer;
 import multiplexer.Multiplexer.MultiplexerMessage;
 import multiplexer.Multiplexer.WelcomeMessage;
+import multiplexer.jmx.RawMessageCodecs;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.ChannelFactory;
