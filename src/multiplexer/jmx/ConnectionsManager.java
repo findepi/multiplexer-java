@@ -12,6 +12,7 @@ import multiplexer.Multiplexer.WelcomeMessage;
 import multiplexer.constants.Types;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
+import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
@@ -34,6 +35,7 @@ class ConnectionsManager {
 	private final int instanceType;
 	private ClientBootstrap bootstrap;
 	private Map<Integer, ChannelGroup> channelsByType = new HashMap<Integer, ChannelGroup>();
+	// mapa instanceId peera --- channel; dodawanie przy odbiorze welcomeMessage
 
 	public ConnectionsManager(final int instanceType) {
 		this.instanceType = instanceType;
@@ -115,5 +117,10 @@ class ConnectionsManager {
 			}
 		});
 		return connectOperation;
+	}
+
+	public void messageReceived(MultiplexerMessage message, Channel channel) {
+		// TODO Auto-generated method stub
+		
 	}
 }

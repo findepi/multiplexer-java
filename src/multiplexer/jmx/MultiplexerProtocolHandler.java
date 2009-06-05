@@ -24,9 +24,8 @@ class MultiplexerProtocolHandler extends SimpleChannelHandler {
 		System.err.println("messageReceived");
 		assert e.getMessage() instanceof MultiplexerMessage : e.getMessage()
 				+ " is not a MultiplexerMessage";
-		System.err.println(e.getMessage());
-		//boolean offered = connection.queue.offer((MultiplexerMessage) e.getMessage());
-		//assert offered : "sorry not offered, offiaro";
+		System.err.println(e.getMessage()); //TODO
+		connectionsManager.messageReceived((MultiplexerMessage) e.getMessage(),ctx.getChannel());
 	}
 
 	@Override
