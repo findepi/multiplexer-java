@@ -28,6 +28,11 @@ import org.jboss.netty.handler.codec.protobuf.ProtobufEncoder;
 
 import com.google.protobuf.ByteString;
 
+/**
+ * 
+ * @author Kasia Findeisen
+ *
+ */
 class ConnectionsManager {
 
 	private static final int UNGROUPPED_CHANNELS = 0;
@@ -40,8 +45,7 @@ class ConnectionsManager {
 	public ConnectionsManager(final int instanceType) {
 		this.instanceType = instanceType;
 		ChannelFactory channelFactory = new NioClientSocketChannelFactory(
-				Executors.newCachedThreadPool(), Executors
-						.newCachedThreadPool());
+			Executors.newCachedThreadPool(), Executors.newCachedThreadPool());
 
 		bootstrap = new ClientBootstrap(channelFactory);
 		bootstrap.setOption("tcpNoDelay", true);
@@ -53,10 +57,10 @@ class ConnectionsManager {
 			private ProtobufEncoder multiplexerMessageEncoder = new ProtobufEncoder();
 			// Decoders
 			private ProtobufDecoder multiplexerMessageDecoder = new ProtobufDecoder(
-					Multiplexer.MultiplexerMessage.getDefaultInstance());
+				Multiplexer.MultiplexerMessage.getDefaultInstance());
 			// Protocol handler
 			private MultiplexerProtocolHandler multiplexerProtocolHandler = new MultiplexerProtocolHandler(
-					ConnectionsManager.this);
+				ConnectionsManager.this);
 
 			@Override
 			public ChannelPipeline getPipeline() throws Exception {
@@ -64,17 +68,17 @@ class ConnectionsManager {
 				// Encoders
 				pipeline.addLast("rawMessageEncoder", rawMessageEncoder);
 				pipeline.addLast("multiplexerMessageEncoder",
-						multiplexerMessageEncoder);
+					multiplexerMessageEncoder);
 
 				// Decoders
 				pipeline.addLast("rawMessageDecoder",
-						new RawMessageCodecs.RawMessageFrameDecoder());
+					new RawMessageCodecs.RawMessageFrameDecoder());
 				pipeline.addLast("multiplexerMessageDecoder",
-						multiplexerMessageDecoder);
+					multiplexerMessageDecoder);
 
 				// Protocol handler
 				pipeline.addLast("multiplexerProtocolHandler",
-						multiplexerProtocolHandler);
+					multiplexerProtocolHandler);
 				return pipeline;
 			}
 		};
@@ -84,10 +88,13 @@ class ConnectionsManager {
 	}
 
 	public MultiplexerMessage createMessage(ByteString message, int type) {
-		MultiplexerMessage mxmsg = MultiplexerMessage.newBuilder().setId(
-				new Random().nextLong()).setFrom(instanceId).setType(type)
-				.setMessage(message).build();
-		return mxmsg;
+		return createMessage(MultiplexerMessage.newBuilder()
+			.setMessage(message).setType(type));
+	}
+
+	public MultiplexerMessage createMessage(MultiplexerMessage.Builder message) {
+		return message.setId(new Random().nextLong()).setFrom(instanceId)
+			.build();
 	}
 
 	public ChannelFuture asyncConnect(SocketAddress address) {
@@ -96,7 +103,7 @@ class ConnectionsManager {
 
 			@Override
 			public void operationComplete(ChannelFuture future)
-					throws Exception {
+				throws Exception {
 				assert future.isDone();
 				// TODO zrobić, żeby user, gdy dostanie future, nie mógł zrobić
 				// getChannel
@@ -105,14 +112,14 @@ class ConnectionsManager {
 				synchronized (channelsByType) {
 					if (!channelsByType.containsKey(UNGROUPPED_CHANNELS)) {
 						channelsByType.put(UNGROUPPED_CHANNELS,
-								new DefaultChannelGroup());
+							new DefaultChannelGroup());
 					}
 					channelsByType.get(UNGROUPPED_CHANNELS).add(channel);
 				}
 				// send out welcome message
 				System.out.println("sending welcome message"); // TODO
 				ByteString message = WelcomeMessage.newBuilder().setType(
-						instanceType).setId(instanceId).build().toByteString();
+					instanceType).setId(instanceId).build().toByteString();
 				channel.write(createMessage(message, Types.CONNECTION_WELCOME));
 			}
 		});
