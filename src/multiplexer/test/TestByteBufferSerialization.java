@@ -5,11 +5,10 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.zip.CRC32;
 
+import junit.framework.TestCase;
+
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.buffer.LittleEndianHeapChannelBuffer;
-
-import junit.framework.TestCase;
 
 public class TestByteBufferSerialization extends TestCase {
 

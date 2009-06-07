@@ -8,8 +8,6 @@ import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelHandler;
 
-import sun.jdbc.odbc.ee.ConnectionAttributes;
-
 @ChannelPipelineCoverage("all")
 class MultiplexerProtocolHandler extends SimpleChannelHandler {
 	

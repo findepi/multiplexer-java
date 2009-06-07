@@ -9,15 +9,14 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.zip.CRC32;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.ByteString.Output;
-
 import multiplexer.Multiplexer.MultiplexerMessage;
 import multiplexer.Multiplexer.WelcomeMessage;
+
+import com.google.protobuf.ByteString;
+import com.google.protobuf.ByteString.Output;
 
 public class SimpleConnection {
 	
@@ -26,8 +25,6 @@ public class SimpleConnection {
 	private final InputStream input_stream;
 	private final OutputStream output_stream;
 	private static final int header_length = 8;
-	private long peer_id;
-	
 	public long getInstanceId() {
 		return instance_id;
 	}
@@ -106,7 +103,7 @@ public class SimpleConnection {
 	    assert mxmsg.getType() == CONNECTION_WELCOME;
 	    WelcomeMessage peer = WelcomeMessage.newBuilder().mergeFrom(mxmsg.getMessage()).build();
 	    assert peer.getType() == MULTIPLEXER;
-	    c.peer_id = peer.getId();
+	    peer.getId();
 
 	    // send a stupid search_query
 	    ArrayList<Byte> sq = new ArrayList<Byte>(); 
