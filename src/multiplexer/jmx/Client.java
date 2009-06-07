@@ -199,7 +199,7 @@ public class Client {
 				MultiplexerMessage backendQueryMessage = createMessage(MultiplexerMessage.newBuilder()
 						.setMessage(message).setType(messageType).setTo(
 								answerFromId));
-				send(backendQueryMessage, new SendingMethod(answer.getConnection()));
+				send(backendQueryMessage, SendingMethod.via(answer.getConnection()));
 				long backendQueryId = backendQueryMessage.getId();
 				queryResponses.put(backendQueryId, queryQueue);
 				
