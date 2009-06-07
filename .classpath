@@ -5,5 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/PROTOBUF"/>
 	<classpathentry kind="lib" path="libs/netty-3.1.0.BETA3.jar" sourcepath="libs/netty-3.1.0.BETA3-sources.jar"/>
+	<classpathentry kind="lib" path="libs/google-collect-1.0-rc2.jar" sourcepath="libs/google-collect-src-1.0-rc2.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
