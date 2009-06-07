@@ -1,20 +1,20 @@
 package multiplexer.jmx;
 
-import org.jboss.netty.channel.socket.SocketChannel;
+import org.jboss.netty.channel.Channel;
 
 /**
- * Wrapper around {@link SocketChannel}.
+ * Wrapper around {@link Channel}.
  * @author Piotr Findeisen
  */
 class Connection {
 
-	private final SocketChannel channel;
+	private final Channel channel;
 	
-	Connection(SocketChannel channel) {
+	Connection(Channel channel) {
 		this.channel = channel; 
 	}
 	
-	SocketChannel getChannel() {
+	Channel getChannel() {
 		return channel;
 	}
 }
