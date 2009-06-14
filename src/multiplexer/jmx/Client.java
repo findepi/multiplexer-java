@@ -208,7 +208,7 @@ public class Client {
 	 */
 	public IncomingMessageData query(ByteString message, int messageType,
 		long timeout) throws OperationFailedException {
-		
+
 		// TODO: support Types.BACKEND_ERROR
 
 		boolean phase1DeliveryError = false;
@@ -218,121 +218,134 @@ public class Client {
 		final long queryId = queryMessage.getId();
 		final List<Long> queryPossibleReferences = new ArrayList<Long>(3);
 		final BlockingQueue<IncomingMessageData> queryQueue = new LinkedBlockingQueue<IncomingMessageData>();
-		queryResponses.put(queryId, queryQueue);
-		send(queryMessage, SendingMethod.THROUGH_ONE);
+		try {
+			queryPossibleReferences.add(queryId);
+			queryResponses.put(queryId, queryQueue);
+			send(queryMessage, SendingMethod.THROUGH_ONE);
 
-		IncomingMessageData answer = pollUninterruptibly(queryQueue, timeout);
-		if (answer != null) {
-			if (answer.getMessage().getType() != Types.DELIVERY_ERROR) {
-				return answer;
-			} else
-				phase1DeliveryError = true;
-		}
-
-		BackendForPacketSearch backendSearch = BackendForPacketSearch
-			.newBuilder().setPacketType(messageType).build();
-		MultiplexerMessage backendSearchMessage = createMessage(backendSearch
-			.toByteString(), Types.BACKEND_FOR_PACKET_SEARCH);
-		long backendSearchMessageId = backendSearchMessage.getId();
-		queryResponses.put(backendSearchMessageId, queryQueue);
-		int count = event(backendSearchMessage);
-
-		answer = null;
-		long answerFromId;
-		TimeoutCounter timer = new TimeoutCounter(timeout);
-		while (answer == null) {
-
-			answer = pollUninterruptibly(queryQueue, timer);
-
-			if (answer == null) {
-				throw new OperationTimeoutException("query phase 2 timed out");
+			IncomingMessageData answer = pollUninterruptibly(queryQueue,
+				timeout);
+			if (answer != null) {
+				if (answer.getMessage().getType() != Types.DELIVERY_ERROR) {
+					return answer;
+				} else
+					phase1DeliveryError = true;
 			}
 
-			long references = answer.getMessage().getReferences();
-			int type = answer.getMessage().getType();
+			BackendForPacketSearch backendSearch = BackendForPacketSearch
+				.newBuilder().setPacketType(messageType).build();
+			MultiplexerMessage backendSearchMessage = createMessage(
+				backendSearch.toByteString(), Types.BACKEND_FOR_PACKET_SEARCH);
+			long backendSearchMessageId = backendSearchMessage.getId();
+			queryPossibleReferences.add(backendSearchMessageId);
+			queryResponses.put(backendSearchMessageId, queryQueue);
+			int count = event(backendSearchMessage);
 
-			if (type == Types.DELIVERY_ERROR && references == queryId) {
-				phase1DeliveryError = true;
-				answer = null;
-				continue;
-			}
+			answer = null;
+			long answerFromId;
+			TimeoutCounter timer = new TimeoutCounter(timeout);
+			while (answer == null) {
 
-			if (type == Types.DELIVERY_ERROR) {
-				assert type == backendSearchMessageId;
-				count--;
-				if (count == 0) {
-					throw new BackendUnreachableException(
-						"query phase 2 rejected by all peers");
+				answer = pollUninterruptibly(queryQueue, timer);
+
+				if (answer == null) {
+					throw new OperationTimeoutException(
+						"query phase 2 timed out");
 				}
-				answer = null;
-				continue;
-			}
 
-			if (references == queryId) {
-				return answer;
-			}
+				long references = answer.getMessage().getReferences();
+				int type = answer.getMessage().getType();
 
-			if (references == backendSearchMessageId) {
-				answerFromId = answer.getMessage().getFrom();
-				MultiplexerMessage backendQueryMessage = createMessage(MultiplexerMessage
-					.newBuilder().setMessage(message).setType(messageType)
-					.setTo(answerFromId));
-				long backendQueryId = backendQueryMessage.getId();
-				queryResponses.put(backendQueryId, queryQueue);
-				send(backendQueryMessage, SendingMethod.via(answer
-					.getConnection()));
+				if (type == Types.DELIVERY_ERROR && references == queryId) {
+					phase1DeliveryError = true;
+					answer = null;
+					continue;
+				}
 
-				answer = null;
-				timer = new TimeoutCounter(timeout);
-				while (answer == null) {
-
-					answer = pollUninterruptibly(queryQueue, timer);
-
-					if (answer == null) {
-						throw new OperationTimeoutException(
-							"query phase 3 timed out");
+				if (type == Types.DELIVERY_ERROR) {
+					assert type == backendSearchMessageId;
+					count--;
+					if (count == 0) {
+						throw new BackendUnreachableException(
+							"query phase 2 rejected by all peers");
 					}
+					answer = null;
+					continue;
+				}
 
-					references = answer.getMessage().getReferences();
-					type = answer.getMessage().getType();
+				if (references == queryId) {
+					return answer;
+				}
 
-					if (references == backendSearchMessageId) {
-						answer = null;
-						continue;
-					}
+				if (references == backendSearchMessageId) {
+					answerFromId = answer.getMessage().getFrom();
+					MultiplexerMessage backendQueryMessage = createMessage(MultiplexerMessage
+						.newBuilder().setMessage(message).setType(messageType)
+						.setTo(answerFromId));
+					long backendQueryId = backendQueryMessage.getId();
+					queryPossibleReferences.add(backendQueryId);
+					queryResponses.put(backendQueryId, queryQueue);
+					send(backendQueryMessage, SendingMethod.via(answer
+						.getConnection()));
 
-					if (type != Types.DELIVERY_ERROR
-						&& ((references == queryId) || (references == backendQueryId))) {
-						return answer;
-					}
+					answer = null;
+					timer = new TimeoutCounter(timeout);
+					while (answer == null) {
 
-					if (references == queryId) {
-						assert type == Types.DELIVERY_ERROR;
-						if (phase3DeliveryError) {
-							throw new BackendUnreachableException(
-								"query phases 1 and 3 rejected");
-						} else {
-							phase1DeliveryError = true;
+						answer = pollUninterruptibly(queryQueue, timer);
+
+						if (answer == null) {
+							throw new OperationTimeoutException(
+								"query phase 3 timed out");
+						}
+
+						references = answer.getMessage().getReferences();
+						type = answer.getMessage().getType();
+
+						if (references == backendSearchMessageId) {
 							answer = null;
 							continue;
 						}
-					}
 
-					if (references == backendQueryId) {
-						assert type == Types.DELIVERY_ERROR;
-						if (phase1DeliveryError) {
-							throw new BackendUnreachableException(
-								"query phases 1 and 3 rejected");
-						} else {
-							phase3DeliveryError = true;
-							answer = null;
-							continue;
+						if (type != Types.DELIVERY_ERROR
+							&& ((references == queryId) || (references == backendQueryId))) {
+							return answer;
+						}
+
+						if (references == queryId) {
+							assert type == Types.DELIVERY_ERROR;
+							if (phase3DeliveryError) {
+								throw new BackendUnreachableException(
+									"query phases 1 and 3 rejected");
+							} else {
+								phase1DeliveryError = true;
+								answer = null;
+								continue;
+							}
+						}
+
+						if (references == backendQueryId) {
+							assert type == Types.DELIVERY_ERROR;
+							if (phase1DeliveryError) {
+								throw new BackendUnreachableException(
+									"query phases 1 and 3 rejected");
+							} else {
+								phase3DeliveryError = true;
+								answer = null;
+								continue;
+							}
 						}
 					}
+
 				}
 
 			}
-
+		} finally {
+			for (long referentId : queryPossibleReferences) {
+				// TODO this can be done after a while, so that we receive all
+				// responses, even those a bit late
+				queryResponses.remove(referentId);
+			}
 		}
 		throw new AssertionError("Should not reach here.");
 	}
