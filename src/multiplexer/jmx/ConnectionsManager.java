@@ -96,6 +96,7 @@ class ConnectionsManager {
 
 	public MultiplexerMessage createMessage(MultiplexerMessage.Builder message) {
 		return message.setId(new Random().nextLong()).setFrom(instanceId)
+				.setTimestamp((int) (System.currentTimeMillis() / 1000))
 				.build();
 	}
 
