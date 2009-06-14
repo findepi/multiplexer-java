@@ -3,9 +3,7 @@ package multiplexer.jmx;
 import java.net.SocketAddress;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import multiplexer.Multiplexer;
 import multiplexer.Multiplexer.MultiplexerMessage;
@@ -40,7 +38,6 @@ class ConnectionsManager {
 	private final int instanceType;
 	private ClientBootstrap bootstrap;
 	private ConnectionsMap connectionsMap = new ConnectionsMap();
-	private BlockingQueue<IncomingMessageData> messageQueue = new LinkedBlockingQueue<IncomingMessageData>();
 	private MessageReceivedListener messageReceivedListener;
 
 	public ConnectionsManager(final int instanceType) {
@@ -158,10 +155,6 @@ class ConnectionsManager {
 			throw new NullPointerException("messageReceivedListener");
 		}
 		this.messageReceivedListener = messageReceivedListener;
-	}
-
-	public IncomingMessageData receiveMessage() throws InterruptedException {
-		return messageQueue.take();
 	}
 
 	private void sendMessage(MultiplexerMessage message, Channel channel) {

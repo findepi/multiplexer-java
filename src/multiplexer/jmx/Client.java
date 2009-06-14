@@ -1,17 +1,25 @@
 package multiplexer.jmx;
 
+import static multiplexer.jmx.internal.Queues.pollUninterruptibly;
+
 import java.net.SocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import multiplexer.Multiplexer;
 import multiplexer.Multiplexer.BackendForPacketSearch;
 import multiplexer.Multiplexer.MultiplexerMessage;
 import multiplexer.Multiplexer.MultiplexerMessage.Builder;
 import multiplexer.constants.Peers;
 import multiplexer.constants.Types;
+import multiplexer.jmx.exceptions.BackendUnreachableException;
+import multiplexer.jmx.exceptions.OperationFailedException;
+import multiplexer.jmx.exceptions.OperationTimeoutException;
 
 import org.jboss.netty.channel.ChannelFuture;
 
@@ -48,24 +56,24 @@ public class Client {
 	public Client(int clientType) {
 		connectionsManager = new ConnectionsManager(clientType);
 		connectionsManager
-				.setMessageReceivedListener(new MessageReceivedListener() {
+			.setMessageReceivedListener(new MessageReceivedListener() {
 
-					@Override
-					public void onMessageReceived(MultiplexerMessage message,
-							Connection connection) {
-						long Id = message.getReferences();
-						IncomingMessageData msg = new IncomingMessageData(
-								message, connection);
-						BlockingQueue<IncomingMessageData> queryQueue = queryResponses
-								.get(Id);
-						if (queryQueue == null) {
-							messageQueue.add(msg);
-						} else {
-							queryQueue.add(msg);
-						}
-
+				@Override
+				public void onMessageReceived(MultiplexerMessage message,
+					Connection connection) {
+					long id = message.getReferences();
+					IncomingMessageData msg = new IncomingMessageData(message,
+						connection);
+					BlockingQueue<IncomingMessageData> queryQueue = queryResponses
+						.get(id);
+					if (queryQueue == null) {
+						messageQueue.add(msg);
+					} else {
+						queryQueue.add(msg);
 					}
-				});
+
+				}
+			});
 	}
 
 	/**
@@ -141,7 +149,20 @@ public class Client {
 	 * @return includes the received message and a connection
 	 */
 	public IncomingMessageData receive() throws InterruptedException {
-		return connectionsManager.receiveMessage();
+		return messageQueue.take();
+	}
+
+	/**
+	 * Tries to take one message from {@link BlockingQueue} of received
+	 * messages. Blocks until any message is available or timeout occurs.
+	 * 
+	 * @return includes the received message and a connection
+	 * @throws InterruptedException
+	 */
+	public IncomingMessageData receive(long timeout, TimeUnit unit)
+		throws InterruptedException {
+
+		return messageQueue.poll(timeout, unit);
 	}
 
 	/**
@@ -180,23 +201,27 @@ public class Client {
 	 *            right backend type
 	 * @param timeout
 	 *            each of the 3 phases of the algorithm has the same time limit
-	 * @throws InterruptedException
 	 * @return an answer message
+	 * @throws OperationFailedException
+	 *             when operation times out or there are no reachable backends
+	 *             that can handle the query
 	 */
 	public IncomingMessageData query(ByteString message, int messageType,
-			long timeout) throws InterruptedException {
+		long timeout) throws OperationFailedException {
+		
+		// TODO: support Types.BACKEND_ERROR
 
 		boolean phase1DeliveryError = false;
 		boolean phase3DeliveryError = false;
 
 		MultiplexerMessage queryMessage = createMessage(message, messageType);
-		long queryId = queryMessage.getId();
-		LinkedBlockingQueue<IncomingMessageData> queryQueue = new LinkedBlockingQueue<IncomingMessageData>();
+		final long queryId = queryMessage.getId();
+		final List<Long> queryPossibleReferences = new ArrayList<Long>(3);
+		final BlockingQueue<IncomingMessageData> queryQueue = new LinkedBlockingQueue<IncomingMessageData>();
 		queryResponses.put(queryId, queryQueue);
 		send(queryMessage, SendingMethod.THROUGH_ONE);
 
-		IncomingMessageData answer = queryQueue.poll(timeout,
-				TimeUnit.MILLISECONDS);
+		IncomingMessageData answer = pollUninterruptibly(queryQueue, timeout);
 		if (answer != null) {
 			if (answer.getMessage().getType() != Types.DELIVERY_ERROR) {
 				return answer;
@@ -205,9 +230,9 @@ public class Client {
 		}
 
 		BackendForPacketSearch backendSearch = BackendForPacketSearch
-				.newBuilder().setPacketType(messageType).build();
+			.newBuilder().setPacketType(messageType).build();
 		MultiplexerMessage backendSearchMessage = createMessage(backendSearch
-				.toByteString(), Types.BACKEND_FOR_PACKET_SEARCH);
+			.toByteString(), Types.BACKEND_FOR_PACKET_SEARCH);
 		long backendSearchMessageId = backendSearchMessage.getId();
 		queryResponses.put(backendSearchMessageId, queryQueue);
 		int count = event(backendSearchMessage);
@@ -217,17 +242,16 @@ public class Client {
 		TimeoutCounter timer = new TimeoutCounter(timeout);
 		while (answer == null) {
 
-			answer = queryQueue.poll(timer.getRemainingMillis(),
-					TimeUnit.MILLISECONDS);
+			answer = pollUninterruptibly(queryQueue, timer);
 
 			if (answer == null) {
-				throw new RuntimeException("query phase 2 timed out");
+				throw new OperationTimeoutException("query phase 2 timed out");
 			}
 
 			long references = answer.getMessage().getReferences();
 			int type = answer.getMessage().getType();
 
-			if (type == Types.DELIVERY_ERROR & references == queryId) {
+			if (type == Types.DELIVERY_ERROR && references == queryId) {
 				phase1DeliveryError = true;
 				answer = null;
 				continue;
@@ -237,8 +261,8 @@ public class Client {
 				assert type == backendSearchMessageId;
 				count--;
 				if (count == 0) {
-					throw new RuntimeException(
-							"query phase 2 rejected by all peers");
+					throw new BackendUnreachableException(
+						"query phase 2 rejected by all peers");
 				}
 				answer = null;
 				continue;
@@ -251,22 +275,22 @@ public class Client {
 			if (references == backendSearchMessageId) {
 				answerFromId = answer.getMessage().getFrom();
 				MultiplexerMessage backendQueryMessage = createMessage(MultiplexerMessage
-						.newBuilder().setMessage(message).setType(messageType)
-						.setTo(answerFromId));
+					.newBuilder().setMessage(message).setType(messageType)
+					.setTo(answerFromId));
 				long backendQueryId = backendQueryMessage.getId();
 				queryResponses.put(backendQueryId, queryQueue);
 				send(backendQueryMessage, SendingMethod.via(answer
-						.getConnection()));
+					.getConnection()));
 
 				answer = null;
 				timer = new TimeoutCounter(timeout);
 				while (answer == null) {
 
-					answer = queryQueue.poll(timer.getRemainingMillis(),
-							TimeUnit.MILLISECONDS);
+					answer = pollUninterruptibly(queryQueue, timer);
 
 					if (answer == null) {
-						throw new RuntimeException("query phase 3 timed out");
+						throw new OperationTimeoutException(
+							"query phase 3 timed out");
 					}
 
 					references = answer.getMessage().getReferences();
@@ -278,15 +302,15 @@ public class Client {
 					}
 
 					if (type != Types.DELIVERY_ERROR
-							& ((references == queryId) || (references == backendQueryId))) {
+						&& ((references == queryId) || (references == backendQueryId))) {
 						return answer;
 					}
 
 					if (references == queryId) {
 						assert type == Types.DELIVERY_ERROR;
 						if (phase3DeliveryError) {
-							throw new RuntimeException(
-									"query phases 1 and 3 rejected");
+							throw new BackendUnreachableException(
+								"query phases 1 and 3 rejected");
 						} else {
 							phase1DeliveryError = true;
 							answer = null;
@@ -297,8 +321,8 @@ public class Client {
 					if (references == backendQueryId) {
 						assert type == Types.DELIVERY_ERROR;
 						if (phase1DeliveryError) {
-							throw new RuntimeException(
-									"query phases 1 and 3 rejected");
+							throw new BackendUnreachableException(
+								"query phases 1 and 3 rejected");
 						} else {
 							phase3DeliveryError = true;
 							answer = null;
@@ -311,53 +335,5 @@ public class Client {
 
 		}
 		throw new AssertionError("Should not reach here.");
-	}
-}
-
-/**
- * Helper class for timeout management. Used time unit is milliseconds. Each
- * instance gets it's creation time and specified timeout. It might check, at
- * any point, whether the timeout has passed.
- * 
- * @author Kasia Findeisen
- * 
- */
-class TimeoutCounter {
-	private final long startTime = System.currentTimeMillis();
-	private long timeoutInMillis;
-
-	/**
-	 * Creates a new instance which might be asked if a specific timeout (
-	 * {@code timeoutInMillis}) has passed since it's creation time.
-	 * 
-	 * @param timeoutInMillis
-	 *            timeout in milliseconds
-	 */
-	public TimeoutCounter(long timeoutInMillis) {
-		this.timeoutInMillis = timeoutInMillis;
-	}
-
-	/**
-	 * Returns the amount of time in milliseconds that has passed since the
-	 * instance's creation time.
-	 * 
-	 * @return
-	 */
-	public long getElapsedMillis() {
-		return (System.currentTimeMillis() - startTime);
-	}
-
-	/**
-	 * Returns the amount of time remaining until {@code timeoutInMillis} passes
-	 * or {@code 0} if it has happened already.
-	 * 
-	 * @return
-	 */
-	public long getRemainingMillis() {
-		long remainingMillis = timeoutInMillis - getElapsedMillis();
-		if (remainingMillis >= 0) {
-			return remainingMillis;
-		}
-		return 0;
 	}
 }

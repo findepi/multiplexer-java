@@ -1,0 +1,49 @@
+package multiplexer.jmx;
+
+/**
+ * Helper class for timeout management. Used time unit is milliseconds. Each
+ * instance gets it's creation time and specified timeout. It might check, at
+ * any point, whether the timeout has passed.
+ * 
+ * @author Kasia Findeisen
+ * 
+ */
+public class TimeoutCounter {
+	private final long startTime = System.currentTimeMillis();
+	private long timeoutInMillis;
+
+	/**
+	 * Creates a new instance which might be asked if a specific timeout (
+	 * {@code timeoutInMillis}) has passed since it's creation time.
+	 * 
+	 * @param timeoutInMillis
+	 *            timeout in milliseconds
+	 */
+	public TimeoutCounter(long timeoutInMillis) {
+		this.timeoutInMillis = timeoutInMillis;
+	}
+
+	/**
+	 * Returns the amount of time in milliseconds that has passed since the
+	 * instance's creation time.
+	 * 
+	 * @return
+	 */
+	public long getElapsedMillis() {
+		return (System.currentTimeMillis() - startTime);
+	}
+
+	/**
+	 * Returns the amount of time remaining until {@code timeoutInMillis} passes
+	 * or {@code 0} if it has happened already.
+	 * 
+	 * @return
+	 */
+	public long getRemainingMillis() {
+		long remainingMillis = timeoutInMillis - getElapsedMillis();
+		if (remainingMillis >= 0) {
+			return remainingMillis;
+		}
+		return 0;
+	}
+}
