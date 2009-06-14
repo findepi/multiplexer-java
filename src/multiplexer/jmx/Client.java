@@ -215,10 +215,11 @@ public class Client {
 		boolean phase3DeliveryError = false;
 
 		MultiplexerMessage queryMessage = createMessage(message, messageType);
-		final long queryId = queryMessage.getId();
 		final List<Long> queryPossibleReferences = new ArrayList<Long>(3);
 		final BlockingQueue<IncomingMessageData> queryQueue = new LinkedBlockingQueue<IncomingMessageData>();
 		try {
+			final long queryId = queryMessage.getId();
+
 			queryPossibleReferences.add(queryId);
 			queryResponses.put(queryId, queryQueue);
 			send(queryMessage, SendingMethod.THROUGH_ONE);
@@ -232,11 +233,9 @@ public class Client {
 					phase1DeliveryError = true;
 			}
 
-			BackendForPacketSearch backendSearch = BackendForPacketSearch
-				.newBuilder().setPacketType(messageType).build();
-			MultiplexerMessage backendSearchMessage = createMessage(
-				backendSearch.toByteString(), Types.BACKEND_FOR_PACKET_SEARCH);
-			long backendSearchMessageId = backendSearchMessage.getId();
+			MultiplexerMessage backendSearchMessage = makeBackendForPacketSearch(messageType);
+			final long backendSearchMessageId = backendSearchMessage.getId();
+
 			queryPossibleReferences.add(backendSearchMessageId);
 			queryResponses.put(backendSearchMessageId, queryQueue);
 			int count = event(backendSearchMessage);
@@ -282,7 +281,8 @@ public class Client {
 					MultiplexerMessage backendQueryMessage = createMessage(MultiplexerMessage
 						.newBuilder().setMessage(message).setType(messageType)
 						.setTo(answerFromId));
-					long backendQueryId = backendQueryMessage.getId();
+
+					final long backendQueryId = backendQueryMessage.getId();
 					queryPossibleReferences.add(backendQueryId);
 					queryResponses.put(backendQueryId, queryQueue);
 					send(backendQueryMessage, SendingMethod.via(answer
@@ -348,5 +348,21 @@ public class Client {
 			}
 		}
 		throw new AssertionError("Should not reach here.");
+	}
+
+	/**
+	 * Constructs new {@link MultiplexerMessage} searching for backends able to
+	 * handle query of type {@code messageType}.
+	 * 
+	 * @param messageType
+	 *            query type
+	 * @return constructed message
+	 */
+	private MultiplexerMessage makeBackendForPacketSearch(final int messageType) {
+		BackendForPacketSearch backendSearch = BackendForPacketSearch
+			.newBuilder().setPacketType(messageType).build();
+		MultiplexerMessage backendSearchMessage = createMessage(backendSearch
+			.toByteString(), Types.BACKEND_FOR_PACKET_SEARCH);
+		return backendSearchMessage;
 	}
 }
