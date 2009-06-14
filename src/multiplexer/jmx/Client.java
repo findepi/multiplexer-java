@@ -214,7 +214,7 @@ public class Client {
 
 		answer = null;
 		long answerFromId;
-		Timer timer = new Timer(timeout);
+		TimeoutCounter timer = new TimeoutCounter(timeout);
 		while (answer == null) {
 
 			answer = queryQueue.poll(timer.getRemainingMillis(),
@@ -259,7 +259,7 @@ public class Client {
 						.getConnection()));
 
 				answer = null;
-				timer = new Timer(timeout);
+				timer = new TimeoutCounter(timeout);
 				while (answer == null) {
 
 					answer = queryQueue.poll(timer.getRemainingMillis(),
@@ -322,7 +322,7 @@ public class Client {
  * @author Kasia Findeisen
  * 
  */
-class Timer {
+class TimeoutCounter {
 	private final long startTime = System.currentTimeMillis();
 	private long timeoutInMillis;
 
@@ -333,7 +333,7 @@ class Timer {
 	 * @param timeoutInMillis
 	 *            timeout in milliseconds
 	 */
-	Timer(long timeoutInMillis) {
+	public TimeoutCounter(long timeoutInMillis) {
 		this.timeoutInMillis = timeoutInMillis;
 	}
 
