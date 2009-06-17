@@ -1,5 +1,7 @@
 package multiplexer.jmx;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Helper class for timeout management. Used time unit is milliseconds. Each
  * instance gets it's creation time and specified timeout. It might check, at
@@ -21,6 +23,20 @@ public class TimeoutCounter {
 	 */
 	public TimeoutCounter(long timeoutInMillis) {
 		this.timeoutInMillis = timeoutInMillis;
+	}
+
+	/**
+	 * Creates a new instance which might be asked if a specific timeout (
+	 * {@code timeout}) in a specified time unit ({@code TimeUnit}) has passed
+	 * since it's creation time.
+	 * 
+	 * @param timeout
+	 *            timeout in time unit
+	 * @param unit
+	 *            time unit
+	 */
+	public TimeoutCounter(long timeout, TimeUnit unit) {
+		this(unit.toMillis(timeout));
 	}
 
 	/**

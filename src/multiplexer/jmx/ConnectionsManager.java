@@ -4,6 +4,7 @@ import java.net.SocketAddress;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import multiplexer.Multiplexer;
 import multiplexer.Multiplexer.MultiplexerMessage;
@@ -39,6 +40,7 @@ class ConnectionsManager {
 	private ClientBootstrap bootstrap;
 	private ConnectionsMap connectionsMap = new ConnectionsMap();
 	private MessageReceivedListener messageReceivedListener;
+	private ChannelFutureSet channelFutureSet = new ChannelFutureSet();
 
 	public ConnectionsManager(final int instanceType) {
 		this.instanceType = instanceType;
@@ -115,7 +117,8 @@ class ConnectionsManager {
 				System.out.println("sending welcome message"); // TODO
 				ByteString message = WelcomeMessage.newBuilder().setType(
 						instanceType).setId(instanceId).build().toByteString();
-				channel.write(createMessage(message, Types.CONNECTION_WELCOME));
+				sendMessage(createMessage(message, Types.CONNECTION_WELCOME),
+						channel);
 			}
 		});
 		return connectOperation;
@@ -157,36 +160,59 @@ class ConnectionsManager {
 		this.messageReceivedListener = messageReceivedListener;
 	}
 
-	private void sendMessage(MultiplexerMessage message, Channel channel) {
-		channel.write(message);
+	private ChannelFuture sendMessage(MultiplexerMessage message,
+			Channel channel) {
+		ChannelFuture cf = channel.write(message);
+		channelFutureSet.add(cf);
+		return cf;
 	}
 
-	public int sendMessage(MultiplexerMessage message, SendingMethod method) {
+	public ChannelFutureGroup sendMessage(MultiplexerMessage message,
+			SendingMethod method) {
 		if (method == SendingMethod.THROUGH_ONE) {
 			Channel channel = connectionsMap.getAny(Peers.MULTIPLEXER);
-			sendMessage(message, channel);
-			return 1;
+			return new ChannelFutureGroup(sendMessage(message, channel));
 		} else if (method == SendingMethod.THROUGH_ALL) {
-			int count = 0;
 			Iterator<Channel> channels = connectionsMap
 					.getAll(Peers.MULTIPLEXER);
 			Channel channel;
+			ChannelFutureGroup channelFutureGroup = new ChannelFutureGroup();
 			while (channels.hasNext()) {
 				channel = channels.next();
-				sendMessage(message, channel);
-				count++;
+				channelFutureGroup.add(sendMessage(message, channel));
 			}
-			return count;
+			return channelFutureGroup;
 		} else {
-			sendMessage(message, method.getConnection().getChannel());
-			return 1;
+			return new ChannelFutureGroup(sendMessage(message, method
+					.getConnection().getChannel()));
+		}
+	}
+
+	public void flushAll() throws InterruptedException {
+		copyActiveChannelFutures().await();
+	}
+
+	public boolean flushAll(long timeout, TimeUnit unit)
+			throws InterruptedException {
+		return copyActiveChannelFutures().await(timeout, unit);
+
+	}
+
+	public boolean flushAll(long timeoutMillis) throws InterruptedException {
+		return copyActiveChannelFutures().await(timeoutMillis);
+
+	}
+
+	private ChannelFutureGroup copyActiveChannelFutures() {
+		synchronized (channelFutureSet) {
+			return new ChannelFutureGroup(channelFutureSet);
 		}
 	}
 
 }
 
 class IncomingMessageData {
-	private MultiplexerMessage message;
+	private final MultiplexerMessage message;
 	private final Connection connection;
 
 	public IncomingMessageData(MultiplexerMessage message, Connection connection) {
