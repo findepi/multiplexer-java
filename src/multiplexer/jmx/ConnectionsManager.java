@@ -3,6 +3,8 @@ package multiplexer.jmx;
 import java.net.SocketAddress;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -31,23 +33,62 @@ import com.google.protobuf.InvalidProtocolBufferException;
 /**
  * 
  * @author Kasia Findeisen
- * 
+ * @author Piotr Findeisen
  */
 class ConnectionsManager {
 
 	private final long instanceId = new Random().nextLong();
 	private final int instanceType;
-	private ClientBootstrap bootstrap;
-	private ConnectionsMap connectionsMap = new ConnectionsMap();
+	private final ClientBootstrap bootstrap;
+	private final ConnectionsMap connectionsMap = new ConnectionsMap();
 	private MessageReceivedListener messageReceivedListener;
-	private ChannelFutureSet channelFutureSet = new ChannelFutureSet();
+	private final ChannelFutureSet channelFutureSet = new ChannelFutureSet();
 
+	/**
+	 * Constructs new ConnectionsManager with given type.
+	 * 
+	 * @param instanceType
+	 *            the type of the peer that this {@link ConnectionsManager} will
+	 *            represent
+	 */
 	public ConnectionsManager(final int instanceType) {
+		this(instanceType, Executors.newCachedThreadPool());
+	}
+
+	/**
+	 * Constructs new ConnectionsManager with given type.
+	 * 
+	 * @param instanceType
+	 *            the type of the peer that this {@link ConnectionsManager} will
+	 *            represent
+	 * @param threadPool
+	 *            ExecutorService that will be used to create boss and worker
+	 *            threads for handling {@code java.nio}
+	 */
+	public ConnectionsManager(final int instanceType, ExecutorService threadPool) {
+		this(instanceType, threadPool, threadPool);
+	}
+
+	/**
+	 * Constructs new ConnectionsManager with given type.
+	 * 
+	 * @param instanceType
+	 *            the type of the peer that this {@link ConnectionsManager} will
+	 *            represent
+	 * @param bossExecutor
+	 *            {@link ExecutorService} that will be used to create boss
+	 *            thread
+	 * @param workerExecutor
+	 *            {@link ExecutorService} that will be used to create I/O worker
+	 *            threads; it must be able to create at least a thread per CPU
+	 *            core
+	 */
+	public ConnectionsManager(final int instanceType, Executor bossExecutor,
+		Executor workerExecutor) {
+
 		this.instanceType = instanceType;
 		ChannelFactory channelFactory = new NioClientSocketChannelFactory(
-				Executors.newCachedThreadPool(), Executors
-						.newCachedThreadPool());
-
+			bossExecutor, workerExecutor);
 		bootstrap = new ClientBootstrap(channelFactory);
 		bootstrap.setOption("tcpNoDelay", true);
 		bootstrap.setOption("keepAlive", true);
@@ -58,10 +99,10 @@ class ConnectionsManager {
 			private ProtobufEncoder multiplexerMessageEncoder = new ProtobufEncoder();
 			// Decoders
 			private ProtobufDecoder multiplexerMessageDecoder = new ProtobufDecoder(
-					Multiplexer.MultiplexerMessage.getDefaultInstance());
+				Multiplexer.MultiplexerMessage.getDefaultInstance());
 			// Protocol handler
 			private MultiplexerProtocolHandler multiplexerProtocolHandler = new MultiplexerProtocolHandler(
-					ConnectionsManager.this);
+				ConnectionsManager.this);
 
 			@Override
 			public ChannelPipeline getPipeline() throws Exception {
@@ -69,17 +110,17 @@ class ConnectionsManager {
 				// Encoders
 				pipeline.addLast("rawMessageEncoder", rawMessageEncoder);
 				pipeline.addLast("multiplexerMessageEncoder",
-						multiplexerMessageEncoder);
+					multiplexerMessageEncoder);
 
 				// Decoders
 				pipeline.addLast("rawMessageDecoder",
-						new RawMessageCodecs.RawMessageFrameDecoder());
+					new RawMessageCodecs.RawMessageFrameDecoder());
 				pipeline.addLast("multiplexerMessageDecoder",
-						multiplexerMessageDecoder);
+					multiplexerMessageDecoder);
 
 				// Protocol handler
 				pipeline.addLast("multiplexerProtocolHandler",
-						multiplexerProtocolHandler);
+					multiplexerProtocolHandler);
 				return pipeline;
 			}
 		};
@@ -90,13 +131,12 @@ class ConnectionsManager {
 
 	public MultiplexerMessage createMessage(ByteString message, int type) {
 		return createMessage(MultiplexerMessage.newBuilder()
-				.setMessage(message).setType(type));
+			.setMessage(message).setType(type));
 	}
 
 	public MultiplexerMessage createMessage(MultiplexerMessage.Builder message) {
 		return message.setId(new Random().nextLong()).setFrom(instanceId)
-				.setTimestamp((int) (System.currentTimeMillis() / 1000))
-				.build();
+			.setTimestamp((int) (System.currentTimeMillis() / 1000)).build();
 	}
 
 	public ChannelFuture asyncConnect(SocketAddress address) {
@@ -105,7 +145,7 @@ class ConnectionsManager {
 
 			@Override
 			public void operationComplete(ChannelFuture future)
-					throws Exception {
+				throws Exception {
 				assert future.isDone();
 				// TODO zrobić, żeby user, gdy dostanie future, nie mógł zrobić
 				// getChannel
@@ -116,9 +156,9 @@ class ConnectionsManager {
 				// send out welcome message
 				System.out.println("sending welcome message"); // TODO
 				ByteString message = WelcomeMessage.newBuilder().setType(
-						instanceType).setId(instanceId).build().toByteString();
+					instanceType).setId(instanceId).build().toByteString();
 				sendMessage(createMessage(message, Types.CONNECTION_WELCOME),
-						channel);
+					channel);
 			}
 		});
 		return connectOperation;
@@ -131,7 +171,7 @@ class ConnectionsManager {
 			try {
 				welcome = WelcomeMessage.newBuilder().mergeFrom(msg).build();
 				connectionsMap.add(channel, message.getFrom(), welcome
-						.getType());
+					.getType());
 			} catch (InvalidProtocolBufferException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -141,7 +181,7 @@ class ConnectionsManager {
 		} else {
 			if (messageReceivedListener != null) {
 				messageReceivedListener.onMessageReceived(message,
-						new Connection(channel));
+					new Connection(channel));
 			} else {
 				System.err.println("Unhandled message\n" + message);
 			}
@@ -153,7 +193,7 @@ class ConnectionsManager {
 	}
 
 	public void setMessageReceivedListener(
-			MessageReceivedListener messageReceivedListener) {
+		MessageReceivedListener messageReceivedListener) {
 		if (messageReceivedListener == null) {
 			throw new NullPointerException("messageReceivedListener");
 		}
@@ -161,20 +201,20 @@ class ConnectionsManager {
 	}
 
 	private ChannelFuture sendMessage(MultiplexerMessage message,
-			Channel channel) {
+		Channel channel) {
 		ChannelFuture cf = channel.write(message);
 		channelFutureSet.add(cf);
 		return cf;
 	}
 
 	public ChannelFutureGroup sendMessage(MultiplexerMessage message,
-			SendingMethod method) {
+		SendingMethod method) {
 		if (method == SendingMethod.THROUGH_ONE) {
 			Channel channel = connectionsMap.getAny(Peers.MULTIPLEXER);
 			return new ChannelFutureGroup(sendMessage(message, channel));
 		} else if (method == SendingMethod.THROUGH_ALL) {
 			Iterator<Channel> channels = connectionsMap
-					.getAll(Peers.MULTIPLEXER);
+				.getAll(Peers.MULTIPLEXER);
 			Channel channel;
 			ChannelFutureGroup channelFutureGroup = new ChannelFutureGroup();
 			while (channels.hasNext()) {
@@ -184,7 +224,7 @@ class ConnectionsManager {
 			return channelFutureGroup;
 		} else {
 			return new ChannelFutureGroup(sendMessage(message, method
-					.getConnection().getChannel()));
+				.getConnection().getChannel()));
 		}
 	}
 
@@ -193,7 +233,7 @@ class ConnectionsManager {
 	}
 
 	public boolean flushAll(long timeout, TimeUnit unit)
-			throws InterruptedException {
+		throws InterruptedException {
 		return copyActiveChannelFutures().await(timeout, unit);
 
 	}

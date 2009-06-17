@@ -43,18 +43,18 @@ public class Client {
 	private BlockingQueue<IncomingMessageData> messageQueue = new LinkedBlockingQueue<IncomingMessageData>();
 
 	/**
-	 * Creates a new instance of a specified type ({@code clientType}). Sets the
+	 * Creates a new instance of a specified type ({@code instanceType}). Sets the
 	 * instance's {@link ConnectionsManager} and defines a callback method
 	 * {@code onMessageReceived}. The method, invoked by the {@code
 	 * ConnectionsManager}, puts the {@link IncomingMessageData}, accordingly to
 	 * it's {@code referenceId} in one of the instance's {@link BlockingQueue}s,
 	 * from where it might be read by method {@code receive()}.
 	 * 
-	 * @param clientType
+	 * @param instanceType
 	 *            client types are defined in {@link Peers}
 	 */
-	public Client(int clientType) {
-		connectionsManager = new ConnectionsManager(clientType);
+	public Client(int instanceType) {
+		connectionsManager = new ConnectionsManager(instanceType);
 		connectionsManager
 			.setMessageReceivedListener(new MessageReceivedListener() {
 
