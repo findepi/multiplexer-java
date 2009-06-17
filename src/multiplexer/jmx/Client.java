@@ -56,24 +56,24 @@ public class Client {
 	public Client(int clientType) {
 		connectionsManager = new ConnectionsManager(clientType);
 		connectionsManager
-				.setMessageReceivedListener(new MessageReceivedListener() {
+			.setMessageReceivedListener(new MessageReceivedListener() {
 
-					@Override
-					public void onMessageReceived(MultiplexerMessage message,
-							Connection connection) {
-						long id = message.getReferences();
-						IncomingMessageData msg = new IncomingMessageData(
-								message, connection);
-						BlockingQueue<IncomingMessageData> queryQueue = queryResponses
-								.get(id);
-						if (queryQueue == null) {
-							messageQueue.add(msg);
-						} else {
-							queryQueue.add(msg);
-						}
-
+				@Override
+				public void onMessageReceived(MultiplexerMessage message,
+					Connection connection) {
+					long id = message.getReferences();
+					IncomingMessageData msg = new IncomingMessageData(message,
+						connection);
+					BlockingQueue<IncomingMessageData> queryQueue = queryResponses
+						.get(id);
+					if (queryQueue == null) {
+						messageQueue.add(msg);
+					} else {
+						queryQueue.add(msg);
 					}
-				});
+
+				}
+			});
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class Client {
 	 *         succeeds or fails
 	 */
 	public ChannelFutureGroup send(MultiplexerMessage message,
-			SendingMethod sendingMethod) {
+		SendingMethod sendingMethod) {
 		return connectionsManager.sendMessage(message, sendingMethod);
 	}
 
@@ -161,7 +161,7 @@ public class Client {
 	 * @throws InterruptedException
 	 */
 	public boolean flush(long timeout, TimeUnit unit)
-			throws InterruptedException {
+		throws InterruptedException {
 		return connectionsManager.flushAll(timeout, unit);
 	}
 
@@ -196,7 +196,7 @@ public class Client {
 	 * @throws InterruptedException
 	 */
 	public IncomingMessageData receive(long timeout, TimeUnit unit)
-			throws InterruptedException {
+		throws InterruptedException {
 
 		return messageQueue.poll(timeout, unit);
 	}
@@ -245,7 +245,7 @@ public class Client {
 	 *             that can handle the query
 	 */
 	public IncomingMessageData query(ByteString message, int messageType,
-			long timeout) throws OperationFailedException {
+		long timeout) throws OperationFailedException {
 
 		// TODO: support Types.BACKEND_ERROR
 
@@ -263,7 +263,7 @@ public class Client {
 			send(queryMessage, SendingMethod.THROUGH_ONE);
 
 			IncomingMessageData answer = pollUninterruptibly(queryQueue,
-					timeout);
+				timeout);
 			if (answer != null) {
 				if (answer.getMessage().getType() != Types.DELIVERY_ERROR) {
 					return answer;
@@ -287,7 +287,7 @@ public class Client {
 
 				if (answer == null) {
 					throw new OperationTimeoutException(
-							"query phase 2 timed out");
+						"query phase 2 timed out");
 				}
 
 				long references = answer.getMessage().getReferences();
@@ -304,7 +304,7 @@ public class Client {
 					count--;
 					if (count == 0) {
 						throw new BackendUnreachableException(
-								"query phase 2 rejected by all peers");
+							"query phase 2 rejected by all peers");
 					}
 					answer = null;
 					continue;
@@ -317,14 +317,14 @@ public class Client {
 				if (references == backendSearchMessageId) {
 					answerFromId = answer.getMessage().getFrom();
 					MultiplexerMessage backendQueryMessage = createMessage(MultiplexerMessage
-							.newBuilder().setMessage(message).setType(
-									messageType).setTo(answerFromId));
+						.newBuilder().setMessage(message).setType(messageType)
+						.setTo(answerFromId));
 
 					final long backendQueryId = backendQueryMessage.getId();
 					queryPossibleReferences.add(backendQueryId);
 					queryResponses.put(backendQueryId, queryQueue);
 					send(backendQueryMessage, SendingMethod.via(answer
-							.getConnection()));
+						.getConnection()));
 
 					answer = null;
 					timer = new TimeoutCounter(timeout);
@@ -334,7 +334,7 @@ public class Client {
 
 						if (answer == null) {
 							throw new OperationTimeoutException(
-									"query phase 3 timed out");
+								"query phase 3 timed out");
 						}
 
 						references = answer.getMessage().getReferences();
@@ -346,7 +346,7 @@ public class Client {
 						}
 
 						if (type != Types.DELIVERY_ERROR
-								&& ((references == queryId) || (references == backendQueryId))) {
+							&& ((references == queryId) || (references == backendQueryId))) {
 							return answer;
 						}
 
@@ -354,7 +354,7 @@ public class Client {
 							assert type == Types.DELIVERY_ERROR;
 							if (phase3DeliveryError) {
 								throw new BackendUnreachableException(
-										"query phases 1 and 3 rejected");
+									"query phases 1 and 3 rejected");
 							} else {
 								phase1DeliveryError = true;
 								answer = null;
@@ -366,7 +366,7 @@ public class Client {
 							assert type == Types.DELIVERY_ERROR;
 							if (phase1DeliveryError) {
 								throw new BackendUnreachableException(
-										"query phases 1 and 3 rejected");
+									"query phases 1 and 3 rejected");
 							} else {
 								phase3DeliveryError = true;
 								answer = null;
@@ -398,9 +398,9 @@ public class Client {
 	 */
 	private MultiplexerMessage makeBackendForPacketSearch(final int messageType) {
 		BackendForPacketSearch backendSearch = BackendForPacketSearch
-				.newBuilder().setPacketType(messageType).build();
+			.newBuilder().setPacketType(messageType).build();
 		MultiplexerMessage backendSearchMessage = createMessage(backendSearch
-				.toByteString(), Types.BACKEND_FOR_PACKET_SEARCH);
+			.toByteString(), Types.BACKEND_FOR_PACKET_SEARCH);
 		return backendSearchMessage;
 	}
 }
