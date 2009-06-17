@@ -86,6 +86,12 @@ peer {
 
 # peers 112 reserved
 
+peer {
+    # yes, it's from reserved range
+    type: 112
+    name: "ECHO_SERVER"
+}
+
 # packages and routing rules definitions
 #
 #   PACKAGES 1 - 99 reserved for Multiplexer meta packages

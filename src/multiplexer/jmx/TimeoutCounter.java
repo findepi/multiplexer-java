@@ -43,7 +43,7 @@ public class TimeoutCounter {
 	 * Returns the amount of time in milliseconds that has passed since the
 	 * instance's creation time.
 	 * 
-	 * @return
+	 * @return elapsed time in milliseconds
 	 */
 	public long getElapsedMillis() {
 		return (System.currentTimeMillis() - startTime);
@@ -53,7 +53,7 @@ public class TimeoutCounter {
 	 * Returns the amount of time remaining until {@code timeoutInMillis} passes
 	 * or {@code 0} if it has happened already.
 	 * 
-	 * @return
+	 * @return remaining time in milliseconds
 	 */
 	public long getRemainingMillis() {
 		long remainingMillis = timeoutInMillis - getElapsedMillis();

@@ -10,4 +10,5 @@ public final class Peers {
 	public static final int LOG_COLLECTOR = 109;
 	public static final int EVENTS_COLLECTOR = 110;
 	public static final int LOG_RECEIVER_EXAMPLE = 111;
+	public static final int ECHO_SERVER = 112;
 }

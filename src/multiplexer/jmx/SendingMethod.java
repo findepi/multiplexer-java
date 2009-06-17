@@ -13,6 +13,9 @@ public final class SendingMethod {
 	public static final SendingMethod THROUGH_ALL = new SendingMethod();
 	
 	public static SendingMethod via(Connection connection) {
+		if (connection == null) {
+			throw new NullPointerException("connection");
+		}
 		return new SendingMethod(connection);
 	}
 

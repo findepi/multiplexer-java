@@ -129,14 +129,22 @@ class ConnectionsManager {
 
 	}
 
+	public MultiplexerMessage.Builder createMessageBuilder() {
+		return initializeMessageBuilder(MultiplexerMessage.newBuilder());
+	}
+
+	private MultiplexerMessage.Builder initializeMessageBuilder(
+		MultiplexerMessage.Builder message) {
+		return message.setId(new Random().nextLong()).setFrom(instanceId)
+			.setTimestamp((int) (System.currentTimeMillis() / 1000));
+	}
+
 	public MultiplexerMessage createMessage(ByteString message, int type) {
-		return createMessage(MultiplexerMessage.newBuilder()
-			.setMessage(message).setType(type));
+		return createMessageBuilder().setMessage(message).setType(type).build(); 
 	}
 
 	public MultiplexerMessage createMessage(MultiplexerMessage.Builder message) {
-		return message.setId(new Random().nextLong()).setFrom(instanceId)
-			.setTimestamp((int) (System.currentTimeMillis() / 1000)).build();
+		return initializeMessageBuilder(message).build();
 	}
 
 	public ChannelFuture asyncConnect(SocketAddress address) {
@@ -249,22 +257,4 @@ class ConnectionsManager {
 		}
 	}
 
-}
-
-class IncomingMessageData {
-	private final MultiplexerMessage message;
-	private final Connection connection;
-
-	public IncomingMessageData(MultiplexerMessage message, Connection connection) {
-		this.message = message;
-		this.connection = connection;
-	}
-
-	public MultiplexerMessage getMessage() {
-		return message;
-	}
-
-	public Connection getConnection() {
-		return connection;
-	}
 }

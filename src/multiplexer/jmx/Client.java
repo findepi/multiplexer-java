@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import multiplexer.Multiplexer;
 import multiplexer.Multiplexer.BackendForPacketSearch;
 import multiplexer.Multiplexer.MultiplexerMessage;
 import multiplexer.Multiplexer.MultiplexerMessage.Builder;
@@ -43,8 +42,8 @@ public class Client {
 	private BlockingQueue<IncomingMessageData> messageQueue = new LinkedBlockingQueue<IncomingMessageData>();
 
 	/**
-	 * Creates a new instance of a specified type ({@code instanceType}). Sets the
-	 * instance's {@link ConnectionsManager} and defines a callback method
+	 * Creates a new instance of a specified type ({@code instanceType}). Sets
+	 * the instance's {@link ConnectionsManager} and defines a callback method
 	 * {@code onMessageReceived}. The method, invoked by the {@code
 	 * ConnectionsManager}, puts the {@link IncomingMessageData}, accordingly to
 	 * it's {@code referenceId} in one of the instance's {@link BlockingQueue}s,
@@ -119,11 +118,21 @@ public class Client {
 	 *            use {@code MultiplexerMessage.newBuilder()} to obtain a
 	 *            builder. Use {@code builder.setAttributeName(name)} to set
 	 *            {@code attributeName}. {@link MultiplexerMessage}'s attributes
-	 *            are defined in {@link Multiplexer.proto} -> {@code
-	 *            MultiplexerMessage}.
+	 *            are defined in {@code Multiplexer.proto} ->
+	 *            {@link MultiplexerMessage}.
 	 */
 	public MultiplexerMessage createMessage(MultiplexerMessage.Builder message) {
 		return connectionsManager.createMessage(message);
+	}
+
+	/**
+	 * Creates new {@link Builder} with {@code from}, {@code id} and {@code
+	 * timestamp} already filled in.
+	 * 
+	 * @return new builder with prefilled fields
+	 */
+	public MultiplexerMessage.Builder createMessageBuilder() {
+		return connectionsManager.createMessageBuilder();
 	}
 
 	/**
