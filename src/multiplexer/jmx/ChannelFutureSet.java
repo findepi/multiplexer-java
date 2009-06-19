@@ -1,11 +1,9 @@
-/**
- * 
- */
 package multiplexer.jmx;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
+
+import multiplexer.jmx.util.ConcurrentHashSet;
 
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
@@ -13,36 +11,40 @@ import org.jboss.netty.channel.ChannelFutureListener;
 import com.google.common.collect.ForwardingSet;
 
 /**
+ * A Set of {@link ChannelFuture}s which allows concurrent operations (addition,
+ * removal) and iteration,
+ * 
  * @author Kasia Findeisen
- *
+ * 
  */
-public class ChannelFutureSet extends ForwardingSet<ChannelFuture> {
-	
-	private Set<ChannelFuture> channelFutures = new HashSet<ChannelFuture>();
+public class ChannelFutureSet<E extends ChannelFuture> extends ForwardingSet<E> {
+
+	private Set<E> channelFutures = new ConcurrentHashSet<E>();
 	private ChannelFutureListener completionListener = new ChannelFutureListener() {
 
-				@Override
-				public void operationComplete(ChannelFuture future) throws Exception {
-					channelFutures.remove(future);
-				}
+		@Override
+		public void operationComplete(ChannelFuture future) throws Exception {
+			channelFutures.remove(future);
+		}
+	};
 
-			};
-			
-	public boolean add(ChannelFuture cf) {
+	@Override
+	public boolean add(E cf) {
 		cf.addListener(completionListener);
 		return super.add(cf);
 	}
-	
-	public boolean addAll(Collection<? extends ChannelFuture> cfCollection) {
-		for (ChannelFuture cf: cfCollection) {
-			cf.addListener(completionListener);
+
+	@Override
+	public boolean addAll(Collection<? extends E> cfCollection) {
+		boolean modified = false;
+		for (E cf : cfCollection) {
+			modified = add(cf) || modified;
 		}
-		return super.addAll(cfCollection);
+		return modified;
 	}
 
 	@Override
-	protected Set<ChannelFuture> delegate() {
+	protected Set<E> delegate() {
 		return channelFutures;
 	}
-
 }

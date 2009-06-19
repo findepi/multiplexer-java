@@ -13,7 +13,7 @@ import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 
 /**
- * 
+ * TODO(konio) javadoc
  * @author Kasia Findeisen
  * 
  */
