@@ -1,7 +1,6 @@
 package multiplexer.jmx.util;
 
 import java.util.AbstractSet;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,17 +9,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * modifications and iteration.
  * 
  * @author Piotr Findeisen
- * 
- * @param <E>
  */
 public class ConcurrentHashSet<E> extends AbstractSet<E> {
 	
-	private final ConcurrentHashMap<E, Integer> elements = new ConcurrentHashMap<E, Integer>();
+	private static final Object VALUE = new Object();
+	private final ConcurrentHashMap<E, Object> elements = new ConcurrentHashMap<E, Object>();
 
 	@Override
 	public boolean add(E e) {
-		Integer previous = elements.put(e, 1);
-		return previous == null || previous == 0;
+		return elements.put(e, VALUE) == null;
 	}
 
 	@Override
@@ -30,8 +27,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> {
 
 	@Override
 	public boolean contains(Object o) {
-		Integer count = elements.get(o);
-		return count != null && count > 0;
+		return elements.containsKey(o);
 	}
 
 	@Override
@@ -46,18 +42,7 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> {
 
 	@Override
 	public boolean remove(Object o) {
-		Integer previous = elements.remove(o);
-		return previous != null && previous > 0;
-	}
-
-	@Override
-	public boolean retainAll(Collection<?> c) {
-		boolean modified = false;
-		for (E e : this)
-			if (!c.contains(e))
-				if (remove(e))
-					modified = true;
-		return modified;
+		return elements.remove(o) == VALUE;
 	}
 
 	@Override
