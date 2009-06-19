@@ -17,9 +17,9 @@ import com.google.common.collect.ForwardingSet;
  * @author Kasia Findeisen
  * 
  */
-public class ChannelFutureSet<E extends ChannelFuture> extends ForwardingSet<E> {
+public class ChannelFutureSet extends ForwardingSet<ChannelFuture> {
 
-	private Set<E> channelFutures = new ConcurrentHashSet<E>();
+	private Set<ChannelFuture> channelFutures = new ConcurrentHashSet<ChannelFuture>();
 	private ChannelFutureListener completionListener = new ChannelFutureListener() {
 
 		@Override
@@ -29,22 +29,22 @@ public class ChannelFutureSet<E extends ChannelFuture> extends ForwardingSet<E> 
 	};
 
 	@Override
-	public boolean add(E cf) {
+	public boolean add(ChannelFuture cf) {
 		cf.addListener(completionListener);
 		return super.add(cf);
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends E> cfCollection) {
+	public boolean addAll(Collection<? extends ChannelFuture> cfCollection) {
 		boolean modified = false;
-		for (E cf : cfCollection) {
+		for (ChannelFuture cf : cfCollection) {
 			modified = add(cf) || modified;
 		}
 		return modified;
 	}
 
 	@Override
-	protected Set<E> delegate() {
+	protected Set<ChannelFuture> delegate() {
 		return channelFutures;
 	}
 }
