@@ -220,7 +220,7 @@ def test():
     # send out invitation
     print "sending welcome message"
     welcome = WelcomeMessage()
-    welcome.type = peers.SEARCH # FIXME
+    welcome.type = peers.SEARCH
     welcome.id = c.instance_id
     c.send_message(welcome, types.CONNECTION_WELCOME)
 

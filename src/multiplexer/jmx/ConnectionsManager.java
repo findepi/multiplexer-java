@@ -7,6 +7,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import multiplexer.Multiplexer;
 import multiplexer.Multiplexer.MultiplexerMessage;
@@ -31,11 +33,15 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 /**
+ * TODO: javadoc
  * 
  * @author Kasia Findeisen
  * @author Piotr Findeisen
  */
 class ConnectionsManager {
+
+	private final Logger logger = Logger.getLogger(ConnectionsManager.class
+		.getName());
 
 	private final long instanceId = new Random().nextLong();
 	private final int instanceType;
@@ -85,6 +91,8 @@ class ConnectionsManager {
 	 */
 	public ConnectionsManager(final int instanceType, Executor bossExecutor,
 		Executor workerExecutor) {
+
+		// TODO: ConnectionsManager should send & expect heartbits.
 
 		this.instanceType = instanceType;
 		ChannelFactory channelFactory = new NioClientSocketChannelFactory(
@@ -140,7 +148,7 @@ class ConnectionsManager {
 	}
 
 	public MultiplexerMessage createMessage(ByteString message, int type) {
-		return createMessageBuilder().setMessage(message).setType(type).build(); 
+		return createMessageBuilder().setMessage(message).setType(type).build();
 	}
 
 	public MultiplexerMessage createMessage(MultiplexerMessage.Builder message) {
@@ -162,7 +170,7 @@ class ConnectionsManager {
 				connectionsMap.addNew(channel);
 
 				// send out welcome message
-				System.out.println("sending welcome message"); // TODO
+				System.out.println("sending welcome message"); // FIXME
 				ByteString message = WelcomeMessage.newBuilder().setType(
 					instanceType).setId(instanceId).build().toByteString();
 				sendMessage(createMessage(message, Types.CONNECTION_WELCOME),
@@ -174,26 +182,37 @@ class ConnectionsManager {
 
 	public void messageReceived(MultiplexerMessage message, Channel channel) {
 		if (message.getType() == Types.CONNECTION_WELCOME) {
-			ByteString msg = message.getMessage();
 			WelcomeMessage welcome;
 			try {
-				welcome = WelcomeMessage.newBuilder().mergeFrom(msg).build();
-				connectionsMap.add(channel, message.getFrom(), welcome
-					.getType());
+				welcome = WelcomeMessage.parseFrom(message.getMessage());
 			} catch (InvalidProtocolBufferException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// TODO: use logging
+				logger.log(Level.WARNING,
+					"Malformed CONNECTION_WELCOME received.", e);
+				close(channel);
+				return;
 			}
+			connectionsMap.add(channel, message.getFrom(), welcome.getType());
 			// TODO Nie akceptować drugiego WELCOME na tym channelu
 		} else if (message.getType() == Types.HEARTBIT) {
+			// TODO: handle HEARTBIT
+
 		} else {
-			if (messageReceivedListener != null) {
-				messageReceivedListener.onMessageReceived(message,
-					new Connection(channel));
-			} else {
+			if (!fireOnMessageReceived(message, channel)) {
 				System.err.println("Unhandled message\n" + message);
 			}
 		}
+	}
+
+	/**
+	 * Request closing the channel and removing it from connections maps.
+	 * 
+	 * @param channel
+	 *            channel to be closed
+	 */
+	void close(Channel channel) {
+		// TODO remove `channel' from the connections maps
+		channel.close();
 	}
 
 	public MessageReceivedListener getMessageReceivedListener() {
@@ -206,6 +225,17 @@ class ConnectionsManager {
 			throw new NullPointerException("messageReceivedListener");
 		}
 		this.messageReceivedListener = messageReceivedListener;
+	}
+
+	private boolean fireOnMessageReceived(MultiplexerMessage message,
+		Channel channel) {
+		if (messageReceivedListener != null) {
+			messageReceivedListener.onMessageReceived(message, new Connection(
+				channel));
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	private ChannelFuture sendMessage(MultiplexerMessage message,
