@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import multiplexer.jmx.util.ConcurrentHashSet;
+import multiplexer.jmx.util.ConcurrentSet;
 
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
@@ -19,7 +20,7 @@ import com.google.common.collect.ForwardingSet;
  */
 public class ChannelFutureSet extends ForwardingSet<ChannelFuture> {
 
-	private Set<ChannelFuture> channelFutures = new ConcurrentHashSet<ChannelFuture>();
+	private ConcurrentSet<ChannelFuture> channelFutures = new ConcurrentHashSet<ChannelFuture>();
 	private ChannelFutureListener completionListener = new ChannelFutureListener() {
 
 		@Override

@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 
  * @author Piotr Findeisen
  */
-public class ConcurrentHashSet<E> extends AbstractSet<E> {
+public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSet<E> {
 	
 	private static final Object VALUE = new Object();
 	private final ConcurrentHashMap<E, Object> elements = new ConcurrentHashMap<E, Object>();
