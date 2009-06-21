@@ -51,4 +51,30 @@
     </java>
   </target>
 
+  <!-- javadoc -->
+  <target name="doc">
+    <javadoc access="protected"
+             author="true"
+             classpathref="project.class.path"
+             destdir="doc"
+             sourcepath="${src}"
+             nodeprecated="false"
+             nodeprecatedlist="false"
+             noindex="false"
+             nonavbar="false"
+             notree="false"
+             source="1.6"
+             splitindex="true"
+             use="true"
+             version="true">
+      <link href="http://java.sun.com/javase/6/docs/api/" />
+      <link href="http://code.google.com/apis/protocolbuffers/docs/reference/java/" />
+      <link href="http://www.jboss.org/file-access/default/members/netty/freezone/api/3.1/" />
+      <link href="http://google-collections.googlecode.com/svn/trunk/javadoc/" />
+      <package name="*" />
+      <excludepackage name="**.test" />
+      <excludepackage name="**.test.**" />
+    </javadoc>
+  </target>
+
 </project>
