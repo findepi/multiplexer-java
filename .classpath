@@ -3,8 +3,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/PROTOBUF"/>
 	<classpathentry kind="lib" path="libs/netty-3.1.0.BETA3.jar" sourcepath="libs/netty-3.1.0.BETA3-sources.jar"/>
 	<classpathentry kind="lib" path="libs/google-collect-1.0-rc2.jar" sourcepath="libs/google-collect-src-1.0-rc2.zip"/>
+	<classpathentry kind="lib" path="libs/protobuf.jar" sourcepath="libs/google-protobuf-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
