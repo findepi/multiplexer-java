@@ -171,9 +171,14 @@ class ConnectionsManager {
 				// getChannel
 
 				// send out welcome message
-				System.out.println("sending welcome message"); // TODO debug
-				ByteString message = WelcomeMessage.newBuilder().setType(
-						instanceType).setId(instanceId).build().toByteString();
+				// TODO(findepi) In case of server's ConnectionsManager, don't
+				// send WelcomeMessage before receiving such message from the
+				// other party.
+				WelcomeMessage welcomeMessage = WelcomeMessage.newBuilder()
+					.setType(instanceType).setId(instanceId).build();
+				logger.log(Level.FINE, "sending welcome message"
+					+ welcomeMessage);
+				ByteString message = welcomeMessage.toByteString();
 				sendMessage(createMessage(message, Types.CONNECTION_WELCOME),
 						future.getChannel());
 			}

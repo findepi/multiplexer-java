@@ -1,5 +1,8 @@
 package multiplexer.jmx;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import multiplexer.Multiplexer.MultiplexerMessage;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -10,6 +13,8 @@ import org.jboss.netty.channel.SimpleChannelHandler;
 
 @ChannelPipelineCoverage("all")
 class MultiplexerProtocolHandler extends SimpleChannelHandler {
+	
+	private static final Logger logger = Logger.getLogger(MultiplexerProtocolHandler.class.getName());
 	
 	private ConnectionsManager connectionsManager;
 
@@ -37,7 +42,7 @@ class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-		e.getCause().printStackTrace();
+		logger.log(Level.WARNING, "Unhandled exception", e.getCause());
 		e.getChannel().close();
 	}
 }
