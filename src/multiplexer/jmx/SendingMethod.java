@@ -1,7 +1,7 @@
 package multiplexer.jmx;
 
 /**
- * TODO
+ * TODO javadoc
  * @author Piotr Findeisen
  *
  */
@@ -24,7 +24,6 @@ public final class SendingMethod {
 	}
 
 	private SendingMethod(Connection connection) {
-		// TODO
 		if (connection == null) {
 			throw new NullPointerException("connection");
 		}
