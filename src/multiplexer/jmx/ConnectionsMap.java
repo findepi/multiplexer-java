@@ -9,26 +9,27 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.group.ChannelGroup;
+import org.jboss.netty.channel.group.DefaultChannelGroup;
+
 import com.google.common.collect.LinkedListMultimap;
 
 /**
  * @author Kasia Findeisen
- * 
+ * @author Piotr Findeisen
  */
 public class ConnectionsMap {
 
 	/**
-	 * Reserved key in {@code channelsByType}. This key's purpose is providing
-	 * access to all open channels while cleaning up.
-	 */
-	private static final int UNGROUPED_CHANNELS = 0;
-
-	/**
-	 * A multimap of {@link Channel}s grouped by connected peers' types plus
-	 * special key {@code UNGROUPED_CHANNELS} associated with all channels.
+	 * A multimap of {@link Channel}s grouped by connected peers' types.
 	 */
 	private LinkedListMultimap<Integer, Channel> channelsByType = LinkedListMultimap
-			.create();
+		.create();
+
+	/**
+	 * Provides access to all open channels while cleaning up.
+	 */
+	private ChannelGroup allChannels = new DefaultChannelGroup();
 
 	/**
 	 * A map of {@link Channel}s by peer Id. Id is associated with the peer's
@@ -43,19 +44,14 @@ public class ConnectionsMap {
 	private Map<Channel, Integer> peerTypesByChannel = new HashMap<Channel, Integer>();
 
 	/**
-	 * Adds a new channel to {@code channelsByType} which is a
-	 * {@link LinkedListMultimap} of {@link Channel}s grouped by peer Id, as an
-	 * entry for a special key {@code UNGROUPED_CHANNELS}. This key's purpose is
-	 * providing access to all open channels while cleaning up. Any closed
-	 * channel will be removed automatically. //TODO remove closed channels
+	 * Adds a new channel to {@code allChannels} which is a {@link ChannelGroup}
+	 * . Any closed channel will be removed automatically.
 	 * 
 	 * @param channel
 	 *            a new connection
 	 */
 	public void addNew(Channel channel) {
-		synchronized (channelsByType) {
-			channelsByType.put(UNGROUPED_CHANNELS, channel);
-		}
+		allChannels.add(channel);
 	}
 
 	/**
@@ -80,7 +76,7 @@ public class ConnectionsMap {
 		Channel oldChannel = channelsByPeerId.put(peerId, channel);
 		if (oldChannel != null) {
 			channelsByType.remove(peerTypesByChannel.get(oldChannel),
-					oldChannel);
+				oldChannel);
 			peerTypesByChannel.remove(oldChannel);
 		}
 		peerTypesByChannel.put(channel, peerType);
@@ -97,7 +93,7 @@ public class ConnectionsMap {
 	 *            requested type of the peer
 	 * @return
 	 */
-	public Channel getAny(int peerType) {
+	public synchronized Channel getAny(int peerType) {
 		List<Channel> list = channelsByType.get(peerType);
 		Channel anyChannel = list.remove(0);
 		list.add(anyChannel);
@@ -107,8 +103,8 @@ public class ConnectionsMap {
 	/**
 	 * Returns an {@Link Iterator} of all {@link Channel}s associated
 	 * with the given peer type ({@code peerType}). You should manually
-	 * synchronize on this {@link ConnectionsMap} when iterating over the
-	 * returned value.
+	 * synchronize on this {@link ConnectionsMap} when calling this method and
+	 * iterating over the returned value.
 	 * 
 	 * @param peerType
 	 *            requested type of the peer
@@ -119,4 +115,13 @@ public class ConnectionsMap {
 		return list.iterator();
 	}
 
+	/**
+	 * Get all {@link Channel}s that have been added with {@link #addNew} and
+	 * has not yet been closed. You should not modify the returned set.
+	 * 
+	 * @return all channels
+	 */
+	public ChannelGroup getAllChannels() {
+		return allChannels;
+	}
 }
