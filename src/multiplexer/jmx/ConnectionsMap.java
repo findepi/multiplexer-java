@@ -1,6 +1,3 @@
-/**
- * 
- */
 package multiplexer.jmx;
 
 import java.util.HashMap;
@@ -101,7 +98,7 @@ public class ConnectionsMap {
 	}
 
 	/**
-	 * Returns an {@Link Iterator} of all {@link Channel}s associated
+	 * Returns an {@link Iterator} of all {@link Channel}s associated
 	 * with the given peer type ({@code peerType}). You should manually
 	 * synchronize on this {@link ConnectionsMap} when calling this method and
 	 * iterating over the returned value.
