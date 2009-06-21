@@ -2,16 +2,27 @@ package multiplexer.jmx.util;
 
 import java.util.AbstractSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Simple implementation of concurrent Set that supports thread-safe
  * modifications and iteration.
  * 
+ * Instantiating this class is roughly equivalent to
+ * 
+ * <pre>
+ * Set&lt;E&gt; s = Collections.newSetFromMap(new ConcurrentHashMap&lt;E, Boolean&gt;());
+ * </pre>
+ * 
+ * except that {@link ConcurrentHashSet} implements {@link ConcurrentSet}
+ * interface in addition to plain {@link Set} interface.
+ * 
  * @author Piotr Findeisen
  */
-public class ConcurrentHashSet<E> extends AbstractSet<E> implements ConcurrentSet<E> {
-	
+public class ConcurrentHashSet<E> extends AbstractSet<E> implements
+	ConcurrentSet<E> {
+
 	private static final Object VALUE = new Object();
 	private final ConcurrentHashMap<E, Object> elements = new ConcurrentHashMap<E, Object>();
 
