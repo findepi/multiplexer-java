@@ -45,7 +45,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 class ConnectionsManager {
 
 	private final Logger logger = Logger.getLogger(ConnectionsManager.class
-			.getName());
+		.getName());
 
 	private final long instanceId = new Random().nextLong();
 	private final int instanceType;
@@ -54,6 +54,7 @@ class ConnectionsManager {
 	private MessageReceivedListener messageReceivedListener;
 	private final ChannelFutureSet channelFutureSet = new ChannelFutureSet();
 	private final Timer idleTimer = new HashedWheelTimer();
+	private final Config config = new Config();
 
 	/**
 	 * Constructs new ConnectionsManager with given type.
@@ -95,13 +96,11 @@ class ConnectionsManager {
 	 *            core
 	 */
 	public ConnectionsManager(final int instanceType, Executor bossExecutor,
-			Executor workerExecutor) {
-
-		// TODO: ConnectionsManager should send & expect heartbits.
+		Executor workerExecutor) {
 
 		this.instanceType = instanceType;
 		ChannelFactory channelFactory = new NioClientSocketChannelFactory(
-				bossExecutor, workerExecutor);
+			bossExecutor, workerExecutor);
 		bootstrap = new ClientBootstrap(channelFactory);
 		bootstrap.setOption("tcpNoDelay", true);
 		bootstrap.setOption("keepAlive", true);
@@ -112,10 +111,10 @@ class ConnectionsManager {
 			private ProtobufEncoder multiplexerMessageEncoder = new ProtobufEncoder();
 			// Decoders
 			private ProtobufDecoder multiplexerMessageDecoder = new ProtobufDecoder(
-					Multiplexer.MultiplexerMessage.getDefaultInstance());
+				Multiplexer.MultiplexerMessage.getDefaultInstance());
 			// Protocol handler
 			private MultiplexerProtocolHandler multiplexerProtocolHandler = new MultiplexerProtocolHandler(
-					ConnectionsManager.this);
+				ConnectionsManager.this);
 
 			@Override
 			public ChannelPipeline getPipeline() throws Exception {
@@ -123,23 +122,23 @@ class ConnectionsManager {
 				// Encoders
 				pipeline.addLast("rawMessageEncoder", rawMessageEncoder);
 				pipeline.addLast("multiplexerMessageEncoder",
-						multiplexerMessageEncoder);
+					multiplexerMessageEncoder);
 
 				// Decoders
 				pipeline.addLast("rawMessageDecoder",
-						new RawMessageCodecs.RawMessageFrameDecoder());
+					new RawMessageCodecs.RawMessageFrameDecoder());
 				pipeline.addLast("multiplexerMessageDecoder",
-						multiplexerMessageDecoder);
+					multiplexerMessageDecoder);
 
 				// Heartbits
 				pipeline.addLast("idleHandler", new IdleStateHandler(idleTimer,
-						Config.INITIAL_READ_IDLE_TIME,
-						Config.INITIAL_WRITE_IDLE_TIME, Long.MAX_VALUE,
-						TimeUnit.SECONDS));
+					Config.INITIAL_READ_IDLE_TIME,
+					Config.INITIAL_WRITE_IDLE_TIME, Long.MAX_VALUE,
+					TimeUnit.SECONDS));
 
 				// Protocol handler
 				pipeline.addLast("multiplexerProtocolHandler",
-						multiplexerProtocolHandler);
+					multiplexerProtocolHandler);
 				return pipeline;
 			}
 		};
@@ -153,9 +152,9 @@ class ConnectionsManager {
 	}
 
 	private MultiplexerMessage.Builder initializeMessageBuilder(
-			MultiplexerMessage.Builder message) {
+		MultiplexerMessage.Builder message) {
 		return message.setId(new Random().nextLong()).setFrom(instanceId)
-				.setTimestamp((int) (System.currentTimeMillis() / 1000));
+			.setTimestamp((int) (System.currentTimeMillis() / 1000));
 	}
 
 	public MultiplexerMessage createMessage(ByteString message, int type) {
@@ -176,7 +175,7 @@ class ConnectionsManager {
 
 			@Override
 			public void operationComplete(ChannelFuture future)
-					throws Exception {
+				throws Exception {
 				assert future.isDone();
 				// TODO zrobić, żeby user, gdy dostanie future, nie mógł zrobić
 				// getChannel
@@ -186,12 +185,12 @@ class ConnectionsManager {
 				// send WelcomeMessage before receiving such message from the
 				// other party.
 				WelcomeMessage welcomeMessage = WelcomeMessage.newBuilder()
-						.setType(instanceType).setId(instanceId).build();
+					.setType(instanceType).setId(instanceId).build();
 				logger.log(Level.FINE, "sending welcome message"
-						+ welcomeMessage);
+					+ welcomeMessage);
 				ByteString message = welcomeMessage.toByteString();
 				sendMessage(createMessage(message, Types.CONNECTION_WELCOME),
-						future.getChannel());
+					future.getChannel());
 			}
 		});
 		return connectOperation;
@@ -204,18 +203,27 @@ class ConnectionsManager {
 				welcome = WelcomeMessage.parseFrom(message.getMessage());
 			} catch (InvalidProtocolBufferException e) {
 				logger.log(Level.WARNING,
-						"Malformed CONNECTION_WELCOME received.", e);
+					"Malformed CONNECTION_WELCOME received.", e);
 				close(channel);
 				return;
 			}
+			int peerType = welcome.getType();
 			Channel oldChannel = connectionsMap.add(channel, message.getFrom(),
-					welcome.getType());
+				peerType);
+
+			channel.getPipeline()
+				.replace(
+					"idleHandler",
+					"idleHandler",
+					new IdleStateHandler(idleTimer, config.getReadIdleTime(peerType),
+						config.getWriteIdleTime(peerType), Long.MAX_VALUE,
+						TimeUnit.SECONDS));
 
 			if (oldChannel != null) {
 				logger
-						.log(
-								Level.WARNING,
-								"Another CONNECTION_WELCOME received from connected peer; closing previous connection.");
+					.log(
+						Level.WARNING,
+						"Another CONNECTION_WELCOME received from connected peer; closing previous connection.");
 				close(oldChannel);
 				return;
 			}
@@ -245,7 +253,7 @@ class ConnectionsManager {
 	}
 
 	public void setMessageReceivedListener(
-			MessageReceivedListener messageReceivedListener) {
+		MessageReceivedListener messageReceivedListener) {
 		if (messageReceivedListener == null) {
 			throw new NullPointerException("messageReceivedListener");
 		}
@@ -253,10 +261,10 @@ class ConnectionsManager {
 	}
 
 	private boolean fireOnMessageReceived(MultiplexerMessage message,
-			Channel channel) {
+		Channel channel) {
 		if (messageReceivedListener != null) {
 			messageReceivedListener.onMessageReceived(message, new Connection(
-					channel));
+				channel));
 			return true;
 		} else {
 			return false;
@@ -264,14 +272,14 @@ class ConnectionsManager {
 	}
 
 	private ChannelFuture sendMessage(MultiplexerMessage message,
-			Channel channel) {
+		Channel channel) {
 		ChannelFuture cf = channel.write(message);
 		channelFutureSet.add(cf);
 		return cf;
 	}
 
 	public ChannelFutureGroup sendMessage(MultiplexerMessage message,
-			SendingMethod method) {
+		SendingMethod method) {
 		if (method == SendingMethod.THROUGH_ONE) {
 			Channel channel;
 			try {
@@ -282,7 +290,7 @@ class ConnectionsManager {
 			return new ChannelFutureGroup(sendMessage(message, channel));
 		} else if (method == SendingMethod.THROUGH_ALL) {
 			Iterator<Channel> channels = connectionsMap
-					.getAll(Peers.MULTIPLEXER);
+				.getAll(Peers.MULTIPLEXER);
 			Channel channel;
 			ChannelFutureGroup channelFutureGroup = new ChannelFutureGroup();
 			while (channels.hasNext()) {
@@ -292,7 +300,7 @@ class ConnectionsManager {
 			return channelFutureGroup;
 		} else {
 			return new ChannelFutureGroup(sendMessage(message, method
-					.getConnection().getChannel()));
+				.getConnection().getChannel()));
 		}
 	}
 
@@ -301,7 +309,7 @@ class ConnectionsManager {
 	}
 
 	public boolean flushAll(long timeout, TimeUnit unit)
-			throws InterruptedException {
+		throws InterruptedException {
 		return copyActiveChannelFutures().await(timeout, unit);
 
 	}
@@ -319,7 +327,8 @@ class ConnectionsManager {
 
 	public void sendHeartbit(Channel channel) {
 		MultiplexerMessage.Builder heartbitBuilder = createMessageBuilder();
-		MultiplexerMessage heartbit = heartbitBuilder.setType(Types.HEARTBIT).build();
+		MultiplexerMessage heartbit = heartbitBuilder.setType(Types.HEARTBIT)
+			.build();
 		sendMessage(heartbit, channel);
 	}
 

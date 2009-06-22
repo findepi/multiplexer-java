@@ -127,7 +127,7 @@ public class ConnectionsMap {
 		List<Channel> list = channelsByType.get(peerType);
 		if (list == null || list.size() == 0)
 			throw new NoPeerForTypeException();
-		// TODO: skip closed channels or channels with full outgoung queue (is
+		// TODO: skip closed channels or channels with full outgoing queue (is
 		// there such thing?)
 		Channel anyChannel = list.remove(0);
 		assert anyChannel != null;
