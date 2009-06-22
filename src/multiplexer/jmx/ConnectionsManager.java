@@ -15,6 +15,7 @@ import multiplexer.Multiplexer.MultiplexerMessage;
 import multiplexer.Multiplexer.WelcomeMessage;
 import multiplexer.constants.Peers;
 import multiplexer.constants.Types;
+import multiplexer.jmx.exceptions.NoPeerForTypeException;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -272,7 +273,12 @@ class ConnectionsManager {
 	public ChannelFutureGroup sendMessage(MultiplexerMessage message,
 			SendingMethod method) {
 		if (method == SendingMethod.THROUGH_ONE) {
-			Channel channel = connectionsMap.getAny(Peers.MULTIPLEXER);
+			Channel channel;
+			try {
+				channel = connectionsMap.getAny(Peers.MULTIPLEXER);
+			} catch (NoPeerForTypeException e) {
+				return new ChannelFutureGroup();
+			}
 			return new ChannelFutureGroup(sendMessage(message, channel));
 		} else if (method == SendingMethod.THROUGH_ALL) {
 			Iterator<Channel> channels = connectionsMap

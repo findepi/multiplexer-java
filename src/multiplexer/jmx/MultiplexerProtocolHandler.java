@@ -32,12 +32,13 @@ class MultiplexerProtocolHandler extends SimpleChannelHandler {
 		if (e instanceof IdleStateEvent) {
 			IdleStateEvent evt = (IdleStateEvent) e;
 			if (evt.getState() == IdleState.READER_IDLE) {
-				long idleTimeSecs = (System.currentTimeMillis() - evt.getLastActivityTimeMillis()) % 1000;
+				double idleTimeSecs = (System.currentTimeMillis() - evt.getLastActivityTimeMillis()) / 1000.0;
 				logger.log(Level.WARNING, "Peer idle for " + idleTimeSecs + "s, closing connection.");
 				connectionsManager.close(evt.getChannel());
-			} else {
-				assert evt.getState() == IdleState.WRITER_IDLE;
+			} else if (evt.getState() == IdleState.WRITER_IDLE) {
 				connectionsManager.sendHeartbit(ctx.getChannel());
+			} else {
+				assert false : "We do not set " + IdleState.ALL_IDLE + " idle timeouts.";
 			}
 		} else {
 			super.handleUpstream(ctx, e);
