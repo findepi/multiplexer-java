@@ -120,19 +120,22 @@ public class ConnectionsMap {
 	 *            requested type of the peer
 	 * @throws NoPeerForTypeException
 	 *             when there are no Channels for given type
-	 * @return
 	 */
 	public synchronized Channel getAny(int peerType)
 		throws NoPeerForTypeException {
 		List<Channel> list = channelsByType.get(peerType);
 		if (list == null || list.size() == 0)
 			throw new NoPeerForTypeException();
-		// TODO: skip closed channels or channels with full outgoing queue (is
-		// there such thing?)
-		Channel anyChannel = list.remove(0);
-		assert anyChannel != null;
-		list.add(anyChannel);
-		return anyChannel;
+
+		Channel anyChannel;
+		while (list.size() > 0) {
+			anyChannel = list.remove(0);
+			if (anyChannel.isOpen()) {
+				list.add(anyChannel);
+				return anyChannel;
+			}
+		}
+		throw new NoPeerForTypeException();
 	}
 
 	/**
