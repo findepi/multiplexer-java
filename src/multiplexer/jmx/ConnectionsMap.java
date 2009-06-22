@@ -1,14 +1,16 @@
 package multiplexer.jmx;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.LinkedListMultimap;
 
 /**
@@ -32,13 +34,13 @@ public class ConnectionsMap {
 	 * A map of {@link Channel}s by peer Id. Id is associated with the peer's
 	 * most recent connection.
 	 */
-	private Map<Long, Channel> channelsByPeerId = new HashMap<Long, Channel>();
+	private BiMap<Long, Channel> channelsByPeerId = HashBiMap.create();
 
 	/**
 	 * Helper {@link Map}, reverse to {@code channelsByType}, which is a
 	 * {@link LinkedListMultimap} and therefore has no reverse access.
 	 */
-	private Map<Channel, Integer> peerTypesByChannel = new HashMap<Channel, Integer>();
+	private Map<Channel, Integer> peerTypeByChannel = new WeakHashMap<Channel, Integer>();
 
 	/**
 	 * Adds a new channel to {@code allChannels} which is a {@link ChannelGroup}
@@ -72,19 +74,48 @@ public class ConnectionsMap {
 		/* channelsByType.remove(UNGROUPPED_CHANNELS, channel); */
 		Channel oldChannel = channelsByPeerId.put(peerId, channel);
 		if (oldChannel != null) {
-			channelsByType.remove(peerTypesByChannel.get(oldChannel),
-				oldChannel);
-			peerTypesByChannel.remove(oldChannel);
+			channelsByType
+				.remove(peerTypeByChannel.get(oldChannel), oldChannel);
+			peerTypeByChannel.remove(oldChannel);
 		}
-		peerTypesByChannel.put(channel, peerType);
+		peerTypeByChannel.put(channel, peerType);
 		channelsByType.put(peerType, channel);
 		return oldChannel;
 	}
 
 	/**
+	 * Removes the {@link Channel} previously added with {@link #addNew} or
+	 * {#link #add}. Returns true if the {@code channel} has been removed from
+	 * any of internal structures.
+	 * 
+	 * @param channel
+	 *            channel to be removed
+	 * @return true, if the channel has been removed
+	 */
+	public synchronized boolean remove(Channel channel) {
+		boolean removed = false;
+		if (allChannels.remove(channel)) {
+			// The channel was registered with `addNew`.
+			removed = true;
+		}
+
+		Integer type = peerTypeByChannel.get(channel);
+		if (type != null) {
+			// The channel was registered with `add`.
+			channelsByType.remove(type, channel);
+			channelsByPeerId.inverse().remove(channel);
+			peerTypeByChannel.remove(channel);
+			removed = true;
+		}
+		return removed;
+	}
+
+	/**
 	 * Returns a {@link Channel} associated with some peer of the given type (
 	 * {@code peerType}). Chooses the channel on a basis of round-robin
-	 * algorithm. TODO rzuca wyjątek, gdy nie ma peerów tego typu
+	 * algorithm.
+	 * 
+	 * TODO rzuca wyjątek, gdy nie ma peerów tego typu
 	 * 
 	 * @param peerType
 	 *            requested type of the peer
@@ -98,10 +129,10 @@ public class ConnectionsMap {
 	}
 
 	/**
-	 * Returns an {@link Iterator} of all {@link Channel}s associated
-	 * with the given peer type ({@code peerType}). You should manually
-	 * synchronize on this {@link ConnectionsMap} when calling this method and
-	 * iterating over the returned value.
+	 * Returns an {@link Iterator} of all {@link Channel}s associated with the
+	 * given peer type ({@code peerType}). You should manually synchronize on
+	 * this {@link ConnectionsMap} when calling this method and iterating over
+	 * the returned value.
 	 * 
 	 * @param peerType
 	 *            requested type of the peer
