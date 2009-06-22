@@ -28,6 +28,9 @@ import org.jboss.netty.channel.socket.SocketChannel;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.handler.codec.protobuf.ProtobufDecoder;
 import org.jboss.netty.handler.codec.protobuf.ProtobufEncoder;
+import org.jboss.netty.handler.timeout.IdleStateHandler;
+import org.jboss.netty.util.HashedWheelTimer;
+import org.jboss.netty.util.Timer;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -49,6 +52,7 @@ class ConnectionsManager {
 	private final ConnectionsMap connectionsMap = new ConnectionsMap();
 	private MessageReceivedListener messageReceivedListener;
 	private final ChannelFutureSet channelFutureSet = new ChannelFutureSet();
+	private final Timer idleTimer = new HashedWheelTimer();
 
 	/**
 	 * Constructs new ConnectionsManager with given type.
@@ -126,6 +130,12 @@ class ConnectionsManager {
 				pipeline.addLast("multiplexerMessageDecoder",
 						multiplexerMessageDecoder);
 
+				// Heartbits
+				pipeline.addLast("idleHandler", new IdleStateHandler(idleTimer,
+						Config.INITIAL_READ_IDLE_TIME,
+						Config.INITIAL_WRITE_IDLE_TIME, Long.MAX_VALUE,
+						TimeUnit.SECONDS));
+
 				// Protocol handler
 				pipeline.addLast("multiplexerProtocolHandler",
 						multiplexerProtocolHandler);
@@ -175,9 +185,9 @@ class ConnectionsManager {
 				// send WelcomeMessage before receiving such message from the
 				// other party.
 				WelcomeMessage welcomeMessage = WelcomeMessage.newBuilder()
-					.setType(instanceType).setId(instanceId).build();
+						.setType(instanceType).setId(instanceId).build();
 				logger.log(Level.FINE, "sending welcome message"
-					+ welcomeMessage);
+						+ welcomeMessage);
 				ByteString message = welcomeMessage.toByteString();
 				sendMessage(createMessage(message, Types.CONNECTION_WELCOME),
 						future.getChannel());
@@ -199,6 +209,7 @@ class ConnectionsManager {
 			}
 			Channel oldChannel = connectionsMap.add(channel, message.getFrom(),
 					welcome.getType());
+
 			if (oldChannel != null) {
 				logger
 						.log(
@@ -209,7 +220,6 @@ class ConnectionsManager {
 			}
 
 		} else if (message.getType() == Types.HEARTBIT) {
-			// TODO: handle HEARTBIT
 
 		} else {
 			if (!fireOnMessageReceived(message, channel)) {
@@ -299,6 +309,12 @@ class ConnectionsManager {
 		synchronized (channelFutureSet) {
 			return new ChannelFutureGroup(channelFutureSet);
 		}
+	}
+
+	public void sendHeartbit(Channel channel) {
+		MultiplexerMessage.Builder heartbitBuilder = createMessageBuilder();
+		MultiplexerMessage heartbit = heartbitBuilder.setType(Types.HEARTBIT).build();
+		sendMessage(heartbit, channel);
 	}
 
 }
