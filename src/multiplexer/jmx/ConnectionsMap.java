@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import multiplexer.jmx.exceptions.NoPeerForTypeException;
+
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
@@ -71,7 +73,6 @@ public class ConnectionsMap {
 	 *         peer wasn't connected
 	 */
 	public synchronized Channel add(Channel channel, long peerId, int peerType) {
-		/* channelsByType.remove(UNGROUPPED_CHANNELS, channel); */
 		Channel oldChannel = channelsByPeerId.put(peerId, channel);
 		if (oldChannel != null) {
 			channelsByType
@@ -115,15 +116,21 @@ public class ConnectionsMap {
 	 * {@code peerType}). Chooses the channel on a basis of round-robin
 	 * algorithm.
 	 * 
-	 * TODO rzuca wyjątek, gdy nie ma peerów tego typu
-	 * 
 	 * @param peerType
 	 *            requested type of the peer
+	 * @throws NoPeerForTypeException
+	 *             when there are no Channels for given type
 	 * @return
 	 */
-	public synchronized Channel getAny(int peerType) {
+	public synchronized Channel getAny(int peerType)
+		throws NoPeerForTypeException {
 		List<Channel> list = channelsByType.get(peerType);
+		if (list == null || list.size() == 0)
+			throw new NoPeerForTypeException();
+		// TODO: skip closed channels or channels with full outgoung queue (is
+		// there such thing?)
 		Channel anyChannel = list.remove(0);
+		assert anyChannel != null;
 		list.add(anyChannel);
 		return anyChannel;
 	}
