@@ -135,7 +135,7 @@ public final class RawMessageCodecs {
 			rawMessage.writeInt(length);
 			rawMessage.writeInt((int) crc);
 			rawMessage.writeBytes(serialized);
-
+			
 			return rawMessage;
 		}
 	}

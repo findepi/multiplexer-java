@@ -60,7 +60,7 @@ public abstract class AbstractBackend implements Runnable {
 	protected AbstractBackend(int peerType) {
 		connection = new JmxClient(peerType);
 	}
-	
+
 	/**
 	 * Begins asynchronously an attempt of connection with the specified {@code
 	 * address}.
@@ -72,7 +72,7 @@ public abstract class AbstractBackend implements Runnable {
 	public ChannelFuture asyncConnect(SocketAddress address) {
 		return connection.asyncConnect(address);
 	}
-	
+
 	/**
 	 * Connects synchronously with the specified {@code address}.
 	 * 
@@ -117,7 +117,13 @@ public abstract class AbstractBackend implements Runnable {
 
 	private void runOne() throws Exception {
 		lastIncomingRequest = connection.receive();
+		if (lastIncomingRequest == null) {
+			throw new NullPointerException("lastIncomingRequest");
+		}
 		lastMessage = lastIncomingRequest.getMessage();
+		if (lastMessage == null) {
+			throw new NullPointerException("lastMessage");
+		}
 		responseSent = false;
 		responseRequired = true;
 
@@ -183,7 +189,8 @@ public abstract class AbstractBackend implements Runnable {
 		reply(createResponse(Types.BACKEND_ERROR, serializeStackTrace(e)));
 	}
 
-	protected void reportError(String explanation) throws NoPeerForTypeException {
+	protected void reportError(String explanation)
+		throws NoPeerForTypeException {
 		reply(createResponse(Types.BACKEND_ERROR, ByteString
 			.copyFromUtf8(explanation)));
 	}
@@ -207,7 +214,7 @@ public abstract class AbstractBackend implements Runnable {
 	protected MultiplexerMessage.Builder createResponse() {
 		assert lastMessage != null;
 		return connection.createMessageBuilder().setTo(lastMessage.getFrom())
-			.setId(0).setWorkflow(lastMessage.getWorkflow());
+			.setWorkflow(lastMessage.getWorkflow());
 	}
 
 	protected MultiplexerMessage.Builder createResponse(int packetType) {
@@ -220,7 +227,8 @@ public abstract class AbstractBackend implements Runnable {
 		return createResponse(packetType).setMessage(message);
 	}
 
-	protected void reply(MultiplexerMessage.Builder message) throws NoPeerForTypeException {
+	protected void reply(MultiplexerMessage.Builder message)
+		throws NoPeerForTypeException {
 		Connection conn = lastIncomingRequest.getConnection();
 		assert conn != null;
 		assert message.hasType() || message.hasTo();

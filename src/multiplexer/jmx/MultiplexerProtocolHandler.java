@@ -57,9 +57,11 @@ class MultiplexerProtocolHandler extends SimpleChannelHandler {
 	@Override
 	public void writeRequested(ChannelHandlerContext ctx, MessageEvent e)
 			throws Exception {
-
+		
 		assert e.getMessage() instanceof MultiplexerMessage : "You should feed the channel with MultiplexerMessages, not "
 				+ e.getMessage();
+		logger.debug("writing {}", e.getMessage());
+		
 		super.writeRequested(ctx, e);
 	}
 
