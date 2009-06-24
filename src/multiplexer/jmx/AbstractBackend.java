@@ -50,7 +50,7 @@ public abstract class AbstractBackend implements Runnable {
 	 * true if this backend has been cancelled through a call to
 	 * {@link AbstractBackend#cancel}
 	 */
-	private AtomicBoolean cancelled;
+	private AtomicBoolean cancelled = new AtomicBoolean(false);
 	private volatile Thread thread;
 	protected IncomingMessageData lastIncomingRequest;
 	protected MultiplexerMessage lastMessage;
