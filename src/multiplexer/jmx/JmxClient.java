@@ -18,6 +18,7 @@ import multiplexer.Multiplexer.MultiplexerMessage.Builder;
 import multiplexer.constants.Peers;
 import multiplexer.constants.Types;
 import multiplexer.jmx.exceptions.BackendUnreachableException;
+import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.exceptions.OperationFailedException;
 import multiplexer.jmx.exceptions.OperationTimeoutException;
 
@@ -156,9 +157,10 @@ public class JmxClient {
 	 * @param sendingMethod
 	 * @return a future object which notifies when this message sending attempt
 	 *         succeeds or fails
+	 * @throws NoPeerForTypeException 
 	 */
 	public ChannelFutureGroup send(MultiplexerMessage message,
-		SendingMethod sendingMethod) {
+		SendingMethod sendingMethod) throws NoPeerForTypeException {
 		return connectionsManager.sendMessage(message, sendingMethod);
 	}
 
@@ -244,8 +246,9 @@ public class JmxClient {
 	 * @return a future object which notifies when this connection attempt
 	 *         succeeds or fails. Call {@code ChannelFutureGroup.size()} to get
 	 *         the number of copies of {@code message} sent.
+	 * @throws NoPeerForTypeException 
 	 */
-	public ChannelFutureGroup event(MultiplexerMessage message) {
+	public ChannelFutureGroup event(MultiplexerMessage message) throws NoPeerForTypeException {
 		return send(message, SendingMethod.THROUGH_ALL);
 	}
 
@@ -279,9 +282,10 @@ public class JmxClient {
 	 * @throws OperationFailedException
 	 *             when operation times out or there are no reachable backends
 	 *             that can handle the query
+	 * @throws NoPeerForTypeException 
 	 */
 	public IncomingMessageData query(final ByteString message,
-		final int messageType, long timeout) throws OperationFailedException {
+		final int messageType, long timeout) throws OperationFailedException, NoPeerForTypeException {
 
 		final List<Long> queryMessageIds = new ArrayList<Long>(3);
 		try {
@@ -297,10 +301,11 @@ public class JmxClient {
 	 * A {@link JmxClient#query(ByteString, int, long)}, which registers its
 	 * {@code queryQueue} with {@code queryMessageIds} and does not de-register
 	 * it.
+	 * @throws NoPeerForTypeException 
 	 */
 	protected IncomingMessageData query(final ByteString message,
 		final int messageType, long timeout, List<Long> queryMessageIds)
-		throws OperationFailedException {
+		throws OperationFailedException, NoPeerForTypeException {
 
 		// TODO: support Types.BACKEND_ERROR
 

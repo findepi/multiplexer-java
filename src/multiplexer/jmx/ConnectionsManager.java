@@ -275,14 +275,10 @@ class ConnectionsManager {
 	}
 
 	public ChannelFutureGroup sendMessage(MultiplexerMessage message,
-		SendingMethod method) {
+		SendingMethod method) throws NoPeerForTypeException {
 		if (method == SendingMethod.THROUGH_ONE) {
 			Channel channel;
-			try {
-				channel = connectionsMap.getAny(Peers.MULTIPLEXER);
-			} catch (NoPeerForTypeException e) {
-				return new ChannelFutureGroup();
-			}
+			channel = connectionsMap.getAny(Peers.MULTIPLEXER);
 			return new ChannelFutureGroup(sendMessage(message, channel));
 		} else if (method == SendingMethod.THROUGH_ALL) {
 			Iterator<Channel> channels = connectionsMap
@@ -330,7 +326,7 @@ class ConnectionsManager {
 	Timer getTimer() {
 		return idleTimer;
 	}
-	
+
 	public long getInstanceId() {
 		return instanceId;
 	}

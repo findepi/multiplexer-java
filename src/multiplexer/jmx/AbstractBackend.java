@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import multiplexer.Multiplexer.MultiplexerMessage;
 import multiplexer.constants.Types;
+import multiplexer.jmx.exceptions.NoPeerForTypeException;
 
 import com.google.protobuf.ByteString;
 
@@ -155,11 +156,11 @@ public abstract class AbstractBackend implements Runnable {
 		}
 	}
 
-	protected void reportError(Throwable e) {
+	protected void reportError(Throwable e) throws NoPeerForTypeException {
 		reply(createResponse(Types.BACKEND_ERROR, serializeStackTrace(e)));
 	}
 
-	protected void reportError(String explanation) {
+	protected void reportError(String explanation) throws NoPeerForTypeException {
 		reply(createResponse(Types.BACKEND_ERROR, ByteString
 			.copyFromUtf8(explanation)));
 	}
@@ -196,7 +197,7 @@ public abstract class AbstractBackend implements Runnable {
 		return createResponse(packetType).setMessage(message);
 	}
 
-	protected void reply(MultiplexerMessage.Builder message) {
+	protected void reply(MultiplexerMessage.Builder message) throws NoPeerForTypeException {
 		Connection conn = lastIncomingRequest.getConnection();
 		assert conn != null;
 		assert message.hasType() || message.hasTo();
