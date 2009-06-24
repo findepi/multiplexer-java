@@ -19,7 +19,6 @@
 #      Piotr Findeisen <piotr.findeisen at gmail.com>
 #
 
-# vim:ft=conf:
 
 # peer definitions
 #
@@ -55,12 +54,12 @@ peer {
 
 peer {
     type: 106
-    name: "PYTHON_TEST_SERVER"
+    name: "TEST_SERVER"
 }
 
 peer {
     type: 107
-    name: "PYTHON_TEST_CLIENT"
+    name: "TEST_CLIENT"
 }
 
 peer {
@@ -137,15 +136,15 @@ type {
 
 type {
     type: 110
-    name: "PYTHON_TEST_REQUEST"
+    name: "TEST_REQUEST"
     to {
-	peer: "PYTHON_TEST_SERVER"
+	peer: "TEST_SERVER"
     }
 }
 
 type {
     type: 111
-    name: "PYTHON_TEST_RESPONSE"
+    name: "TEST_RESPONSE"
 }
 
 type {
@@ -214,3 +213,4 @@ type {
 
 # types 127-128 reserverd
 
+# vim:ft=conf:

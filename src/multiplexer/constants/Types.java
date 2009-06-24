@@ -6,8 +6,8 @@ public final class Types {
 	public static final int HEARTBIT = 4;
 	public static final int DELIVERY_ERROR = 5;
 	public static final int MAX_MULTIPLEXER_META_PACKET = 99;
-	public static final int PYTHON_TEST_REQUEST = 110;
-	public static final int PYTHON_TEST_RESPONSE = 111;
+	public static final int TEST_REQUEST = 110;
+	public static final int TEST_RESPONSE = 111;
 	public static final int PICKLE_RESPONSE = 112;
 	public static final int REQUEST_RECEIVED = 113;
 	public static final int BACKEND_ERROR = 114;
