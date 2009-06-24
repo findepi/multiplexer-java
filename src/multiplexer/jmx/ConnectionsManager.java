@@ -219,7 +219,8 @@ class ConnectionsManager {
 				peerType);
 			ChannelFuture registartionFuture;
 			synchronized (pendingRegistrations) {
-				registartionFuture = pendingRegistrations.get(channel);
+				registartionFuture = pendingRegistrations.remove(channel);
+				
 			}
 			assert registartionFuture != null;
 			registartionFuture.setSuccess();
