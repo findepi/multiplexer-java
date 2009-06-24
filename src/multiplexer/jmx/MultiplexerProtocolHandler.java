@@ -1,6 +1,5 @@
 package multiplexer.jmx;
 
-
 import multiplexer.Multiplexer.MultiplexerMessage;
 
 import org.jboss.netty.channel.ChannelEvent;
@@ -17,7 +16,8 @@ import org.slf4j.LoggerFactory;
 @ChannelPipelineCoverage("all")
 class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
-	private static final Logger logger = LoggerFactory.getLogger(SimpleChannelHandler.class);
+	private static final Logger logger = LoggerFactory
+		.getLogger(SimpleChannelHandler.class);
 
 	private ConnectionsManager connectionsManager;
 
@@ -27,17 +27,20 @@ class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
 	@Override
 	public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e)
-			throws Exception {
+		throws Exception {
 		if (e instanceof IdleStateEvent) {
 			IdleStateEvent evt = (IdleStateEvent) e;
 			if (evt.getState() == IdleState.READER_IDLE) {
-				double idleTimeSecs = (System.currentTimeMillis() - evt.getLastActivityTimeMillis()) / 1000.0;
-				logger.warn("Peer idle for {}s, closing connection.", idleTimeSecs);
+				double idleTimeSecs = (System.currentTimeMillis() - evt
+					.getLastActivityTimeMillis()) / 1000.0;
+				logger.warn("Peer idle for {}s, closing connection.",
+					idleTimeSecs);
 				connectionsManager.close(evt.getChannel());
 			} else if (evt.getState() == IdleState.WRITER_IDLE) {
 				connectionsManager.sendHeartbit(ctx.getChannel());
 			} else {
-				assert false : "We do not set " + IdleState.ALL_IDLE + " idle timeouts.";
+				assert false : "We do not set " + IdleState.ALL_IDLE
+					+ " idle timeouts.";
 			}
 		} else {
 			super.handleUpstream(ctx, e);
@@ -46,22 +49,27 @@ class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
-		System.err.println("messageReceived");
+		
 		assert e.getMessage() instanceof MultiplexerMessage : e.getMessage()
-				+ " is not a MultiplexerMessage";
-		System.err.println(e.getMessage()); // TODO debug
+			+ " is not a MultiplexerMessage";
+		
+		if (logger.isDebugEnabled()) {
+			if (((MultiplexerMessage) e.getMessage()).getType() != multiplexer.constants.Types.HEARTBIT)
+				logger.debug("messageReceived\n{}", e.getMessage());
+		}
+
 		connectionsManager.messageReceived((MultiplexerMessage) e.getMessage(),
-				ctx.getChannel());
+			ctx.getChannel());
 	}
 
 	@Override
 	public void writeRequested(ChannelHandlerContext ctx, MessageEvent e)
-			throws Exception {
-		
+		throws Exception {
+
 		assert e.getMessage() instanceof MultiplexerMessage : "You should feed the channel with MultiplexerMessages, not "
-				+ e.getMessage();
+			+ e.getMessage();
 		logger.debug("writing {}", e.getMessage());
-		
+
 		super.writeRequested(ctx, e);
 	}
 
