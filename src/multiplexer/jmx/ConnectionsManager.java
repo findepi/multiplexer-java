@@ -174,20 +174,18 @@ class ConnectionsManager {
 		SocketChannel channel = (SocketChannel) connectOperation.getChannel();
 		assert channel != null;
 		connectionsMap.addNew(channel);
-		
+
 		ChannelFuture registrationFuture = Channels.future(channel, false);
 		synchronized (pendingRegistrations) {
 			pendingRegistrations.put(channel, registrationFuture);
 		}
-		
+
 		connectOperation.addListener(new ChannelFutureListener() {
 
 			@Override
 			public void operationComplete(ChannelFuture future)
 				throws Exception {
 				assert future.isDone();
-				// TODO zrobić, żeby user, gdy dostanie future, nie mógł zrobić
-				// getChannel
 
 				// send out welcome message
 				// TODO(findepi) In case of server's ConnectionsManager, don't

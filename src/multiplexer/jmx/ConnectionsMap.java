@@ -16,10 +16,17 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.LinkedListMultimap;
 
 /**
- * TODO: javadoc
+ * A class for managing groups of {@link Channel}s, indexed by connected peers'
+ * types and Ids. Provides access to all {@code Channel}s as well as searching
+ * by peer type (Peer types are described in
+ * {@link Multiplexer.constants.Peers.java}). Methods {@code getAny(peerType)}
+ * and {@code getAll(peerType)} return one or all peers of the given type
+ * respectively.
  * 
- * This object is thread-safe.
- * TODO: check that ConnectionsMap is thread-safe
+ * For each peer (denoted by Id) only one channel can be held in
+ * the structure.
+ * 
+ * This object is thread-safe. TODO: check that ConnectionsMap is thread-safe
  * 
  * @author Kasia Findeisen
  * @author Piotr Findeisen
@@ -152,7 +159,7 @@ public class ConnectionsMap {
 	 * @param peerType
 	 *            requested type of the peer
 	 * @return iterator over connections of give type.
-	 * @throws NoPeerForTypeException 
+	 * @throws NoPeerForTypeException
 	 */
 	public Iterator<Channel> getAll(int peerType) throws NoPeerForTypeException {
 		List<Channel> list = channelsByType.get(peerType);
