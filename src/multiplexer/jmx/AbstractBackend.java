@@ -1,8 +1,10 @@
 package multiplexer.jmx;
 
 import java.io.PrintWriter;
+import java.net.SocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.jboss.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +59,27 @@ public abstract class AbstractBackend implements Runnable {
 
 	protected AbstractBackend(int peerType) {
 		connection = new JmxClient(peerType);
+	}
+	
+	/**
+	 * Begins asynchronously an attempt of connection with the specified {@code
+	 * address}.
+	 * 
+	 * @param address
+	 * @return a future object which notifies when this connection attempt
+	 *         succeeds or fails
+	 */
+	public ChannelFuture asyncConnect(SocketAddress address) {
+		return connection.asyncConnect(address);
+	}
+	
+	/**
+	 * Connects synchronously with the specified {@code address}.
+	 * 
+	 * @param address
+	 */
+	public void connect(SocketAddress address) {
+		asyncConnect(address).awaitUninterruptibly();
 	}
 
 	/**
