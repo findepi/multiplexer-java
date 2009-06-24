@@ -9,7 +9,6 @@ import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Logger;
 
 import multiplexer.Multiplexer;
 import multiplexer.Multiplexer.MultiplexerMessage;
@@ -31,8 +30,6 @@ import com.google.protobuf.ByteString.Output;
 
 public class SimpleNettyConnection {
 
-	static Logger logger = Logger.getAnonymousLogger();
-
 	private final long instanceId;
 	private boolean connected = false;
 	private boolean connecting = false;
@@ -45,14 +42,14 @@ public class SimpleNettyConnection {
 	}
 
 	public SimpleNettyConnection(ChannelFactory factory, SocketAddress address)
-			throws InterruptedException {
+		throws InterruptedException {
 
 		this();
 		asyncConnect(factory, address).await();
 	}
 
 	public ChannelFuture asyncConnect(ChannelFactory factory,
-			SocketAddress address) {
+		SocketAddress address) {
 		assert !connected;
 		assert !connecting;
 		connecting = true;
@@ -66,25 +63,25 @@ public class SimpleNettyConnection {
 
 		// Encoders
 		pipeline.addLast("rawMessageEncoder",
-				new RawMessageCodecs.RawMessageEncoder());
+			new RawMessageCodecs.RawMessageEncoder());
 		pipeline.addLast("multiplexerMessageEncoder", new ProtobufEncoder());
 
 		// Decoders
 		pipeline.addLast("rawMessageDecoder",
-				new RawMessageCodecs.RawMessageFrameDecoder());
+			new RawMessageCodecs.RawMessageFrameDecoder());
 		pipeline.addLast("multiplexerMessageDecoder", new ProtobufDecoder(
-				Multiplexer.MultiplexerMessage.getDefaultInstance()));
+			Multiplexer.MultiplexerMessage.getDefaultInstance()));
 
 		// Protocol handler
 		pipeline.addLast("multiplexerProtocolHandler",
-				new MultiplexerProtocolHandler(this));
+			new MultiplexerProtocolHandler(this));
 
 		ChannelFuture connectOperation = bootstrap.connect(address);
 		connectOperation.addListener(new ChannelFutureListener() {
 
 			@Override
 			public void operationComplete(ChannelFuture future)
-					throws Exception {
+				throws Exception {
 
 				System.err.println("connected");
 				assert future.isDone();
@@ -113,10 +110,10 @@ public class SimpleNettyConnection {
 	}
 
 	public SendingResult sendMessage(ByteString message, int type)
-			throws IOException {
+		throws IOException {
 		MultiplexerMessage mxmsg = MultiplexerMessage.newBuilder().setId(
-				new Random().nextLong()).setFrom(getInstanceId()).setType(type)
-				.setMessage(message).build();
+			new Random().nextLong()).setFrom(getInstanceId()).setType(type)
+			.setMessage(message).build();
 
 		return new SendingResult(channel.write(mxmsg), mxmsg.getId());
 	}
@@ -159,7 +156,7 @@ public class SimpleNettyConnection {
 	 * @throws InterruptedException
 	 */
 	public static void main(String[] args) throws IOException,
-			InterruptedException {
+		InterruptedException {
 
 		final int PYTHON_TEST_SERVER = 106;
 		final int CONNECTION_WELCOME = 2;
@@ -167,15 +164,14 @@ public class SimpleNettyConnection {
 		final int PYTHON_TEST_REQUEST = 110;
 
 		ChannelFactory factory = new NioClientSocketChannelFactory(Executors
-				.newCachedThreadPool(), Executors.newCachedThreadPool());
+			.newCachedThreadPool(), Executors.newCachedThreadPool());
 		SimpleNettyConnection c = new SimpleNettyConnection(factory,
-				new InetSocketAddress("localhost", 1980));
+			new InetSocketAddress("localhost", 1980));
 
 		// send out invitation
 		System.out.println("sending welcome message");
 		ByteString message = WelcomeMessage.newBuilder().setType(
-				PYTHON_TEST_SERVER).setId(c.getInstanceId()).build()
-				.toByteString();
+			PYTHON_TEST_SERVER).setId(c.getInstanceId()).build().toByteString();
 		c.sendMessage(message, CONNECTION_WELCOME).future.await();
 
 		// receive the invitation
@@ -184,14 +180,14 @@ public class SimpleNettyConnection {
 		System.out.println("validating welcome message");
 		assert mxmsg.getType() == CONNECTION_WELCOME;
 		WelcomeMessage peer = WelcomeMessage.newBuilder().mergeFrom(
-				mxmsg.getMessage()).build();
+			mxmsg.getMessage()).build();
 		assert peer.getType() == MULTIPLEXER;
 		peer.getId();
 
 		// send a stupid search_query
 		ArrayList<Byte> sq = new ArrayList<Byte>();
 		for (byte d : "this is a search query with null (\\x00) bytes and other "
-				.getBytes())
+			.getBytes())
 			sq.add(d);
 		for (int i = Byte.MIN_VALUE; i <= Byte.MAX_VALUE; i++)
 			sq.add((byte) i);

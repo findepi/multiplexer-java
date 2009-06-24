@@ -7,8 +7,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import multiplexer.Multiplexer;
 import multiplexer.Multiplexer.MultiplexerMessage;
@@ -32,6 +30,8 @@ import org.jboss.netty.handler.codec.protobuf.ProtobufEncoder;
 import org.jboss.netty.handler.timeout.IdleStateHandler;
 import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -44,8 +44,8 @@ import com.google.protobuf.InvalidProtocolBufferException;
  */
 class ConnectionsManager {
 
-	private final Logger logger = Logger.getLogger(ConnectionsManager.class
-		.getName());
+	private static final Logger logger = LoggerFactory
+		.getLogger(ConnectionsManager.class);
 
 	private final long instanceId = new Random().nextLong();
 	private final int instanceType;
@@ -186,8 +186,7 @@ class ConnectionsManager {
 				// other party.
 				WelcomeMessage welcomeMessage = WelcomeMessage.newBuilder()
 					.setType(instanceType).setId(instanceId).build();
-				logger.log(Level.FINE, "sending welcome message"
-					+ welcomeMessage);
+				logger.debug("sending welcome message {}", welcomeMessage);
 				ByteString message = welcomeMessage.toByteString();
 				sendMessage(createMessage(message, Types.CONNECTION_WELCOME),
 					future.getChannel());
@@ -202,8 +201,7 @@ class ConnectionsManager {
 			try {
 				welcome = WelcomeMessage.parseFrom(message.getMessage());
 			} catch (InvalidProtocolBufferException e) {
-				logger.log(Level.WARNING,
-					"Malformed CONNECTION_WELCOME received.", e);
+				logger.warn("Malformed CONNECTION_WELCOME received.", e);
 				close(channel);
 				return;
 			}
@@ -211,19 +209,17 @@ class ConnectionsManager {
 			Channel oldChannel = connectionsMap.add(channel, message.getFrom(),
 				peerType);
 
-			channel.getPipeline()
-				.replace(
-					"idleHandler",
-					"idleHandler",
-					new IdleStateHandler(idleTimer, config.getReadIdleTime(peerType),
-						config.getWriteIdleTime(peerType), Long.MAX_VALUE,
-						TimeUnit.SECONDS));
+			channel.getPipeline().replace(
+				"idleHandler",
+				"idleHandler",
+				new IdleStateHandler(idleTimer, config
+					.getReadIdleTime(peerType), config
+					.getWriteIdleTime(peerType), Long.MAX_VALUE,
+					TimeUnit.SECONDS));
 
 			if (oldChannel != null) {
 				logger
-					.log(
-						Level.WARNING,
-						"Another CONNECTION_WELCOME received from connected peer; closing previous connection.");
+					.warn("Another CONNECTION_WELCOME received from connected peer; closing previous connection.");
 				close(oldChannel);
 				return;
 			}

@@ -2,7 +2,6 @@ package multiplexer.jmx;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.logging.Logger;
 import java.util.zip.CRC32;
 
 import org.jboss.netty.buffer.ChannelBuffer;
@@ -12,8 +11,14 @@ import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelPipelineCoverage;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
 import org.jboss.netty.handler.codec.replay.ReplayingDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class RawMessageCodecs {
+
+	private static final Logger logger = LoggerFactory
+		.getLogger(RawMessageCodecs.class);
+
 	private RawMessageCodecs() {
 	}
 
@@ -38,9 +43,6 @@ public final class RawMessageCodecs {
 		private static final int HEADER_LENGTH = 8;
 		private static final int MAX_MESSAGE_SIZE = 128 * 1024 * 1024;
 
-		private static final Logger logger = Logger
-			.getLogger(RawMessageCodecs.class.getName());
-
 		private byte[] header = new byte[HEADER_LENGTH];
 		private int length;
 		private int crc;
@@ -58,7 +60,7 @@ public final class RawMessageCodecs {
 			ChannelBuffer buffer, RawMessageDecoderState state)
 			throws Exception {
 
-			logger.entering("RawMessageFrameDecoder", "decode", state);
+			logger.trace("RawMessageFrameDecoder.decode with state {}", state);
 
 			switch (state) {
 			case READ_HEADER:
@@ -67,7 +69,7 @@ public final class RawMessageCodecs {
 				header.order(ByteOrder.LITTLE_ENDIAN);
 				length = header.getInt();
 				crc = header.getInt();
-				logger.finest("next message length = " + length);
+				logger.debug("next message length = {}", length);
 				if (length < 0) {
 					channel.close();
 					throw new Exception("length must be positive, not "
@@ -101,8 +103,8 @@ public final class RawMessageCodecs {
 		private void checkCrc(ChannelBuffer message) throws Exception {
 			if (this.crc != (int) getCrc32(message))
 				throw new Exception("Crc checksum does not match.");
-			logger.finest("validated a checksum of message, length "
-				+ message.readableBytes());
+			logger.debug("validated a checksum of message, length {}", message
+				.readableBytes());
 		}
 	}
 

@@ -5,26 +5,29 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO javadoc
+ * 
  * @author Kasia Findeisen
  * 
  */
 public final class ChannelFutureGroup implements ChannelFuture {
-	private static final Logger logger = Logger
-			.getLogger(ChannelFutureGroup.class.getName());
+
+	private static final Logger logger = LoggerFactory
+		.getLogger(ChannelFutureGroup.class);
+
 	private Set<ChannelFuture> channelFutures = new HashSet<ChannelFuture>();
 	private List<ChannelFutureListener> listeners = new LinkedList<ChannelFutureListener>();
 	private int notCompleted = 0;
 	private ChannelFutureListener completionListener = new ChannelFutureListener() {
-//TODO dodawać completionListenery tylko, gdy są listenery na Groupie.
+		// TODO dodawać completionListenery tylko, gdy są listenery na Groupie.
 		@Override
 		public void operationComplete(ChannelFuture future) throws Exception {
 			notCompleted--;
@@ -81,8 +84,8 @@ public final class ChannelFutureGroup implements ChannelFuture {
 		try {
 			listener.operationComplete(this);
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "An exception was thrown by "
-					+ ChannelFutureListener.class.getSimpleName() + ".", e);
+			logger.warn("An exception was thrown by "
+				+ ChannelFutureListener.class.getSimpleName(), e);
 		}
 	}
 
@@ -120,7 +123,7 @@ public final class ChannelFutureGroup implements ChannelFuture {
 
 	@Override
 	public boolean await(long timeout, TimeUnit unit)
-			throws InterruptedException {
+		throws InterruptedException {
 		TimeoutCounter timeoutCounter = new TimeoutCounter(timeout, unit);
 		for (ChannelFuture cf : channelFutures) {
 			if (!cf.await(timeoutCounter.getRemainingMillis())) {

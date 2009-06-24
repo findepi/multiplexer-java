@@ -1,7 +1,5 @@
 package multiplexer.jmx;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import multiplexer.Multiplexer.MultiplexerMessage;
 
@@ -13,12 +11,13 @@ import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelHandler;
 import org.jboss.netty.handler.timeout.IdleState;
 import org.jboss.netty.handler.timeout.IdleStateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ChannelPipelineCoverage("all")
 class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
-	private static final Logger logger = Logger
-			.getLogger(MultiplexerProtocolHandler.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(SimpleChannelHandler.class);
 
 	private ConnectionsManager connectionsManager;
 
@@ -33,7 +32,7 @@ class MultiplexerProtocolHandler extends SimpleChannelHandler {
 			IdleStateEvent evt = (IdleStateEvent) e;
 			if (evt.getState() == IdleState.READER_IDLE) {
 				double idleTimeSecs = (System.currentTimeMillis() - evt.getLastActivityTimeMillis()) / 1000.0;
-				logger.log(Level.WARNING, "Peer idle for " + idleTimeSecs + "s, closing connection.");
+				logger.warn("Peer idle for {}s, closing connection.", idleTimeSecs);
 				connectionsManager.close(evt.getChannel());
 			} else if (evt.getState() == IdleState.WRITER_IDLE) {
 				connectionsManager.sendHeartbit(ctx.getChannel());
@@ -66,7 +65,7 @@ class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-		logger.log(Level.WARNING, "Unhandled exception", e.getCause());
+		logger.warn("Unhandled exception", e.getCause());
 		e.getChannel().close();
 	}
 }

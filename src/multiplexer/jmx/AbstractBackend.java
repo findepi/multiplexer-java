@@ -2,8 +2,9 @@ package multiplexer.jmx;
 
 import java.io.PrintWriter;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import multiplexer.Multiplexer.MultiplexerMessage;
 import multiplexer.constants.Types;
@@ -34,8 +35,8 @@ import com.google.protobuf.ByteString;
  */
 public abstract class AbstractBackend implements Runnable {
 
-	private static final Logger logger = Logger.getLogger(AbstractBackend.class
-		.getName());
+	private static final Logger logger = LoggerFactory
+		.getLogger(AbstractBackend.class);
 
 	/**
 	 * A handler to Multiplexer server connections.
@@ -84,7 +85,7 @@ public abstract class AbstractBackend implements Runnable {
 				}
 			}
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Unhandled exception.", e);
+			logger.warn("Unhandled exception", e);
 		} finally {
 			thread = null;
 		}
@@ -122,9 +123,8 @@ public abstract class AbstractBackend implements Runnable {
 
 			default:
 				if (lastMessage.getType() <= Types.MAX_MULTIPLEXER_META_PACKET) {
-					logger.log(Level.WARNING,
-						"unable to handle meta packet of type "
-							+ lastMessage.getType());
+					logger.warn("unable to handle meta packet of type {}",
+						lastMessage.getType());
 				} else {
 					handleOrdinaryMessage();
 				}
@@ -145,13 +145,12 @@ public abstract class AbstractBackend implements Runnable {
 			handleMessage(lastMessage);
 			responseMissing = !responseSent && responseRequired;
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "handleMessage threw", e);
+			logger.warn("handleMessage threw", e);
 			reportError(e);
 			throw e;
 		}
 		if (responseMissing) {
-			logger.log(Level.WARNING,
-				"handleMessage finished without sending any response");
+			logger.warn("handleMessage finished without sending any response");
 			reportError("handleMessage finished without sending any response");
 		}
 	}
