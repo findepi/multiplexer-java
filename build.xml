@@ -13,6 +13,8 @@
     <pathelement location="${basedir}/libs/protobuf.jar" />
     <pathelement location="${basedir}/libs/netty-3.1.0.BETA3.jar" />
     <pathelement location="${basedir}/libs/google-collect-1.0-rc2.jar" />
+    <pathelement location="${basedir}/libs/slf4j-api-1.5.8.jar" />
+    <pathelement location="${basedir}/libs/slf4j-jdk14-1.5.8.jar" />
   </path>
 
   <target name="all" depends="make-constants">

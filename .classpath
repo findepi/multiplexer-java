@@ -6,5 +6,7 @@
 	<classpathentry kind="lib" path="libs/netty-3.1.0.BETA3.jar" sourcepath="libs/netty-3.1.0.BETA3-sources.jar"/>
 	<classpathentry kind="lib" path="libs/google-collect-1.0-rc2.jar" sourcepath="libs/google-collect-src-1.0-rc2.zip"/>
 	<classpathentry kind="lib" path="libs/protobuf.jar" sourcepath="libs/google-protobuf-src.zip"/>
+	<classpathentry kind="lib" path="libs/slf4j-api-1.5.8.jar" sourcepath="libs/slf4j-api-1.5.8-sources.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-jdk14-1.5.8.jar" sourcepath="libs/slf4j-jdk14-1.5.8-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
