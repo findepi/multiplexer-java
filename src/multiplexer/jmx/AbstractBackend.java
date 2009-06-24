@@ -41,7 +41,7 @@ public abstract class AbstractBackend implements Runnable {
 	/**
 	 * A handler to Multiplexer server connections.
 	 */
-	protected final Client connection;
+	protected final JmxClient connection;
 
 	/**
 	 * true if this backend has been cancelled through a call to
@@ -55,7 +55,7 @@ public abstract class AbstractBackend implements Runnable {
 	private boolean responseRequired;
 
 	protected AbstractBackend(int peerType) {
-		connection = new Client(peerType);
+		connection = new JmxClient(peerType);
 	}
 
 	/**

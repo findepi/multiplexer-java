@@ -35,7 +35,7 @@ import com.google.protobuf.ByteString;
  * @author Piotr Findeisen
  * 
  */
-public class Client {
+public class JmxClient {
 	protected final ConnectionsManager connectionsManager;
 
 	private ConcurrentMap<Long, BlockingQueue<IncomingMessageData>> queryResponses = new ConcurrentHashMap<Long, BlockingQueue<IncomingMessageData>>();
@@ -52,7 +52,7 @@ public class Client {
 	 * @param instanceType
 	 *            client types are defined in {@link Peers}
 	 */
-	public Client(int instanceType) {
+	public JmxClient(int instanceType) {
 		connectionsManager = new ConnectionsManager(instanceType);
 		connectionsManager
 			.setMessageReceivedListener(new MessageReceivedListener() {
