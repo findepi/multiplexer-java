@@ -146,10 +146,13 @@ public class ConnectionsMap {
 	 * 
 	 * @param peerType
 	 *            requested type of the peer
-	 * @return
+	 * @return iterator over connections of give type.
+	 * @throws NoPeerForTypeException 
 	 */
-	public Iterator<Channel> getAll(int peerType) {
+	public Iterator<Channel> getAll(int peerType) throws NoPeerForTypeException {
 		List<Channel> list = channelsByType.get(peerType);
+		if (list == null || list.size() == 0)
+			throw new NoPeerForTypeException();
 		return list.iterator();
 	}
 
