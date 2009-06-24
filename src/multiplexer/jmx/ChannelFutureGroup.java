@@ -112,11 +112,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	@Override
 	public void addListener(ChannelFutureListener listener) {
 		assert (listener != null) : "addListener";
-
-		// TODO jvadoc += inna semantyka niż zwykły
-		// ChannelFuture: kilka razy na zmianę może być done i not done, bo
-		// można dodawać nowe futury, nawet po done. Listenery są odpalane na
-		// różnych etapach, gdy isDone.
 		boolean notifyNow = false;
 		synchronized (this) {
 			if (isDone()) {
