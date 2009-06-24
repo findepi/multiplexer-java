@@ -77,7 +77,8 @@ public class TestConnectivity extends TestCase {
 		backend
 			.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
 		Thread backendThread = new Thread(backend);
-		backendThread.run();
+		backendThread.setName("backend main thread");
+		backendThread.start();
 
 		// connect
 		JmxClient client = new JmxClient(Peers.TEST_CLIENT);
@@ -105,7 +106,11 @@ public class TestConnectivity extends TestCase {
 		
 		// cleanup
 		backend.cancel();
-		backendThread.join();
+		backendThread.join(3000);
+		assertFalse(backendThread.isAlive());
+		if (backendThread.isAlive())  {
+			backendThread.interrupt();
+		}
 	}
 
 }
