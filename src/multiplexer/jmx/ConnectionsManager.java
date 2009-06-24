@@ -174,7 +174,12 @@ class ConnectionsManager {
 		SocketChannel channel = (SocketChannel) connectOperation.getChannel();
 		assert channel != null;
 		connectionsMap.addNew(channel);
-
+		
+		ChannelFuture registrationFuture = Channels.future(channel, false);
+		synchronized (pendingRegistrations) {
+			pendingRegistrations.put(channel, registrationFuture);
+		}
+		
 		connectOperation.addListener(new ChannelFutureListener() {
 
 			@Override
@@ -196,10 +201,6 @@ class ConnectionsManager {
 					future.getChannel());
 			}
 		});
-		ChannelFuture registrationFuture = Channels.future(channel, false);
-		synchronized (pendingRegistrations) {
-			pendingRegistrations.put(channel, registrationFuture);
-		}
 		return registrationFuture;
 	}
 
@@ -220,7 +221,6 @@ class ConnectionsManager {
 			ChannelFuture registartionFuture;
 			synchronized (pendingRegistrations) {
 				registartionFuture = pendingRegistrations.remove(channel);
-				
 			}
 			assert registartionFuture != null;
 			registartionFuture.setSuccess();
