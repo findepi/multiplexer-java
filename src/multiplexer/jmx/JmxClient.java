@@ -21,6 +21,8 @@ import multiplexer.jmx.exceptions.OperationFailedException;
 import multiplexer.jmx.exceptions.OperationTimeoutException;
 
 import org.jboss.netty.channel.ChannelFuture;
+import org.jboss.netty.util.Timeout;
+import org.jboss.netty.util.TimerTask;
 
 import com.google.protobuf.ByteString;
 
@@ -388,11 +390,18 @@ public class JmxClient {
 
 			}
 		} finally {
-			for (long referentId : queryPossibleReferences) {
-				// TODO this can be done after a while, so that we receive all
-				// responses, even those a bit late
-				queryResponses.remove(referentId);
-			}
+			connectionsManager.getTimer().newTimeout(new TimerTask() {
+				@Override
+				public void run(Timeout timeout) throws Exception {
+					for (long referentId : queryPossibleReferences) {
+
+						// this can be done after a while, so that we receive
+						// all responses, even those a bit late
+						queryResponses.remove(referentId);
+					}
+				}
+			}, 5, TimeUnit.SECONDS);
+
 		}
 		throw new AssertionError("Should not reach here.");
 	}

@@ -328,4 +328,7 @@ class ConnectionsManager {
 		sendMessage(heartbit, channel);
 	}
 
+	Timer getTimer() {
+		return idleTimer;
+	}
 }
