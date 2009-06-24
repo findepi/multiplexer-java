@@ -17,7 +17,10 @@
     <pathelement location="${basedir}/libs/slf4j-jdk14-1.5.8.jar" />
   </path>
 
-  <target name="all" depends="make-constants">
+  <target name="all" depends="build">
+  </target>
+
+  <target name="build" depends="make-constants">
   </target>
 
   <!-- make-constants that compiles multiplexer.rules into
