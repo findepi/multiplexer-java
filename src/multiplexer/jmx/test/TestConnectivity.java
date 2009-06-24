@@ -26,20 +26,23 @@ import multiplexer.jmx.exceptions.NoPeerForTypeException;
 public class TestConnectivity extends TestCase {
 	
 	public void testConnect() throws UnknownHostException {
-		JmxClient client = new JmxClient(Peers.PYTHON_TEST_CLIENT);
+		JmxClient client = new JmxClient(Peers.TEST_CLIENT);
 		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
 	}
 	
-	public void testConnectSendReceiev() throws UnknownHostException, InterruptedException, NoPeerForTypeException {
+	public void testConnectSendReceive() throws UnknownHostException, InterruptedException, NoPeerForTypeException {
 		
 		// connect
-		JmxClient client = new JmxClient(Peers.PYTHON_TEST_CLIENT);
+		JmxClient client = new JmxClient(Peers.TEST_CLIENT);
 		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
 		
 		// create message
 		MultiplexerMessage.Builder builder = MultiplexerMessage.newBuilder();
-		builder.setTo(client.getInstanceId()).setType(Types.PYTHON_TEST_REQUEST);
+		builder.setTo(client.getInstanceId()).setType(Types.TEST_REQUEST);
 		MultiplexerMessage msgSent = client.createMessage(builder);
+		
+		// wait until connection is established
+		Thread.sleep(1000);
 		
 		// send message
 		ChannelFuture sendingOperation = client.send(msgSent, SendingMethod.THROUGH_ONE);
@@ -50,7 +53,7 @@ public class TestConnectivity extends TestCase {
 		IncomingMessageData msgData = client.receive(2, TimeUnit.SECONDS);
 		assertNotNull(msgData);
 		MultiplexerMessage msgReceived = msgData.getMessage();
-		assertEquals(msgReceived.getId(), msgSent.getId());
+		assertEquals(msgSent, msgReceived);
 		assertNotSame(msgSent, msgReceived);
 	}
 
