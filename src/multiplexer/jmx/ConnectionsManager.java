@@ -312,7 +312,6 @@ class ConnectionsManager {
 
 	public boolean flushAll(long timeoutMillis) throws InterruptedException {
 		return copyActiveChannelFutures().await(timeoutMillis);
-
 	}
 
 	private ChannelFutureGroup copyActiveChannelFutures() {
@@ -321,7 +320,7 @@ class ConnectionsManager {
 		}
 	}
 
-	public void sendHeartbit(Channel channel) {
+	void sendHeartbit(Channel channel) {
 		MultiplexerMessage.Builder heartbitBuilder = createMessageBuilder();
 		MultiplexerMessage heartbit = heartbitBuilder.setType(Types.HEARTBIT)
 			.build();

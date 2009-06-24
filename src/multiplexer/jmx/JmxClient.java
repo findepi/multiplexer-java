@@ -131,6 +131,7 @@ public class JmxClient {
 	 *            {@link MultiplexerMessage}.
 	 */
 	public MultiplexerMessage createMessage(MultiplexerMessage.Builder message) {
+		assert message.hasType();
 		return connectionsManager.createMessage(message);
 	}
 
