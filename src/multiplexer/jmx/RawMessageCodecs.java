@@ -109,9 +109,13 @@ public final class RawMessageCodecs {
 	}
 
 	/**
-	 * RawMessageEncoder is responsible for creating frames in the format [
-	 * length ][ crc ][ message... ] (thus, as expected by
-	 * RawMessageFrameDecoder)
+	 * RawMessageEncoder is responsible for creating frames in the format
+	 * 
+	 * <pre>
+	 * [ length ][ crc ][ message... ]
+	 * </pre>
+	 * 
+	 * (thus, as expected by RawMessageFrameDecoder)
 	 */
 	@ChannelPipelineCoverage("all")
 	public static class RawMessageEncoder extends OneToOneEncoder {
