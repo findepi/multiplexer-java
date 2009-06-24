@@ -40,9 +40,6 @@ public class TestConnectivity extends TestCase {
 		JmxClient client = new JmxClient(Peers.TEST_CLIENT);
 		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
 
-		// wait until connection is established
-		Thread.sleep(1000);
-
 		// create message
 		MultiplexerMessage.Builder builder = MultiplexerMessage.newBuilder();
 		builder.setTo(client.getInstanceId()).setType(Types.TEST_REQUEST);
@@ -86,14 +83,12 @@ public class TestConnectivity extends TestCase {
 		JmxClient client = new JmxClient(Peers.TEST_CLIENT);
 		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
 
-		// wait until connection is established
-		Thread.sleep(1000);
-
 		// create message
 		MultiplexerMessage.Builder builder = MultiplexerMessage.newBuilder();
 		builder.setType(Types.TEST_REQUEST).setMessage(msgBody);
 		MultiplexerMessage msgSent = client.createMessage(builder);
-
+		assertFalse(msgSent.hasTo());
+		
 		// send message
 		ChannelFuture sendingOperation = client.send(msgSent,
 			SendingMethod.THROUGH_ONE);
@@ -107,6 +102,10 @@ public class TestConnectivity extends TestCase {
 		assertNotSame(msgSent, msgReceived);
 		assertEquals(msgReceived.getType(), msgSent.getType());
 		assertEquals(msgReceived.getMessage(), msgBody);
+		
+		// cleanup
+		backend.cancel();
+		backendThread.join();
 	}
 
 }
