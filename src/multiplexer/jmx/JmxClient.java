@@ -209,7 +209,23 @@ public class JmxClient {
 
 	/**
 	 * Tries to take one message from {@link BlockingQueue} of received
-	 * messages. Blocks until any message is available or timeout occurs.
+	 * messages. Blocks until any message is available or timeout occurs. In
+	 * case of timeout, null is returned.
+	 * 
+	 * @param timeoutMillis
+	 *            time to wait, in millis
+	 * @return includes the received message and a connection
+	 * @throws InterruptedException
+	 */
+	public IncomingMessageData receive(long timeoutMillis)
+		throws InterruptedException {
+		return receive(timeoutMillis, TimeUnit.MILLISECONDS);
+	}
+
+	/**
+	 * Tries to take one message from {@link BlockingQueue} of received
+	 * messages. Blocks until any message is available or timeout occurs. In
+	 * case of timeout, null is returned.
 	 * 
 	 * @return includes the received message and a connection
 	 * @throws InterruptedException
@@ -478,7 +494,7 @@ public class JmxClient {
 			.toByteString(), Types.BACKEND_FOR_PACKET_SEARCH);
 		return backendSearchMessage;
 	}
-	
+
 	public long getInstanceId() {
 		return connectionsManager.getInstanceId();
 	}
