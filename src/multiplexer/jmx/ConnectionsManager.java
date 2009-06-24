@@ -171,11 +171,11 @@ class ConnectionsManager {
 
 	public synchronized ChannelFuture asyncConnect(SocketAddress address) {
 		ChannelFuture connectOperation = bootstrap.connect(address);
-		SocketChannel channel = (SocketChannel) connectOperation.getChannel();
+		final SocketChannel channel = (SocketChannel) connectOperation.getChannel();
 		assert channel != null;
 		connectionsMap.addNew(channel);
 
-		ChannelFuture registrationFuture = Channels.future(channel, false);
+		final ChannelFuture registrationFuture = Channels.future(channel, false);
 		synchronized (pendingRegistrations) {
 			pendingRegistrations.put(channel, registrationFuture);
 		}
@@ -186,6 +186,15 @@ class ConnectionsManager {
 			public void operationComplete(ChannelFuture future)
 				throws Exception {
 				assert future.isDone();
+				if (future.isCancelled())
+					return;
+				if (!future.isSuccess()) {
+					registrationFuture.setFailure(future.getCause());
+					synchronized (pendingRegistrations) {
+						pendingRegistrations.remove(channel);
+					}
+					return;
+				}
 
 				// send out welcome message
 				// TODO(findepi) In case of server's ConnectionsManager, don't
