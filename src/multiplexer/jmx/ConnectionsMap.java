@@ -16,6 +16,11 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.LinkedListMultimap;
 
 /**
+ * TODO: javadoc
+ * 
+ * This object is thread-safe.
+ * TODO: check that ConnectionsMap is thread-safe
+ * 
  * @author Kasia Findeisen
  * @author Piotr Findeisen
  */
