@@ -170,12 +170,21 @@ class ConnectionsManager {
 	}
 
 	public synchronized ChannelFuture asyncConnect(SocketAddress address) {
+		// TODO support for reconnecting; each lost connection (or a connection
+		// that could not be estabilished at all) should be retired after
+		// specific amout of time
+		// TODO send THROUGH_ALL/THROUGH_ALL in case of no connections should
+		// also try to reconnect immediately
+		// TODO send via(Connection) should try to reconnect to the same address, if connection is lost 
 		ChannelFuture connectOperation = bootstrap.connect(address);
-		final SocketChannel channel = (SocketChannel) connectOperation.getChannel();
+		final SocketChannel channel = (SocketChannel) connectOperation
+			.getChannel();
 		assert channel != null;
 		connectionsMap.addNew(channel);
 
-		final ChannelFuture registrationFuture = Channels.future(channel, false);
+		// TODO make registrationFuture cancellable
+		final ChannelFuture registrationFuture = Channels
+			.future(channel, false);
 		synchronized (pendingRegistrations) {
 			pendingRegistrations.put(channel, registrationFuture);
 		}
@@ -212,7 +221,7 @@ class ConnectionsManager {
 	}
 
 	public void messageReceived(MultiplexerMessage message, Channel channel) {
-		// TODO(findepi) remove synchronized
+		// TODO ignore duplicated messages
 		if (message.getType() == Types.CONNECTION_WELCOME) {
 			WelcomeMessage welcome;
 			try {
