@@ -477,4 +477,8 @@ public class JmxClient {
 			.toByteString(), Types.BACKEND_FOR_PACKET_SEARCH);
 		return backendSearchMessage;
 	}
+	
+	public long getInstanceId() {
+		return connectionsManager.getInstanceId();
+	}
 }

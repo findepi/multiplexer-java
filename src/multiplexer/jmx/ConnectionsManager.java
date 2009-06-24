@@ -331,4 +331,8 @@ class ConnectionsManager {
 	Timer getTimer() {
 		return idleTimer;
 	}
+	
+	public long getInstanceId() {
+		return instanceId;
+	}
 }
