@@ -2,7 +2,9 @@ package multiplexer.jmx;
 
 import java.net.SocketAddress;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
+import java.util.WeakHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,6 +57,8 @@ class ConnectionsManager {
 	private final ChannelFutureSet channelFutureSet = new ChannelFutureSet();
 	private final Timer idleTimer = new HashedWheelTimer();
 	private final Config config = new Config();
+
+	private final Map<Channel, ChannelFuture> pendingRegistrations = new WeakHashMap<Channel, ChannelFuture>();
 
 	/**
 	 * Constructs new ConnectionsManager with given type.
@@ -165,7 +169,7 @@ class ConnectionsManager {
 		return initializeMessageBuilder(message).build();
 	}
 
-	public ChannelFuture asyncConnect(SocketAddress address) {
+	public synchronized ChannelFuture asyncConnect(SocketAddress address) {
 		ChannelFuture connectOperation = bootstrap.connect(address);
 		SocketChannel channel = (SocketChannel) connectOperation.getChannel();
 		assert channel != null;
@@ -192,10 +196,15 @@ class ConnectionsManager {
 					future.getChannel());
 			}
 		});
-		return connectOperation;
+		ChannelFuture registrationFuture = Channels.future(channel, false);
+		synchronized (pendingRegistrations) {
+			pendingRegistrations.put(channel, registrationFuture);
+		}
+		return registrationFuture;
 	}
 
 	public void messageReceived(MultiplexerMessage message, Channel channel) {
+		// TODO(findepi) remove synchronized
 		if (message.getType() == Types.CONNECTION_WELCOME) {
 			WelcomeMessage welcome;
 			try {
@@ -208,6 +217,12 @@ class ConnectionsManager {
 			int peerType = welcome.getType();
 			Channel oldChannel = connectionsMap.add(channel, message.getFrom(),
 				peerType);
+			ChannelFuture registartionFuture;
+			synchronized (pendingRegistrations) {
+				registartionFuture = pendingRegistrations.get(channel);
+			}
+			assert registartionFuture != null;
+			registartionFuture.setSuccess();
 
 			channel.getPipeline().replace(
 				"idleHandler",
@@ -225,6 +240,7 @@ class ConnectionsManager {
 			}
 
 		} else if (message.getType() == Types.HEARTBIT) {
+			// Ignored, functionality of HEARTBITs handled by the pipeline.
 
 		} else {
 			if (!fireOnMessageReceived(message, channel)) {
