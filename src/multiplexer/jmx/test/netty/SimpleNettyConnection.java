@@ -118,30 +118,6 @@ public class SimpleNettyConnection {
 		return new SendingResult(channel.write(mxmsg), mxmsg.getId());
 	}
 
-	// private byte[] read_all(int len) throws IOException {
-	// byte[] buffer = new byte[len];
-	// int off = 0;
-	// while (off < len) {
-	// off += input_stream.read(buffer, off, len - off);
-	// }
-	// return buffer;
-	// }
-	//	
-	// public MultiplexerMessage receive_message() throws IOException {
-	// ByteBuffer buffer = ByteBuffer.wrap(read_all(HEADER_LENGTH));
-	// buffer.order(ByteOrder.LITTLE_ENDIAN);
-	// int length = buffer.getInt();
-	// int crc32 = buffer.getInt();
-	// byte[] body = read_all(length);
-	// CRC32 body_sum = new CRC32();
-	// body_sum.update(body);
-	// assert (int)body_sum.getValue() == crc32;
-	// MultiplexerMessage mxmsg =
-	// MultiplexerMessage.newBuilder().mergeFrom(body).build();
-	// System.out.println("received "+body.length+" bytes ("+mxmsg.getMessage().size()+" meaningful)");
-	// return mxmsg;
-	// }
-
 	public MultiplexerMessage receive_message() throws InterruptedException {
 		return queue.take();
 	}
@@ -179,8 +155,7 @@ public class SimpleNettyConnection {
 		MultiplexerMessage mxmsg = c.receive_message();
 		System.out.println("validating welcome message");
 		assert mxmsg.getType() == CONNECTION_WELCOME;
-		WelcomeMessage peer = WelcomeMessage.newBuilder().mergeFrom(
-			mxmsg.getMessage()).build();
+		WelcomeMessage peer = WelcomeMessage.parseFrom(mxmsg.getMessage());
 		assert peer.getType() == MULTIPLEXER;
 		peer.getId();
 

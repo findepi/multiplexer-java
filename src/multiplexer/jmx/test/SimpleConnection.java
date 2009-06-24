@@ -74,7 +74,7 @@ public class SimpleConnection {
 		CRC32 body_sum = new CRC32();
 		body_sum.update(body);
 		assert (int)body_sum.getValue() == crc32;
-		MultiplexerMessage mxmsg = MultiplexerMessage.newBuilder().mergeFrom(body).build();
+		MultiplexerMessage mxmsg = MultiplexerMessage.parseFrom(body);
 		System.out.println("received "+body.length+" bytes ("+mxmsg.getMessage().size()+" meaningful)");
         return mxmsg;
 	}
@@ -101,7 +101,7 @@ public class SimpleConnection {
 	    MultiplexerMessage mxmsg = c.receive_message();
 	    System.out.println("validating welcome message");
 	    assert mxmsg.getType() == CONNECTION_WELCOME;
-	    WelcomeMessage peer = WelcomeMessage.newBuilder().mergeFrom(mxmsg.getMessage()).build();
+	    WelcomeMessage peer = WelcomeMessage.parseFrom(mxmsg.getMessage());
 	    assert peer.getType() == MULTIPLEXER;
 	    peer.getId();
 
