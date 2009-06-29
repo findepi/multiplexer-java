@@ -65,7 +65,7 @@
   </target>
 
   <!-- javadoc -->
-  <target name="doc">
+  <target name="doc" depends="make-constants">
     <javadoc access="protected"
              author="true"
              classpathref="project.class.path"
