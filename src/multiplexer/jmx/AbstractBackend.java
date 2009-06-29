@@ -213,8 +213,11 @@ public abstract class AbstractBackend implements Runnable {
 
 	protected MultiplexerMessage.Builder createResponse() {
 		assert lastMessage != null;
-		return connection.createMessageBuilder().setTo(lastMessage.getFrom())
-			.setWorkflow(lastMessage.getWorkflow());
+		MultiplexerMessage.Builder builder = connection.createMessageBuilder()
+			.setTo(lastMessage.getFrom()).setReferences(lastMessage.getId());
+		if (lastMessage.hasWorkflow())
+			builder.setWorkflow(lastMessage.getWorkflow());
+		return builder;
 	}
 
 	protected MultiplexerMessage.Builder createResponse(int packetType) {
