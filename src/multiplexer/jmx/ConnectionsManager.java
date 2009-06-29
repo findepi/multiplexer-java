@@ -1,6 +1,7 @@
 package multiplexer.jmx;
 
 import java.net.SocketAddress;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
@@ -57,6 +58,7 @@ class ConnectionsManager {
 	private final ChannelFutureSet channelFutureSet = new ChannelFutureSet();
 	private final Timer idleTimer = new HashedWheelTimer();
 	private final Config config = new Config();
+	private final RecentIdPool recentMsgIds = new RecentIdPool();
 
 	private final Map<Channel, ChannelFuture> pendingRegistrations = new WeakHashMap<Channel, ChannelFuture>();
 
@@ -221,7 +223,13 @@ class ConnectionsManager {
 	}
 
 	public void messageReceived(MultiplexerMessage message, Channel channel) {
-		// TODO ignore duplicated messages
+		
+		if (!recentMsgIds.add(message.getId())) {
+			logger.debug("Duplicate message received: {}, dropped.", message.getId());
+			return;
+		}
+		
+
 		if (message.getType() == Types.CONNECTION_WELCOME) {
 			WelcomeMessage welcome;
 			try {
