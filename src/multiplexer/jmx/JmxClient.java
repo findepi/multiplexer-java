@@ -333,6 +333,7 @@ public class JmxClient {
 			if (answer.getMessage().getType() == Types.DELIVERY_ERROR) {
 				phase1DeliveryError = true;
 			} else if (answer.getMessage().getType() == Types.BACKEND_ERROR) {
+				logger.warn("received BACKEND_ERROR message {}", answer);
 				phase1DeliveryError = true;
 				backendErrorMessage = answer;
 			} else {
@@ -369,11 +370,16 @@ public class JmxClient {
 			if (type == Types.BACKEND_ERROR && references == queryId) {
 				phase1DeliveryError = true;
 				backendErrorMessage = answer;
+				logger.warn("received BACKEND_ERROR message {}", answer);
 				continue;
 			}
 
 			if ((type == Types.DELIVERY_ERROR) || (type == Types.BACKEND_ERROR)) {
 				assert references == backendSearchMessageId;
+				if (type == Types.BACKEND_ERROR) {
+					backendErrorMessage = answer;
+					logger.warn("received BACKEND_ERROR message {}", answer);
+				}
 				activeBackendSearches--;
 				if (activeBackendSearches == 0) {
 					if (backendErrorMessage != null) {
@@ -430,6 +436,7 @@ public class JmxClient {
 							|| (type == Types.BACKEND_ERROR);
 						if (type == Types.BACKEND_ERROR) {
 							backendErrorMessage = answer;
+							logger.warn("received BACKEND_ERROR message {}", answer);
 						}
 						if (phase3DeliveryError) {
 							if (backendErrorMessage != null) {
@@ -448,6 +455,7 @@ public class JmxClient {
 							|| (type == Types.BACKEND_ERROR);
 						if (type == Types.BACKEND_ERROR) {
 							backendErrorMessage = answer;
+							logger.warn("received BACKEND_ERROR message {}", answer);
 						}
 						if (phase1DeliveryError) {
 							if (backendErrorMessage != null) {
