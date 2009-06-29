@@ -157,7 +157,7 @@ public class JmxClient {
 	 * @param sendingMethod
 	 * @return a future object which notifies when this message sending attempt
 	 *         succeeds or fails
-	 * @throws NoPeerForTypeException 
+	 * @throws NoPeerForTypeException
 	 */
 	public ChannelFutureGroup send(MultiplexerMessage message,
 		SendingMethod sendingMethod) throws NoPeerForTypeException {
@@ -246,9 +246,10 @@ public class JmxClient {
 	 * @return a future object which notifies when this connection attempt
 	 *         succeeds or fails. Call {@code ChannelFutureGroup.size()} to get
 	 *         the number of copies of {@code message} sent.
-	 * @throws NoPeerForTypeException 
+	 * @throws NoPeerForTypeException
 	 */
-	public ChannelFutureGroup event(MultiplexerMessage message) throws NoPeerForTypeException {
+	public ChannelFutureGroup event(MultiplexerMessage message)
+		throws NoPeerForTypeException {
 		return send(message, SendingMethod.THROUGH_ALL);
 	}
 
@@ -282,10 +283,11 @@ public class JmxClient {
 	 * @throws OperationFailedException
 	 *             when operation times out or there are no reachable backends
 	 *             that can handle the query
-	 * @throws NoPeerForTypeException 
+	 * @throws NoPeerForTypeException
 	 */
 	public IncomingMessageData query(final ByteString message,
-		final int messageType, long timeout) throws OperationFailedException, NoPeerForTypeException {
+		final int messageType, long timeout) throws OperationFailedException,
+		NoPeerForTypeException {
 
 		final List<Long> queryMessageIds = new ArrayList<Long>(3);
 		try {
@@ -301,7 +303,8 @@ public class JmxClient {
 	 * A {@link JmxClient#query(ByteString, int, long)}, which registers its
 	 * {@code queryQueue} with {@code queryMessageIds} and does not de-register
 	 * it.
-	 * @throws NoPeerForTypeException 
+	 * 
+	 * @throws NoPeerForTypeException
 	 */
 	protected IncomingMessageData query(final ByteString message,
 		final int messageType, long timeout, List<Long> queryMessageIds)
@@ -313,6 +316,7 @@ public class JmxClient {
 		MultiplexerMessage queryMessage = createMessage(message, messageType);
 		boolean phase1DeliveryError = false;
 		boolean phase3DeliveryError = false;
+		IncomingMessageData backendErrorMessage = null;
 
 		final long queryId = queryMessage.getId();
 
@@ -325,6 +329,17 @@ public class JmxClient {
 				return answer;
 			} else
 				phase1DeliveryError = true;
+		}
+
+		if (answer != null) {
+			if (answer.getMessage().getType() == Types.DELIVERY_ERROR) {
+				phase1DeliveryError = true;
+			} else if (answer.getMessage().getType() == Types.BACKEND_ERROR) {
+				phase1DeliveryError = true;
+				backendErrorMessage = answer;
+			} else {
+				return answer;
+			}
 		}
 
 		MultiplexerMessage backendSearchMessage = makeBackendForPacketSearch(messageType);
@@ -353,10 +368,19 @@ public class JmxClient {
 				continue;
 			}
 
-			if (type == Types.DELIVERY_ERROR) {
-				assert type == backendSearchMessageId;
+			if (type == Types.BACKEND_ERROR && references == queryId) {
+				phase1DeliveryError = true;
+				backendErrorMessage = answer;
+				continue;
+			}
+
+			if ((type == Types.DELIVERY_ERROR) || (type == Types.BACKEND_ERROR)) {
+				assert references == backendSearchMessageId;
 				activeBackendSearches--;
 				if (activeBackendSearches == 0) {
+					if (backendErrorMessage != null) {
+						return backendErrorMessage;
+					}
 					throw new BackendUnreachableException(
 						"query phase 2 rejected by all peers");
 				}
@@ -397,14 +421,22 @@ public class JmxClient {
 						continue;
 					}
 
-					if (type != Types.DELIVERY_ERROR
+					if ((type != Types.DELIVERY_ERROR)
+						&& (type != Types.BACKEND_ERROR)
 						&& ((references == queryId) || (references == backendQueryId))) {
 						return answer;
 					}
 
 					if (references == queryId) {
-						assert type == Types.DELIVERY_ERROR;
+						assert (type == Types.DELIVERY_ERROR)
+							|| (type == Types.BACKEND_ERROR);
+						if (type == Types.BACKEND_ERROR) {
+							backendErrorMessage = answer;
+						}
 						if (phase3DeliveryError) {
+							if (backendErrorMessage != null) {
+								return backendErrorMessage;
+							}
 							throw new BackendUnreachableException(
 								"query phases 1 and 3 rejected");
 						} else {
@@ -414,8 +446,15 @@ public class JmxClient {
 					}
 
 					if (references == backendQueryId) {
-						assert type == Types.DELIVERY_ERROR;
+						assert (type == Types.DELIVERY_ERROR)
+							|| (type == Types.BACKEND_ERROR);
+						if (type == Types.BACKEND_ERROR) {
+							backendErrorMessage = answer;
+						}
 						if (phase1DeliveryError) {
+							if (backendErrorMessage != null) {
+								return backendErrorMessage;
+							}
 							throw new BackendUnreachableException(
 								"query phases 1 and 3 rejected");
 						} else {
