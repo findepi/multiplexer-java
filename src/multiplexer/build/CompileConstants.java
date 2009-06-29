@@ -18,7 +18,7 @@ public class CompileConstants {
 		FileReader fr = new FileReader(fileName);
 		Multiplexer.MultiplexerRules.Builder rulesBuilder = Multiplexer.MultiplexerRules
 			.newBuilder();
-		TextFormat.merge(fr, rulesBuilder);
+                TextFormat.merge(fr, rulesBuilder);
 		rules = rulesBuilder.build();
 	}
 
