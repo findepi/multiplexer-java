@@ -1,4 +1,4 @@
-<project name="JMX" default="build" basedir=".">
+<project name="JMX" default="all" basedir=".">
 
   <property name="src" location="src" />
   <property name="build" location="bin" />
@@ -18,6 +18,9 @@
     <pathelement location="${libs}/slf4j-jdk14-1.5.8.jar" />
     <pathelement location="${libs}/trove-2.0.4.jar" />
   </path>
+
+  <target name="all" depends="build,doc">
+  </target>
 
   <target name="build" depends="make-constants">
     <mkdir dir="${build}" />
