@@ -310,8 +310,6 @@ public class JmxClient {
 		final int messageType, long timeout, List<Long> queryMessageIds)
 		throws OperationFailedException, NoPeerForTypeException {
 
-		// TODO: support Types.BACKEND_ERROR
-
 		final BlockingQueue<IncomingMessageData> queryQueue = new LinkedBlockingQueue<IncomingMessageData>();
 		MultiplexerMessage queryMessage = createMessage(message, messageType);
 		boolean phase1DeliveryError = false;
