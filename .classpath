@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="libs/protobuf.jar" sourcepath="libs/google-protobuf-src.zip"/>
 	<classpathentry kind="lib" path="libs/slf4j-api-1.5.8.jar" sourcepath="libs/slf4j-api-1.5.8-sources.jar"/>
 	<classpathentry kind="lib" path="libs/slf4j-jdk14-1.5.8.jar" sourcepath="libs/slf4j-jdk14-1.5.8-sources.jar"/>
+	<classpathentry kind="lib" path="libs/trove-2.0.4.jar" sourcepath="libs/trove-src-2.0.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -2,6 +2,7 @@
 
   <property name="src" location="src" />
   <property name="build" location="bin" />
+  <property name="libs" location="${basedir}/libs" />
 
   <path id="project.build.path">
     <pathelement location="${build}" />
@@ -10,11 +11,12 @@
 
   <path id="project.class.path">
     <pathelement location="{$build}" />
-    <pathelement location="${basedir}/libs/protobuf.jar" />
-    <pathelement location="${basedir}/libs/netty-3.1.0.BETA3.jar" />
-    <pathelement location="${basedir}/libs/google-collect-1.0-rc2.jar" />
-    <pathelement location="${basedir}/libs/slf4j-api-1.5.8.jar" />
-    <pathelement location="${basedir}/libs/slf4j-jdk14-1.5.8.jar" />
+    <pathelement location="${libs}/protobuf.jar" />
+    <pathelement location="${libs}/netty-3.1.0.BETA3.jar" />
+    <pathelement location="${libs}/google-collect-1.0-rc2.jar" />
+    <pathelement location="${libs}/slf4j-api-1.5.8.jar" />
+    <pathelement location="${libs}/slf4j-jdk14-1.5.8.jar" />
+    <pathelement location="${libs}/trove-2.0.4.jar" />
   </path>
 
   <target name="build" depends="make-constants">

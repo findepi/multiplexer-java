@@ -16,6 +16,7 @@ import multiplexer.Multiplexer.WelcomeMessage;
 import multiplexer.constants.Peers;
 import multiplexer.constants.Types;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
+import multiplexer.jmx.util.RecentLongPool;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -25,7 +26,6 @@ import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.Channels;
-import org.jboss.netty.channel.socket.SocketChannel;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.handler.codec.protobuf.ProtobufDecoder;
 import org.jboss.netty.handler.codec.protobuf.ProtobufEncoder;
@@ -57,9 +57,11 @@ class ConnectionsManager {
 	private final ChannelFutureSet channelFutureSet = new ChannelFutureSet();
 	private final Timer idleTimer = new HashedWheelTimer();
 	private final Config config = new Config();
-	private final RecentIdPool recentMsgIds = new RecentIdPool();
+	private final RecentLongPool recentMsgIds = new RecentLongPool();
 
 	private final Map<Channel, ChannelFuture> pendingRegistrations = new WeakHashMap<Channel, ChannelFuture>();
+
+	private final Map<Channel, SocketAddress> endpointByChannel = new WeakHashMap<Channel, SocketAddress>();
 
 	/**
 	 * Constructs new ConnectionsManager with given type.
@@ -176,12 +178,13 @@ class ConnectionsManager {
 		// specific amout of time
 		// TODO send THROUGH_ALL/THROUGH_ALL in case of no connections should
 		// also try to reconnect immediately
-		// TODO send via(Connection) should try to reconnect to the same address, if connection is lost 
+		// TODO send via(Connection) should try to reconnect to the same
+		// address, if connection is lost
 		ChannelFuture connectOperation = bootstrap.connect(address);
-		final SocketChannel channel = (SocketChannel) connectOperation
-			.getChannel();
+		final Channel channel = connectOperation.getChannel();
 		assert channel != null;
 		connectionsMap.addNew(channel);
+		endpointByChannel.put(channel, address);
 
 		// TODO make registrationFuture cancellable
 		final ChannelFuture registrationFuture = Channels
@@ -222,12 +225,12 @@ class ConnectionsManager {
 	}
 
 	public void messageReceived(MultiplexerMessage message, Channel channel) {
-		
+
 		if (!recentMsgIds.add(message.getId())) {
-			logger.debug("Duplicate message received: {}, dropped.", message.getId());
+			logger.debug("Duplicate message received: {}, dropped.", message
+				.getId());
 			return;
 		}
-		
 
 		if (message.getType() == Types.CONNECTION_WELCOME) {
 			WelcomeMessage welcome;
@@ -282,6 +285,12 @@ class ConnectionsManager {
 	void close(Channel channel) {
 		// TODO remove `channel' from the connections maps
 		channel.close();
+		connectionsMap.remove(channel);
+		
+		SocketAddress endpoint = endpointByChannel.get(channel);
+		if (endpoint != null) {
+			asyncConnect(endpoint);
+		}
 	}
 
 	public MessageReceivedListener getMessageReceivedListener() {
