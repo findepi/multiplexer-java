@@ -7,12 +7,7 @@ import multiplexer.Multiplexer.MultiplexerMessage;
  * 
  */
 public interface MessageReceivedListener {
-	/**
-	 * TODO javadoc
-	 * 
-	 * @param message
-	 * @param connection
-	 */
+
 	public void onMessageReceived(MultiplexerMessage message,
 		Connection connection);
 }

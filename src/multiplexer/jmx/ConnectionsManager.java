@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import multiplexer.Multiplexer;
 import multiplexer.Multiplexer.MultiplexerMessage;
 import multiplexer.Multiplexer.WelcomeMessage;
+import multiplexer.Multiplexer.MultiplexerMessage.Builder;
 import multiplexer.constants.Peers;
 import multiplexer.constants.Types;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
@@ -154,6 +155,17 @@ class ConnectionsManager {
 
 	}
 
+	/**
+	 * Creates a {@link Builder} of a {@link MultiplexerMessage} instance.
+	 * Fields {@code id}, {@code from} and {@code timestamp} are set accordingly
+	 * to this {@link ConnectionsManager}'s and {@code System}'s properties. The
+	 * returned {@code Builder} might be filled with other values and used to
+	 * create a new {@code MultiplexerMessage} by either calling it's {@code
+	 * build()} method or using {@link ConnectionsManager}'s {@code
+	 * createMessabe(MultiplexerMessage.Builder)} method.
+	 * 
+	 * @return a {@link Builder} of a {@link MultiplexerMessage} instance
+	 */
 	public MultiplexerMessage.Builder createMessageBuilder() {
 		return initializeMessageBuilder(MultiplexerMessage.newBuilder());
 	}
@@ -164,10 +176,33 @@ class ConnectionsManager {
 			.setTimestamp((int) (System.currentTimeMillis() / 1000));
 	}
 
+	/**
+	 * Creates an {@link MultiplexerMessage} instance with the given content (
+	 * {@code message}) and of the given {@code type}. Also, the {@code
+	 * MultiplexerMessage}'s fields {@code id}, {@code from} and {@code
+	 * timestamp} are set accordingly to this {@link ConnectionsManager}'s and
+	 * {@code System}'s properties.
+	 * 
+	 * @param message
+	 *            new {@code MultiplexerMessage}'s content
+	 * @param type
+	 *            new {@code MultiplexerMessage}'s type
+	 * @return {@code MultiplexerMessage} instance
+	 */
 	public MultiplexerMessage createMessage(ByteString message, int type) {
 		return createMessageBuilder().setMessage(message).setType(type).build();
 	}
 
+	/**
+	 * Creates an {@link MultiplexerMessage} instance from the given {@code
+	 * builder}. Fields {@code id}, {@code from} and {@code timestamp} are set
+	 * accordingly to this {@link ConnectionsManager}'s and {@code System}'s
+	 * properties.
+	 * 
+	 * @param message
+	 *            a builder
+	 * @return {@code MultiplexerMessage} instance
+	 */
 	public MultiplexerMessage createMessage(MultiplexerMessage.Builder message) {
 		return initializeMessageBuilder(message).build();
 	}
@@ -286,7 +321,7 @@ class ConnectionsManager {
 		// TODO remove `channel' from the connections maps
 		channel.close();
 		connectionsMap.remove(channel);
-		
+
 		SocketAddress endpoint = endpointByChannel.get(channel);
 		if (endpoint != null) {
 			asyncConnect(endpoint);
