@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 import multiplexer.Multiplexer;
 import multiplexer.Multiplexer.MultiplexerMessage;
 import multiplexer.Multiplexer.WelcomeMessage;
-import multiplexer.Multiplexer.MultiplexerMessage.Builder;
 import multiplexer.constants.Peers;
 import multiplexer.constants.Types;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
@@ -40,7 +39,20 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 /**
- * TODO: javadoc
+ * A class for connections management, instantiated by any Multiplexer server's
+ * client.
+ * 
+ * It is responsible for establishing, keeping and closing connections. It
+ * handles all system messages accordingly to the Multiplexer's protocol.
+ * 
+ * Any incoming message which is not a system message is forwarded to the client
+ * (client must provide a {@link MessageReceivedListener}). Also, the
+ * ConnectionsManager allows the client to send messages asynchronously. The
+ * sending method's ({@code sendMessage()}) return type is {@link ChannelFuture}
+ * which allows asynchronous and synchronous handling of the initialized sending
+ * operation. Apart from the asynchronous sending operation, a method {@code
+ * flushAll()} is available for synchronous completion of all initialized
+ * sending operations.
  * 
  * @author Kasia Findeisen
  * @author Piotr Findeisen
