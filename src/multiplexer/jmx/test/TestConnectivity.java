@@ -26,12 +26,12 @@ import com.google.protobuf.ByteString;
  */
 public class TestConnectivity extends TestCase {
 
-	public void testConnect() throws UnknownHostException {
+	public void xtestConnect() throws UnknownHostException {
 		JmxClient client = new JmxClient(Peers.TEST_CLIENT);
 		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
 	}
 
-	public void testConnectSendReceive() throws UnknownHostException,
+	public void xtestConnectSendReceive() throws UnknownHostException,
 		InterruptedException, NoPeerForTypeException {
 
 		// connect
@@ -57,7 +57,7 @@ public class TestConnectivity extends TestCase {
 		assertNotSame(msgSent, msgReceived);
 	}
 
-	public void testBackend() throws UnknownHostException,
+	public void xtestBackend() throws UnknownHostException,
 		InterruptedException, NoPeerForTypeException {
 
 		ByteString msgBody = ByteString.copyFromUtf8("Więcej budynió!");
@@ -112,7 +112,7 @@ public class TestConnectivity extends TestCase {
 		}
 	}
 
-	public void testQuery() throws UnknownHostException,
+	public void xtestQueryBasic() throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException {
 
 		// create backend
@@ -149,6 +149,98 @@ public class TestConnectivity extends TestCase {
 		assertFalse(backendThread.isAlive());
 		if (backendThread.isAlive()) {
 			backendThread.interrupt();
+		}
+	}
+
+	public void testQueryBackendErrorAA() throws UnknownHostException,
+		OperationFailedException, NoPeerForTypeException, InterruptedException {
+		testQueryBackendError(0, 0);
+	}
+
+	public void testQueryBackendErrorAB() throws UnknownHostException,
+		OperationFailedException, NoPeerForTypeException, InterruptedException {
+		testQueryBackendError(0, 1);
+	}
+
+	public void testQueryBackendErrorBA() throws UnknownHostException,
+		OperationFailedException, NoPeerForTypeException, InterruptedException {
+		testQueryBackendError(1, 0);
+	}
+
+	public void testQueryBackendErrorBB() throws UnknownHostException,
+		OperationFailedException, NoPeerForTypeException, InterruptedException {
+		testQueryBackendError(1, 1);
+	}
+
+	private void testQueryBackendError(final int backend1ErrorType,
+		final int backend2ErrorType) throws UnknownHostException,
+		OperationFailedException, NoPeerForTypeException, InterruptedException {
+
+		// create backend 1
+		AbstractBackend backend1 = new AbstractBackend(Peers.TEST_SERVER) {
+			@Override
+			protected void handleMessage(MultiplexerMessage message)
+				throws Exception {
+
+				switch (backend1ErrorType) {
+				case 0:
+					throw new Exception("I am the crazy backend.");
+				case 1:
+					reply(createResponse(Types.BACKEND_ERROR));
+				}
+			}
+		};
+
+		// connect backend 1 and run in new thread
+		backend1
+			.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
+		Thread backend1Thread = new Thread(backend1);
+		backend1Thread.setName("backend1 main thread");
+		backend1Thread.start();
+
+		// create backend 2
+		AbstractBackend backend2 = new AbstractBackend(Peers.TEST_SERVER) {
+			@Override
+			protected void handleMessage(MultiplexerMessage message)
+				throws Exception {
+				switch (backend1ErrorType) {
+				case 0:
+					throw new Exception("I am the crazy backend.");
+				case 1:
+					reply(createResponse(Types.BACKEND_ERROR));
+				}
+			}
+		};
+
+		// connect backend 2 and run in new thread
+		backend2
+			.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
+		Thread backend2Thread = new Thread(backend2);
+		backend2Thread.setName("backend2 main thread");
+		backend2Thread.start();
+
+		// connect
+		JmxClient client = new JmxClient(Peers.TEST_CLIENT);
+		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
+
+		// query
+		IncomingMessageData msgData = client.query(ByteString
+			.copyFromUtf8("Lama ma kota."), Types.TEST_REQUEST, 2000);
+
+		assertEquals(msgData.getMessage().getType(), Types.BACKEND_ERROR);
+
+		// cleanup
+		backend1.cancel();
+		backend1Thread.join(3000);
+		assertFalse(backend1Thread.isAlive());
+		if (backend1Thread.isAlive()) {
+			backend1Thread.interrupt();
+		}
+		backend2.cancel();
+		backend2Thread.join(3000);
+		assertFalse(backend2Thread.isAlive());
+		if (backend2Thread.isAlive()) {
+			backend2Thread.interrupt();
 		}
 	}
 

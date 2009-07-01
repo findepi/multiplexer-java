@@ -55,7 +55,7 @@ class MultiplexerProtocolHandler extends SimpleChannelHandler {
 		
 		if (logger.isDebugEnabled()) {
 			if (((MultiplexerMessage) e.getMessage()).getType() != multiplexer.constants.Types.HEARTBIT)
-				logger.debug("messageReceived\n{}", e.getMessage());
+				logger.debug("MessageReceived\n{}", e.getMessage());
 		}
 
 		connectionsManager.messageReceived((MultiplexerMessage) e.getMessage(),
@@ -68,7 +68,7 @@ class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
 		assert e.getMessage() instanceof MultiplexerMessage : "You should feed the channel with MultiplexerMessages, not "
 			+ e.getMessage();
-		logger.debug("writing {}", e.getMessage());
+		logger.debug("Writing\n{}", e.getMessage());
 
 		super.writeRequested(ctx, e);
 	}

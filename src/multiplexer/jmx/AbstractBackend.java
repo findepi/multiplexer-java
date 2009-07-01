@@ -36,6 +36,9 @@ import com.google.protobuf.ByteString;
  * 
  * @author Piotr Findeisen
  */
+
+// TODO mam wrażenie, że AbstractBackend nie zmienia timestampu, gdy odpowiada
+// backend_errorem...
 public abstract class AbstractBackend implements Runnable {
 
 	private static final Logger logger = LoggerFactory
@@ -106,6 +109,11 @@ public abstract class AbstractBackend implements Runnable {
 			} catch (InterruptedException e) {
 				if (!isCancelled()) {
 					throw e;
+				} else {
+					logger
+						.warn(
+							"interruption ignored, use AbstractBackend.cancel to stop the backend",
+							e);
 				}
 			}
 		} catch (Exception e) {
@@ -113,6 +121,7 @@ public abstract class AbstractBackend implements Runnable {
 		} finally {
 			thread = null;
 		}
+		// TODO cleanup of JmxClient
 	}
 
 	private void runOne() throws Exception {
@@ -153,7 +162,7 @@ public abstract class AbstractBackend implements Runnable {
 
 			default:
 				if (lastMessage.getType() <= Types.MAX_MULTIPLEXER_META_PACKET) {
-					logger.warn("unable to handle meta packet of type {}",
+					logger.warn("Unable to handle meta packet of type {}",
 						lastMessage.getType());
 				} else {
 					handleOrdinaryMessage();

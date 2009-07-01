@@ -228,7 +228,7 @@ class ConnectionsManager {
 				// other party.
 				WelcomeMessage welcomeMessage = WelcomeMessage.newBuilder()
 					.setType(instanceType).setId(instanceId).build();
-				logger.debug("sending welcome message {}", welcomeMessage);
+				logger.debug("Sending welcome message\n{}", welcomeMessage);
 				ByteString message = welcomeMessage.toByteString();
 				sendMessage(createMessage(message, Types.CONNECTION_WELCOME),
 					future.getChannel());
@@ -240,7 +240,7 @@ class ConnectionsManager {
 	public void messageReceived(MultiplexerMessage message, Channel channel) {
 
 		if (!recentMsgIds.add(message.getId())) {
-			logger.debug("Duplicate message received: {}, dropped.", message
+			logger.debug("Duplicate message received:\n{}, dropped.", message
 				.getId());
 			return;
 		}
@@ -285,6 +285,7 @@ class ConnectionsManager {
 		} else {
 			if (!fireOnMessageReceived(message, channel)) {
 				System.err.println("Unhandled message\n" + message);
+				// TODO logger?
 			}
 		}
 	}
