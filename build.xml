@@ -3,10 +3,12 @@
   <property name="src" location="src" />
   <property name="build" location="bin" />
   <property name="libs" location="${basedir}/libs" />
+  <property name="debug" value="true" />
 
-  <path id="project.build.path">
+  <path id="project.tools.path">
     <pathelement location="${build}" />
     <pathelement location="${libs}/protobuf.jar" />
+    <pathelement location="${libs}/args4j-2.0.10.jar" />
   </path>
 
   <path id="project.class.path">
@@ -18,12 +20,21 @@
     <pathelement location="${libs}/slf4j-jdk14-1.5.8.jar" />
     <pathelement location="${libs}/trove-2.0.4.jar" />
     <pathelement location="${libs}/junit.jar" />
+    <pathelement location="${libs}/args4j-2.0.10.jar" />
   </path>
 
-  <target name="all" depends="build,doc">
-  </target>
+  <!-- all -->
+  <target name="all" depends="build,doc" />
 
-  <target name="build" depends="make-constants">
+  <!-- sources -->
+  <target name="sources"
+          depends="make-constants"
+          description="create the sources that are generated" />
+
+  <!-- build -->
+  <target name="build"
+          depends="sources"
+          description="compiles the sources with debug=${debug}">
     <mkdir dir="${build}" />
     <javac srcdir="${src}"
            destdir="${build}"
@@ -31,14 +42,12 @@
            source="1.5"
            target="1.5"
            encoding="utf8"
-           debug="true"
+           debug="${debug}"
            debuglevel="lines,vars,source">
     </javac>
   </target>
 
-  <!-- make-constants that compiles multiplexer.rules into
-  ${src}/multiplexer/constants/Peers.java and
-  ${src}/multiplexer/constants/Types.java files -->
+  <!-- make-constants -->
   <target name="make-constants.check">
     <condition property="make-constants.run">
       <not>
@@ -57,21 +66,21 @@
     <javac srcdir="${src}"
            destdir="${build}"
            encoding="utf8"
-           classpathref="project.build.path"
+           classpathref="project.tools.path"
            includes="multiplexer/build/CompileConstants.java"
            verbose="true" />
     <mkdir dir="${src}/multiplexer/constants" />
-    <java classname="multiplexer.build.CompileConstants" failonerror="true">
+    <java classname="multiplexer.tools.CompileConstants" failonerror="true">
       <arg value="multiplexer.rules" />
       <arg value="${src}" />
       <arg value="multiplexer/constants/Peers.java" />
       <arg value="multiplexer/constants/Types.java" />
-      <classpath refid="project.build.path" />
+      <classpath refid="project.tools.path" />
     </java>
   </target>
 
   <!-- javadoc -->
-  <target name="doc" depends="make-constants">
+  <target name="doc" depends="make-constants" description="generates Javadoc">
     <javadoc access="protected"
              author="true"
              classpathref="project.class.path"
