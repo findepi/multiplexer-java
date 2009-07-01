@@ -30,6 +30,7 @@
            classpathref="project.class.path"
            source="1.5"
            target="1.5"
+           encoding="utf8"
            debug="true"
            debuglevel="lines,vars,source">
     </javac>
@@ -55,6 +56,7 @@
           if="make-constants.run">
     <javac srcdir="${src}"
            destdir="${build}"
+           encoding="utf8"
            classpathref="project.build.path"
            includes="multiplexer/build/CompileConstants.java"
            verbose="true" />
@@ -75,6 +77,7 @@
              classpathref="project.class.path"
              destdir="doc"
              sourcepath="${src}"
+             encoding="utf8"
              nodeprecated="false"
              nodeprecatedlist="false"
              noindex="false"
