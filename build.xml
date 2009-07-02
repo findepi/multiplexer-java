@@ -12,14 +12,14 @@
   </path>
 
   <path id="project.class.path">
-    <pathelement location="{$build}" />
+    <pathelement location="${build}" />
     <pathelement location="${libs}/protobuf.jar" />
     <pathelement location="${libs}/netty-3.1.0.BETA3.jar" />
     <pathelement location="${libs}/google-collect-1.0-rc2.jar" />
     <pathelement location="${libs}/slf4j-api-1.5.8.jar" />
     <pathelement location="${libs}/slf4j-jdk14-1.5.8.jar" />
     <pathelement location="${libs}/trove-2.0.4.jar" />
-    <pathelement location="${libs}/junit.jar" />
+    <pathelement location="${libs}/junit-4.6.jar" />
     <pathelement location="${libs}/args4j-2.0.10.jar" />
   </path>
 
