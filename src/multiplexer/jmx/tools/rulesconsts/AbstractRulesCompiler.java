@@ -179,7 +179,7 @@ public abstract class AbstractRulesCompiler implements
 		if (options.outputFile == null) {
 			if (options.outputClass != null) {
 				options.outputFile = options.outputRoot + File.separator
-					+ options.outputClass.replaceAll("[.]", File.separator)
+					+ options.outputClass.replace(".", File.separator)
 					+ ".java";
 			} else {
 				throw new RuntimeException("No output file chosen.");
@@ -194,7 +194,7 @@ public abstract class AbstractRulesCompiler implements
 			if (options.outputFile != null) {
 				options.outputClass = options.outputFile.substring(0,
 					options.outputFile.lastIndexOf('.')).substring(
-					options.outputRoot.length() + 1).replaceAll("/", ".");
+					options.outputRoot.length() + 1).replace("/", ".");
 			} else {
 				throw new RuntimeException("Output class not specified.");
 			}
