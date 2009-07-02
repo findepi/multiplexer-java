@@ -139,7 +139,7 @@
   </target>
 
   <!-- test -->
-  <target name="test" depends="build-test">
+  <target name="test" depends="build-test" description="run tests">
     <junit printsummary="true" fork="true" haltonfailure="true">
       <sysproperty key="java.util.logging.config.file" value="jul.test.properties"/>
       <assertions>
@@ -151,6 +151,7 @@
       <formatter type="plain" />
 
       <test name="multiplexer.jmx.test.TestConnectivity" />
+      <test name="multiplexer.jmx.test.TestQuery" />
       <test name="multiplexer.jmx.test.TestByteBufferSerialization" />
     </junit>
   </target>
