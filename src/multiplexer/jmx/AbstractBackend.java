@@ -9,8 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import multiplexer.Multiplexer.MultiplexerMessage;
-import multiplexer.constants.Types;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
+import multiplexer.protocol.Constants.MessageTypes;
 
 import com.google.protobuf.ByteString;
 
@@ -138,21 +138,21 @@ public abstract class AbstractBackend implements Runnable {
 
 		try {
 			switch (lastMessage.getType()) {
-			case Types.CONNECTION_WELCOME:
+			case MessageTypes.CONNECTION_WELCOME:
 				throw new AssertionError("Unexpected CONNECTION_WELCOME");
 
-			case Types.BACKEND_FOR_PACKET_SEARCH:
-				reply(createResponse(Types.PING));
+			case MessageTypes.BACKEND_FOR_PACKET_SEARCH:
+				reply(createResponse(MessageTypes.PING));
 				break;
 
-			case Types.PING:
+			case MessageTypes.PING:
 				if (lastMessage.hasReferences()) {
 					assert lastMessage.getReferences() != 0;
 					noResponse();
 				} else {
 					assert lastMessage.getId() != 0;
 					MultiplexerMessage.Builder response = createResponse()
-						.setType(Types.PING).setMessage(
+						.setType(MessageTypes.PING).setMessage(
 							lastMessage.getMessage());
 					assert response.hasReferences()
 						&& response.getReferences() != 0;
@@ -161,7 +161,7 @@ public abstract class AbstractBackend implements Runnable {
 				break;
 
 			default:
-				if (lastMessage.getType() <= Types.MAX_MULTIPLEXER_META_PACKET) {
+				if (lastMessage.getType() <= MessageTypes.MAX_MULTIPLEXER_META_PACKET) {
 					logger.warn("Unable to handle meta packet of type {}",
 						lastMessage.getType());
 				} else {
@@ -178,7 +178,7 @@ public abstract class AbstractBackend implements Runnable {
 	}
 
 	private void handleOrdinaryMessage() throws Exception {
-		assert lastMessage.getType() > Types.MAX_MULTIPLEXER_META_PACKET;
+		assert lastMessage.getType() > MessageTypes.MAX_MULTIPLEXER_META_PACKET;
 		boolean responseMissing;
 		try {
 			handleMessage(lastMessage);
@@ -195,12 +195,12 @@ public abstract class AbstractBackend implements Runnable {
 	}
 
 	protected void reportError(Throwable e) throws NoPeerForTypeException {
-		reply(createResponse(Types.BACKEND_ERROR, serializeStackTrace(e)));
+		reply(createResponse(MessageTypes.BACKEND_ERROR, serializeStackTrace(e)));
 	}
 
 	protected void reportError(String explanation)
 		throws NoPeerForTypeException {
-		reply(createResponse(Types.BACKEND_ERROR, ByteString
+		reply(createResponse(MessageTypes.BACKEND_ERROR, ByteString
 			.copyFromUtf8(explanation)));
 	}
 

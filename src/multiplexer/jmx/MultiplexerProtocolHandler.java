@@ -1,6 +1,7 @@
 package multiplexer.jmx;
 
 import multiplexer.Multiplexer.MultiplexerMessage;
+import multiplexer.protocol.Constants.MessageTypes;
 
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -49,12 +50,12 @@ class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
-		
+
 		assert e.getMessage() instanceof MultiplexerMessage : e.getMessage()
 			+ " is not a MultiplexerMessage";
-		
+
 		if (logger.isDebugEnabled()) {
-			if (((MultiplexerMessage) e.getMessage()).getType() != multiplexer.constants.Types.HEARTBIT)
+			if (((MultiplexerMessage) e.getMessage()).getType() != MessageTypes.HEARTBIT)
 				logger.debug("MessageReceived\n{}", e.getMessage());
 		}
 

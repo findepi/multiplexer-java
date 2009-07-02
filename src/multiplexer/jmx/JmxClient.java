@@ -15,12 +15,11 @@ import java.util.concurrent.TimeUnit;
 import multiplexer.Multiplexer.BackendForPacketSearch;
 import multiplexer.Multiplexer.MultiplexerMessage;
 import multiplexer.Multiplexer.MultiplexerMessage.Builder;
-import multiplexer.constants.Peers;
-import multiplexer.constants.Types;
 import multiplexer.jmx.exceptions.BackendUnreachableException;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.exceptions.OperationFailedException;
 import multiplexer.jmx.exceptions.OperationTimeoutException;
+import multiplexer.protocol.Constants.MessageTypes;
 
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.util.Timeout;
@@ -324,9 +323,9 @@ public class JmxClient {
 		IncomingMessageData answer = pollUninterruptibly(queryQueue, timeout);
 
 		if (answer != null) {
-			if (answer.getMessage().getType() == Types.DELIVERY_ERROR) {
+			if (answer.getMessage().getType() == MessageTypes.DELIVERY_ERROR) {
 				phase1DeliveryError = true;
-			} else if (answer.getMessage().getType() == Types.BACKEND_ERROR) {
+			} else if (answer.getMessage().getType() == MessageTypes.BACKEND_ERROR) {
 				logger.warn("Received BACKEND_ERROR message\n{}", answer);
 				phase1DeliveryError = true;
 				backendErrorMessage = answer;
@@ -356,21 +355,22 @@ public class JmxClient {
 			long references = answer.getMessage().getReferences();
 			int type = answer.getMessage().getType();
 
-			if (type == Types.DELIVERY_ERROR && references == queryId) {
+			if (type == MessageTypes.DELIVERY_ERROR && references == queryId) {
 				phase1DeliveryError = true;
 				continue;
 			}
 
-			if (type == Types.BACKEND_ERROR && references == queryId) {
+			if (type == MessageTypes.BACKEND_ERROR && references == queryId) {
 				phase1DeliveryError = true;
 				backendErrorMessage = answer;
 				logger.warn("Received BACKEND_ERROR message\n{}", answer);
 				continue;
 			}
 
-			if ((type == Types.DELIVERY_ERROR) || (type == Types.BACKEND_ERROR)) {
+			if ((type == MessageTypes.DELIVERY_ERROR)
+				|| (type == MessageTypes.BACKEND_ERROR)) {
 				assert references == backendSearchMessageId;
-				if (type == Types.BACKEND_ERROR) {
+				if (type == MessageTypes.BACKEND_ERROR) {
 					backendErrorMessage = answer;
 					logger.warn("Received BACKEND_ERROR message\n{}", answer);
 				}
@@ -419,18 +419,19 @@ public class JmxClient {
 						continue;
 					}
 
-					if ((type != Types.DELIVERY_ERROR)
-						&& (type != Types.BACKEND_ERROR)
+					if ((type != MessageTypes.DELIVERY_ERROR)
+						&& (type != MessageTypes.BACKEND_ERROR)
 						&& ((references == queryId) || (references == backendQueryId))) {
 						return answer;
 					}
 
 					if (references == queryId) {
-						assert (type == Types.DELIVERY_ERROR)
-							|| (type == Types.BACKEND_ERROR);
-						if (type == Types.BACKEND_ERROR) {
+						assert (type == MessageTypes.DELIVERY_ERROR)
+							|| (type == MessageTypes.BACKEND_ERROR);
+						if (type == MessageTypes.BACKEND_ERROR) {
 							backendErrorMessage = answer;
-							logger.warn("Received BACKEND_ERROR message\n{}", answer);
+							logger.warn("Received BACKEND_ERROR message\n{}",
+								answer);
 						}
 						if (phase3DeliveryError) {
 							if (backendErrorMessage != null) {
@@ -445,11 +446,12 @@ public class JmxClient {
 					}
 
 					if (references == backendQueryId) {
-						assert (type == Types.DELIVERY_ERROR)
-							|| (type == Types.BACKEND_ERROR);
-						if (type == Types.BACKEND_ERROR) {
+						assert (type == MessageTypes.DELIVERY_ERROR)
+							|| (type == MessageTypes.BACKEND_ERROR);
+						if (type == MessageTypes.BACKEND_ERROR) {
 							backendErrorMessage = answer;
-							logger.warn("Received BACKEND_ERROR message\n{}", answer);
+							logger.warn("Received BACKEND_ERROR message\n{}",
+								answer);
 						}
 						if (phase1DeliveryError) {
 							if (backendErrorMessage != null) {
@@ -535,7 +537,7 @@ public class JmxClient {
 		BackendForPacketSearch backendSearch = BackendForPacketSearch
 			.newBuilder().setPacketType(messageType).build();
 		MultiplexerMessage backendSearchMessage = createMessage(backendSearch
-			.toByteString(), Types.BACKEND_FOR_PACKET_SEARCH);
+			.toByteString(), MessageTypes.BACKEND_FOR_PACKET_SEARCH);
 		return backendSearchMessage;
 	}
 

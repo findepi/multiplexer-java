@@ -1,0 +1,75 @@
+# peer definitions
+#
+#   PEERS 1 - 99 reserverd for Multiplexer and special types
+peer {
+    type: 1
+    name: "MULTIPLEXER"
+    comment: "Peer type representing normal multiplexer instance."
+}
+
+peer {
+    type: 2
+    name: "ALL_TYPES"
+    comment: "this is special peer type that causes a message to be sent to all types"
+}
+
+peer {
+    type: 99
+    name: "MAX_MULTIPLEXER_SPECIAL_PEER_TYPE"
+    comment: "this only defines a constant"
+}
+
+
+# packages and routing rules definitions
+#
+#   PACKAGES 1 - 99 reserved for Multiplexer meta packages
+type {
+    type: 1
+    name: "PING"
+    comment: "I'm alive packet; it never carries any significant message."
+}
+
+type {
+    type: 2
+    name: "CONNECTION_WELCOME"
+    comment: "message interchange by peers just after connecting to each other"
+}
+
+type {
+    type: 3
+    name: "BACKEND_FOR_PACKET_SEARCH"
+    comment: "message used by MX client in query() for finding a backend that would handle its request"
+}
+
+type {
+    type: 4
+    name: "HEARTBIT"
+    comment: "packet to be sent by every peer on every channel when nothing sent through the given channel for certain period of time"
+}
+
+type {
+    type: 5
+    name: "DELIVERY_ERROR"
+    comment: "packet could not be delivered to one or more recipients"
+}
+
+type {
+    type: 99
+    name: "MAX_MULTIPLEXER_META_PACKET"
+    comment: "this only defines a constant"
+}
+
+type {
+    type: 113
+    name: "REQUEST_RECEIVED"
+    comment: "packet sent by the backend immediatelly after receiving a request and stright to the requesting peer"
+}
+
+type {
+    type: 114
+    name: "BACKEND_ERROR"
+    comment: "packet sent by the backend when request handling function finishes and no packet response packet is sent"
+}
+
+
+# vim:ft=conf:

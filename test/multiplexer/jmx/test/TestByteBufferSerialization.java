@@ -1,4 +1,4 @@
-package multiplexer.test;
+package multiplexer.jmx.test;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -55,9 +55,6 @@ public class TestByteBufferSerialization extends TestCase {
 
 		byte[] copy = new byte[8];
 		b.getBytes(0, copy);
-		for (byte c : copy)
-			System.out.print(c + ", ");
-		System.out.println();
 		assertTrue(Arrays.equals(copy, new byte[] { 3, 0, 0, 0, 96, 13,
 			169 - 256, 69 }));
 	}

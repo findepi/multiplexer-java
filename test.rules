@@ -1,0 +1,128 @@
+# peer definitions
+#
+#   PEERS 1 - 99 reserverd for Multiplexer and special types
+#   PEERS 100-999 are plain peers
+
+# peers 100-105 reserved
+
+peer {
+    type: 102
+    name: "WEBSITE"
+    is_passive: true
+    comment: "example peer type showing how to describe a peer which doesn't run MX library main loop for the most of the time"
+}
+
+peer {
+    type: 106
+    name: "TEST_SERVER"
+}
+
+peer {
+    type: 107
+    name: "TEST_CLIENT"
+}
+
+peer {
+    type: 108
+    name: "LOG_STREAMER"
+    is_passive: true
+}
+
+peer {
+    type: 109
+    name: "LOG_COLLECTOR"
+}
+
+peer {
+    type: 110
+    name: "EVENTS_COLLECTOR"
+}
+
+peer {
+    type: 111
+    name: "LOG_RECEIVER_EXAMPLE"
+}
+
+# peers 112 reserved
+
+peer {
+    # yes, it's from reserved range
+    type: 112
+    name: "ECHO_SERVER"
+}
+
+# packages and routing rules definitions
+#
+#   PACKAGES 1 - 99 reserved for Multiplexer meta packages
+#   PACKAGES 100 - 999 normal package
+
+# types 100-109 reserved
+
+type {
+    type: 110
+    name: "TEST_REQUEST"
+    to {
+	peer: "TEST_SERVER"
+    }
+}
+
+type {
+    type: 111
+    name: "TEST_RESPONSE"
+}
+
+type {
+    type: 112
+    name: "PICKLE_RESPONSE"
+}
+
+type {
+    type: 115
+    name: "LOGS_STREAM"
+    comment: "payload is LogEntriesMessage"
+    to {
+	peer: "LOG_COLLECTOR"
+        whom: ALL
+    }
+    to {
+	peer: "LOG_RECEIVER_EXAMPLE"
+	whom: ALL
+    }
+}
+
+type {
+    type: 116
+    name: "LOGS_STREAM_RESPONSE"
+    # currently unused
+}
+
+type {
+    type: 117
+    name: "SEARCH_COLLECTED_LOGS_REQUEST"
+    comment: "payload is SearchCollectedLogs; logs are returned in LogEntriesMessage"
+    to {
+	peer: "LOG_COLLECTOR"
+	whom: ANY
+    }
+}
+
+type {
+    type: 118
+    name: "SEARCH_COLLECTED_LOGS_RESPONSE"
+}
+
+# types 119-125 reserved
+
+type {
+    type: 126
+    name: "REPLAY_EVENTS_REQUEST"
+    comment: "this is a no-response request"
+    to {
+	peer: "EVENTS_COLLECTOR"
+	whom: ANY
+    }
+}
+
+# types 127-128 reserverd
+
+# vim:ft=conf:

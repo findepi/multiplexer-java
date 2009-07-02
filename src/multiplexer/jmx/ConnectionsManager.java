@@ -13,10 +13,10 @@ import java.util.concurrent.TimeUnit;
 import multiplexer.Multiplexer;
 import multiplexer.Multiplexer.MultiplexerMessage;
 import multiplexer.Multiplexer.WelcomeMessage;
-import multiplexer.constants.Peers;
-import multiplexer.constants.Types;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.util.RecentLongPool;
+import multiplexer.protocol.Constants.MessageTypes;
+import multiplexer.protocol.Constants.PeerTypes;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -230,8 +230,8 @@ class ConnectionsManager {
 					.setType(instanceType).setId(instanceId).build();
 				logger.debug("Sending welcome message\n{}", welcomeMessage);
 				ByteString message = welcomeMessage.toByteString();
-				sendMessage(createMessage(message, Types.CONNECTION_WELCOME),
-					future.getChannel());
+				sendMessage(createMessage(message,
+					MessageTypes.CONNECTION_WELCOME), future.getChannel());
 			}
 		});
 		return registrationFuture;
@@ -245,7 +245,7 @@ class ConnectionsManager {
 			return;
 		}
 
-		if (message.getType() == Types.CONNECTION_WELCOME) {
+		if (message.getType() == MessageTypes.CONNECTION_WELCOME) {
 			WelcomeMessage welcome;
 			try {
 				welcome = WelcomeMessage.parseFrom(message.getMessage());
@@ -279,7 +279,7 @@ class ConnectionsManager {
 				return;
 			}
 
-		} else if (message.getType() == Types.HEARTBIT) {
+		} else if (message.getType() == MessageTypes.HEARTBIT) {
 			// Ignored, functionality of HEARTBITs handled by the pipeline.
 
 		} else {
@@ -341,11 +341,11 @@ class ConnectionsManager {
 		SendingMethod method) throws NoPeerForTypeException {
 		if (method == SendingMethod.THROUGH_ONE) {
 			Channel channel;
-			channel = connectionsMap.getAny(Peers.MULTIPLEXER);
+			channel = connectionsMap.getAny(PeerTypes.MULTIPLEXER);
 			return new ChannelFutureGroup(sendMessage(message, channel));
 		} else if (method == SendingMethod.THROUGH_ALL) {
 			Iterator<Channel> channels = connectionsMap
-				.getAll(Peers.MULTIPLEXER);
+				.getAll(PeerTypes.MULTIPLEXER);
 			Channel channel;
 			ChannelFutureGroup channelFutureGroup = new ChannelFutureGroup();
 			while (channels.hasNext()) {
@@ -381,8 +381,8 @@ class ConnectionsManager {
 
 	void sendHeartbit(Channel channel) {
 		MultiplexerMessage.Builder heartbitBuilder = createMessageBuilder();
-		MultiplexerMessage heartbit = heartbitBuilder.setType(Types.HEARTBIT)
-			.build();
+		MultiplexerMessage heartbit = heartbitBuilder.setType(
+			MessageTypes.HEARTBIT).build();
 		sendMessage(heartbit, channel);
 	}
 

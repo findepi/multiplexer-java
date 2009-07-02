@@ -7,14 +7,13 @@ import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 import multiplexer.Multiplexer.MultiplexerMessage;
-import multiplexer.constants.Peers;
-import multiplexer.constants.Types;
 import multiplexer.jmx.AbstractBackend;
 import multiplexer.jmx.IncomingMessageData;
 import multiplexer.jmx.JmxClient;
 import multiplexer.jmx.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.exceptions.OperationFailedException;
+import multiplexer.protocol.Constants.MessageTypes;
 
 import org.jboss.netty.channel.ChannelFuture;
 
@@ -26,21 +25,22 @@ import com.google.protobuf.ByteString;
  */
 public class TestConnectivity extends TestCase {
 
-	public void xtestConnect() throws UnknownHostException {
-		JmxClient client = new JmxClient(Peers.TEST_CLIENT);
+	public void testConnect() throws UnknownHostException {
+		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
 		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
 	}
 
-	public void xtestConnectSendReceive() throws UnknownHostException,
+	public void testConnectSendReceive() throws UnknownHostException,
 		InterruptedException, NoPeerForTypeException {
 
 		// connect
-		JmxClient client = new JmxClient(Peers.TEST_CLIENT);
+		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
 		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
 
 		// create message
 		MultiplexerMessage.Builder builder = MultiplexerMessage.newBuilder();
-		builder.setTo(client.getInstanceId()).setType(Types.TEST_REQUEST);
+		builder.setTo(client.getInstanceId()).setType(
+			TestConstants.MessageTypes.TEST_REQUEST);
 		MultiplexerMessage msgSent = client.createMessage(builder);
 
 		// send message
@@ -57,13 +57,14 @@ public class TestConnectivity extends TestCase {
 		assertNotSame(msgSent, msgReceived);
 	}
 
-	public void xtestBackend() throws UnknownHostException,
+	public void testBackend() throws UnknownHostException,
 		InterruptedException, NoPeerForTypeException {
 
 		ByteString msgBody = ByteString.copyFromUtf8("Więcej budynió!");
 
 		// create backend
-		AbstractBackend backend = new AbstractBackend(Peers.TEST_SERVER) {
+		AbstractBackend backend = new AbstractBackend(
+			TestConstants.PeerTypes.TEST_SERVER) {
 			@Override
 			protected void handleMessage(MultiplexerMessage message)
 				throws Exception {
@@ -80,12 +81,13 @@ public class TestConnectivity extends TestCase {
 		backendThread.start();
 
 		// connect
-		JmxClient client = new JmxClient(Peers.TEST_CLIENT);
+		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
 		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
 
 		// create message
 		MultiplexerMessage.Builder builder = MultiplexerMessage.newBuilder();
-		builder.setType(Types.TEST_REQUEST).setMessage(msgBody);
+		builder.setType(TestConstants.MessageTypes.TEST_REQUEST).setMessage(
+			msgBody);
 		MultiplexerMessage msgSent = client.createMessage(builder);
 		assertFalse(msgSent.hasTo());
 
@@ -112,11 +114,12 @@ public class TestConnectivity extends TestCase {
 		}
 	}
 
-	public void xtestQueryBasic() throws UnknownHostException,
+	public void testQueryBasic() throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException {
 
 		// create backend
-		AbstractBackend backend = new AbstractBackend(Peers.TEST_SERVER) {
+		AbstractBackend backend = new AbstractBackend(
+			TestConstants.PeerTypes.TEST_SERVER) {
 			@Override
 			protected void handleMessage(MultiplexerMessage message)
 				throws Exception {
@@ -133,12 +136,13 @@ public class TestConnectivity extends TestCase {
 		backendThread.start();
 
 		// connect
-		JmxClient client = new JmxClient(Peers.TEST_CLIENT);
+		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
 		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
 
 		// query
 		IncomingMessageData msgData = client.query(ByteString
-			.copyFromUtf8("Lama ma kota."), Types.TEST_REQUEST, 2000);
+			.copyFromUtf8("Lama ma kota."),
+			TestConstants.MessageTypes.TEST_REQUEST, 2000);
 
 		assertEquals(msgData.getMessage().getMessage(), ByteString
 			.copyFromUtf8("Lama ma kota."));
@@ -177,7 +181,8 @@ public class TestConnectivity extends TestCase {
 		OperationFailedException, NoPeerForTypeException, InterruptedException {
 
 		// create backend 1
-		AbstractBackend backend1 = new AbstractBackend(Peers.TEST_SERVER) {
+		AbstractBackend backend1 = new AbstractBackend(
+			TestConstants.PeerTypes.TEST_SERVER) {
 			@Override
 			protected void handleMessage(MultiplexerMessage message)
 				throws Exception {
@@ -186,7 +191,7 @@ public class TestConnectivity extends TestCase {
 				case 0:
 					throw new Exception("I am the crazy backend.");
 				case 1:
-					reply(createResponse(Types.BACKEND_ERROR));
+					reply(createResponse(MessageTypes.BACKEND_ERROR));
 				}
 			}
 		};
@@ -199,7 +204,8 @@ public class TestConnectivity extends TestCase {
 		backend1Thread.start();
 
 		// create backend 2
-		AbstractBackend backend2 = new AbstractBackend(Peers.TEST_SERVER) {
+		AbstractBackend backend2 = new AbstractBackend(
+			TestConstants.PeerTypes.TEST_SERVER) {
 			@Override
 			protected void handleMessage(MultiplexerMessage message)
 				throws Exception {
@@ -207,7 +213,7 @@ public class TestConnectivity extends TestCase {
 				case 0:
 					throw new Exception("I am the crazy backend.");
 				case 1:
-					reply(createResponse(Types.BACKEND_ERROR));
+					reply(createResponse(MessageTypes.BACKEND_ERROR));
 				}
 			}
 		};
@@ -220,14 +226,15 @@ public class TestConnectivity extends TestCase {
 		backend2Thread.start();
 
 		// connect
-		JmxClient client = new JmxClient(Peers.TEST_CLIENT);
+		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
 		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
 
 		// query
 		IncomingMessageData msgData = client.query(ByteString
-			.copyFromUtf8("Lama ma kota."), Types.TEST_REQUEST, 2000);
+			.copyFromUtf8("Lama ma kota."),
+			TestConstants.MessageTypes.TEST_REQUEST, 2000);
 
-		assertEquals(msgData.getMessage().getType(), Types.BACKEND_ERROR);
+		assertEquals(msgData.getMessage().getType(), MessageTypes.BACKEND_ERROR);
 
 		// cleanup
 		backend1.cancel();
@@ -243,5 +250,4 @@ public class TestConnectivity extends TestCase {
 			backend2Thread.interrupt();
 		}
 	}
-
 }
