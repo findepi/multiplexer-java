@@ -11,6 +11,7 @@
   <property name="libs" location="${basedir}/libs" />
   <property name="libs.unpacked.dir" location="deps" />
   <property name="debug" value="true" />
+  <property name="compatibility" value="1.5" />
 
   <property name="system.rules" value="system.rules" />
   <property name="constants.src"
@@ -139,8 +140,8 @@
     <javac srcdir="${src}"
            destdir="${build.dir}"
            classpathref="project.class.path"
-           source="1.5"
-           target="1.5"
+           source="${compatibility}"
+           target="${compatibility}"
            encoding="utf8"
            debug="${debug}"
            debuglevel="lines,vars,source">
@@ -213,8 +214,8 @@
     <mkdir dir="${build.dir}" />
     <javac srcdir="${test.src}"
            destdir="${build.dir}"
-           source="1.5"
-           target="1.5"
+           source="${compatibility}"
+           target="${compatibility}"
            encoding="utf8"
            debug="${debug}"
            debuglevel="lines,vars,source">
@@ -251,7 +252,7 @@
     <javadoc access="protected"
              author="true"
              classpathref="project.class.path"
-             destdir="${doc.dir"
+             destdir="${doc.dir}"
              sourcepath="${src}"
              encoding="utf8"
              nodeprecated="false"
@@ -259,7 +260,7 @@
              noindex="false"
              nonavbar="false"
              notree="false"
-             source="1.6"
+             source="${compatibility}"
              splitindex="true"
              use="true"
              version="true">
