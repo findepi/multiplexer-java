@@ -22,7 +22,6 @@ public abstract class AbstractRulesCompiler implements
 
 	protected Options options;
 
-	@Override
 	public void compile(Options options) throws FileNotFoundException,
 		IOException, InvalidRulesFileException {
 

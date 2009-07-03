@@ -66,7 +66,6 @@ public class JmxClient {
 		connectionsManager
 			.setMessageReceivedListener(new MessageReceivedListener() {
 
-				@Override
 				public void onMessageReceived(MultiplexerMessage message,
 					Connection connection) {
 					long id = message.getReferences();
@@ -503,7 +502,6 @@ public class JmxClient {
 		try {
 			TimerTask removalTask = new TimerTask() {
 
-				@Override
 				public void run(Timeout timeout) throws Exception {
 					if (timeout != null && timeout.isCancelled())
 						return;

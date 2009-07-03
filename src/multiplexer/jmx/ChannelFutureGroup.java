@@ -42,7 +42,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 */
 	private int tracedNotCompleted = 0;
 	private ChannelFutureListener completionListener = new ChannelFutureListener() {
-		@Override
 		public void operationComplete(ChannelFuture future) throws Exception {
 			tracedNotCompleted--;
 			if (tracedNotCompleted == 0) {
@@ -109,7 +108,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * multiple points of notifying listeners.
 	 * 
 	 */
-	@Override
 	public void addListener(ChannelFutureListener listener) {
 		assert (listener != null) : "addListener";
 		boolean notifyNow = false;
@@ -157,7 +155,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * Blocks until the {@code ChannelFutureGroup} {@code isDone}. Calls {@code
 	 * await()} on all the {@code ChannelFutureGroup}'s elements.
 	 */
-	@Override
 	public ChannelFuture await() throws InterruptedException {
 		for (ChannelFuture cf : channelFutures) {
 			cf.await();
@@ -170,7 +167,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * isDone}. Calls {@code awaitUninterruptibly()} on all the {@code
 	 * ChannelFutureGroup}'s elements.
 	 */
-	@Override
 	public ChannelFuture awaitUninterruptibly() {
 		for (ChannelFuture cf : channelFutures) {
 			cf.awaitUninterruptibly();
@@ -182,7 +178,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * Blocks until the {@code ChannelFutureGroup} {@code isDone} or {@code
 	 * timeoutMillis} elapses.
 	 */
-	@Override
 	public boolean await(long timeoutMillis) throws InterruptedException {
 		return await(timeoutMillis, TimeUnit.MILLISECONDS);
 	}
@@ -191,7 +186,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * Blocks until the {@code ChannelFutureGroup} {@code isDone} or {@code
 	 * timeout} given in specified {@code TimeUnit} elapses.
 	 */
-	@Override
 	public boolean await(long timeout, TimeUnit unit)
 		throws InterruptedException {
 		TimeoutCounter timeoutCounter = new TimeoutCounter(timeout, unit);
@@ -207,7 +201,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * Blocks uninterruptibly until the {@code ChannelFutureGroup} {@code
 	 * isDone} or {@code timeoutMillis} elapses.
 	 */
-	@Override
 	public boolean awaitUninterruptibly(long timeoutMillis) {
 		return awaitUninterruptibly(timeoutMillis, TimeUnit.MILLISECONDS);
 	}
@@ -216,7 +209,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * Blocks uninterruptibly until the {@code ChannelFutureGroup} {@code
 	 * isDone} or {@code timeout} given in specified {@code TimeUnit} elapses.
 	 */
-	@Override
 	public boolean awaitUninterruptibly(long timeout, TimeUnit unit) {
 		TimeoutCounter timeoutCounter = new TimeoutCounter(timeout, unit);
 		for (ChannelFuture cf : channelFutures) {
@@ -231,7 +223,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * Cancels all {@code ChannelFuture}s of the {@code ChannelFutureGroup}.
 	 * 
 	 */
-	@Override
 	public boolean cancel() {
 		boolean ret = true;
 		for (ChannelFuture cf : channelFutures) {
@@ -245,7 +236,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * ChannelFutureGroup}'s {@code ChannelFuture}s or null, if {@code Cause} is
 	 * unavailable.
 	 */
-	@Override
 	public Throwable getCause() {
 		for (ChannelFuture cf : channelFutures) {
 			if (cf.getCause() != null) {
@@ -255,7 +245,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 		return null;
 	}
 
-	@Override
 	public Channel getChannel() {
 		throw new RuntimeException("Not implemented.");
 	}
@@ -264,7 +253,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * True if and only if every {@code ChannelFuture} of the {@code
 	 * ChannelFutureGroup} {@code isCancelled}.
 	 */
-	@Override
 	public boolean isCancelled() {
 		for (ChannelFuture cf : channelFutures) {
 			if (!cf.isCancelled()) {
@@ -278,7 +266,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * True if and only if every {@code ChannelFuture} of the {@code
 	 * ChannelFutureGroup} {@code isDone}.
 	 */
-	@Override
 	public boolean isDone() {
 		for (ChannelFuture cf : channelFutures) {
 			if (!cf.isDone()) {
@@ -292,7 +279,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * True if and only if every {@code ChannelFuture} of the {@code
 	 * ChannelFutureGroup} {@code isSuccess}.
 	 */
-	@Override
 	public boolean isSuccess() {
 		for (ChannelFuture cf : channelFutures) {
 			if (!cf.isSuccess()) {
@@ -305,7 +291,6 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	/**
 	 * Removes specified {@code Listener} from the {@code ChannelFutureGroup}.
 	 */
-	@Override
 	public void removeListener(ChannelFutureListener listener) {
 		assert (listener != null) : "removeListener";
 		synchronized (this) {
@@ -313,12 +298,10 @@ public final class ChannelFutureGroup implements ChannelFuture {
 		}
 	}
 
-	@Override
 	public boolean setFailure(Throwable cause) {
 		throw new RuntimeException("Not implemented.");
 	}
 
-	@Override
 	public boolean setSuccess() {
 		throw new RuntimeException("Not implemented.");
 	}

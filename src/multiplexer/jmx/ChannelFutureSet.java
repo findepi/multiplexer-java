@@ -23,7 +23,6 @@ public class ChannelFutureSet extends ForwardingSet<ChannelFuture> {
 	private ConcurrentSet<ChannelFuture> channelFutures = new ConcurrentHashSet<ChannelFuture>();
 	private ChannelFutureListener completionListener = new ChannelFutureListener() {
 
-		@Override
 		public void operationComplete(ChannelFuture future) throws Exception {
 			channelFutures.remove(future);
 		}

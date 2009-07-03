@@ -97,7 +97,6 @@ public abstract class AbstractBackend implements Runnable {
 	abstract protected void handleMessage(MultiplexerMessage message)
 		throws Exception;
 
-	@Override
 	public void run() {
 		assert thread == null;
 		thread = Thread.currentThread();

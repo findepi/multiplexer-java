@@ -79,7 +79,6 @@ public class SimpleNettyConnection {
 		ChannelFuture connectOperation = bootstrap.connect(address);
 		connectOperation.addListener(new ChannelFutureListener() {
 
-			@Override
 			public void operationComplete(ChannelFuture future)
 				throws Exception {
 

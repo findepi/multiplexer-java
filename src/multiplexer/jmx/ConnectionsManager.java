@@ -136,7 +136,6 @@ class ConnectionsManager {
 			private MultiplexerProtocolHandler multiplexerProtocolHandler = new MultiplexerProtocolHandler(
 				ConnectionsManager.this);
 
-			@Override
 			public ChannelPipeline getPipeline() throws Exception {
 				ChannelPipeline pipeline = Channels.pipeline();
 				// Encoders
@@ -208,7 +207,6 @@ class ConnectionsManager {
 
 		connectOperation.addListener(new ChannelFutureListener() {
 
-			@Override
 			public void operationComplete(ChannelFuture future)
 				throws Exception {
 				assert future.isDone();
