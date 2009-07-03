@@ -20,6 +20,7 @@ import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.exceptions.OperationFailedException;
 import multiplexer.jmx.exceptions.OperationTimeoutException;
 import multiplexer.protocol.Constants.MessageTypes;
+import multiplexer.protocol.Constants.PeerTypes;
 
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.util.Timeout;
@@ -59,7 +60,7 @@ public class JmxClient {
 	 * from where it might be read by method {@code receive()}.
 	 * 
 	 * @param instanceType
-	 *            client types are defined in {@link Peers}
+	 *            client types are defined in {@link PeerTypes}
 	 */
 	public JmxClient(int instanceType) {
 		connectionsManager = new ConnectionsManager(instanceType);
@@ -111,7 +112,7 @@ public class JmxClient {
 	 * 
 	 * @param message
 	 * @param type
-	 *            message types are defined in {@link Types}
+	 *            message types are defined in {@link MessageTypes}
 	 */
 	public MultiplexerMessage createMessage(ByteString message, int type) {
 		return connectionsManager.createMessage(message, type);
