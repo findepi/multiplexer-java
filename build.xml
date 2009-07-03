@@ -1,9 +1,15 @@
 <project name="JMX" default="all" basedir=".">
 
+  <!-- version -->
+  <property name="version" value="0.1" />
+
   <property name="src" location="src" />
   <property name="test.src" location="test" />
-  <property name="build" location="bin" />
+  <property name="build.dir" location="bin" />
+  <property name="doc.dir" location="doc" />
+  <property name="dist.dir" location="dist" />
   <property name="libs" location="${basedir}/libs" />
+  <property name="libs.unpacked.dir" location="deps" />
   <property name="debug" value="true" />
 
   <property name="system.rules" value="system.rules" />
@@ -15,20 +21,24 @@
             value="${test.src}/multiplexer/jmx/test/TestConstants.java" />
 
   <path id="project.tools.path">
-    <pathelement location="${build}" />
+    <pathelement location="${build.dir}" />
     <pathelement location="${libs}/protobuf.jar" />
     <pathelement location="${libs}/args4j-2.0.10.jar" />
   </path>
 
+  <filelist id="project.jar.dependencies" dir="${basedir}">
+    <file name="${libs}/protobuf.jar" />
+    <file name="${libs}/netty-3.1.0.BETA3.jar" />
+    <file name="${libs}/google-collect-1.0-rc2.jar" />
+    <file name="${libs}/slf4j-api-1.5.8.jar" />
+    <file name="${libs}/trove-2.0.4.jar" />
+    <file name="${libs}/args4j-2.0.10.jar" />
+  </filelist>
+
   <path id="project.class.path">
-    <pathelement location="${build}" />
-    <pathelement location="${libs}/protobuf.jar" />
-    <pathelement location="${libs}/netty-3.1.0.BETA3.jar" />
-    <pathelement location="${libs}/google-collect-1.0-rc2.jar" />
-    <pathelement location="${libs}/slf4j-api-1.5.8.jar" />
+    <pathelement location="${build.dir}" />
+    <filelist refid="project.jar.dependencies" />
     <pathelement location="${libs}/slf4j-jdk14-1.5.8.jar" />
-    <pathelement location="${libs}/trove-2.0.4.jar" />
-    <pathelement location="${libs}/args4j-2.0.10.jar" />
   </path>
 
   <path id="project.test.class.path">
@@ -36,13 +46,19 @@
     <pathelement location="${libs}/junit-4.6.jar" />
   </path>
 
-  <!-- init -->
+  <!-- - - - - - - - - - - - - - - - - - 
+          target: init                      
+         - - - - - - - - - - - - - - - - - -->
   <target name="init">
-    <mkdir dir="${build}" />
+    <mkdir dir="${build.dir}" />
   </target>
 
-  <!-- all -->
-  <target name="all" depends="build,doc,test" />
+  <!-- ================================= 
+          target: all              
+         ================================= -->
+  <target name="all"
+          depends="build,test,jar,doc"
+          description="run standard targets" />
 
   <!-- macro compile-constants -->
   <macrodef name="compile-constants">
@@ -51,7 +67,7 @@
     <attribute name="outdir" />
     <sequential>
       <javac srcdir="${src}"
-             destdir="${build}"
+             destdir="${build.dir}"
              encoding="utf8"
              classpathref="project.tools.path"
              includes="multiplexer/jmx/tools/CompileConstants.java" />
@@ -70,7 +86,9 @@
     </sequential>
   </macrodef>
 
-  <!-- constants -->
+  <!-- - - - - - - - - - - - - - - - - - 
+          target: constants                      
+         - - - - - - - - - - - - - - - - - -->
   <target name="constants"
           depends="init,constants.check"
           unless="constants.notRequired">
@@ -98,22 +116,28 @@
               targetfile="${test.constants.src}" />
   </target>
 
-  <!-- sources -->
+  <!-- - - - - - - - - - - - - - - - - - 
+          target: sources                      
+         - - - - - - - - - - - - - - - - - -->
   <target name="sources"
           depends="constants"
           description="create the sources that are generated" />
 
-  <!-- test-sources -->
+  <!-- - - - - - - - - - - - - - - - - - 
+          target: test-sources                      
+         - - - - - - - - - - - - - - - - - -->
   <target name="test-sources"
           depends="sources,test-constants"
           description="create the test sources that are generated" />
 
-  <!-- build -->
+  <!-- ================================= 
+          target: build              
+         ================================= -->
   <target name="build"
           depends="init,sources"
           description="compiles the sources with debug=${debug}">
     <javac srcdir="${src}"
-           destdir="${build}"
+           destdir="${build.dir}"
            classpathref="project.class.path"
            source="1.5"
            target="1.5"
@@ -123,11 +147,72 @@
     </javac>
   </target>
 
-  <!-- build-test -->
+  <!-- ================================= 
+          target: jar              
+         ================================= -->
+  <target name="jar"
+          depends="jar-bin, jar-src, jar-bin-with-dependencies"
+          description="create distributable jars" />
+
+  <!-- =================================
+          target: jar-bin
+         ================================= -->
+  <target name="jar-bin"
+          depends="build"
+          description="create distributable jar with compiled classes">
+    <mkdir dir="${dist.dir}" />
+    <jar destfile="${dist.dir}/jmx-${version}.jar"
+         manifestencoding="utf8"
+         index="true"
+         basedir="${build.dir}">
+    </jar>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+          target: jar-src
+         - - - - - - - - - - - - - - - - - -->
+  <target name="jar-src" depends="sources">
+    <mkdir dir="${dist.dir}" />
+    <jar destfile="${dist.dir}/jmx-${version}-src.jar"
+         manifestencoding="utf8"
+         index="true"
+         basedir="${src}">
+    </jar>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - -
+          target: jar-bin-with-dependencies
+         - - - - - - - - - - - - - - - - - -->
+  <target name="jar-bin-with-dependencies"
+          depends="jar-bin, check-jar-bin-with-dependencies"
+          unless="jar-bin-with-dependencies.notRequired">
+    <mkdir dir="${dist.dir}" />
+    <!-- unjar all the included libraries -->
+    <mkdir dir="${libs.unpacked.dir}" />
+    <unjar dest="${libs.unpacked.dir}">
+      <filelist refid="project.jar.dependencies" />
+    </unjar>
+    <jar destfile="${dist.dir}/jmx-${version}-withdeps.jar"
+         manifestencoding="utf8"
+         index="true"
+         basedir="${build.dir}">
+      <fileset dir="${libs.unpacked.dir}" />
+    </jar>
+  </target>
+  <target name="check-jar-bin-with-dependencies">
+    <uptodate property="jar-bin-with-dependencies.notRequired"
+              targetfile="${dist.dir}/jmx-${version}-withdeps.jar">
+      <srcfiles dir="${build.dir}" />
+    </uptodate>
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - - 
+          target: build-test
+         - - - - - - - - - - - - - - - - - -->
   <target name="build-test" depends="init,test-sources,build">
-    <mkdir dir="${build}" />
+    <mkdir dir="${build.dir}" />
     <javac srcdir="${test.src}"
-           destdir="${build}"
+           destdir="${build.dir}"
            source="1.5"
            target="1.5"
            encoding="utf8"
@@ -138,10 +223,13 @@
     </javac>
   </target>
 
-  <!-- test -->
+  <!-- ================================= 
+          target: test              
+         ================================= -->
   <target name="test" depends="build-test" description="run tests">
     <junit printsummary="true" fork="true" haltonfailure="true">
-      <sysproperty key="java.util.logging.config.file" value="jul.test.properties"/>
+      <sysproperty key="java.util.logging.config.file"
+                   value="jul.test.properties" />
       <assertions>
         <enable />
       </assertions>
@@ -156,12 +244,14 @@
     </junit>
   </target>
 
-  <!-- javadoc -->
+  <!-- ================================= 
+          target: doc              
+         ================================= -->
   <target name="doc" depends="init,constants" description="generates Javadoc">
     <javadoc access="protected"
              author="true"
              classpathref="project.class.path"
-             destdir="doc"
+             destdir="${doc.dir"
              sourcepath="${src}"
              encoding="utf8"
              nodeprecated="false"
@@ -179,6 +269,16 @@
       <link href="http://google-collections.googlecode.com/svn/trunk/javadoc/" />
       <package name="*" />
     </javadoc>
+  </target>
+
+  <!-- ================================= 
+          target: clean              
+         ================================= -->
+  <target name="clean" description="removes less important generated files">
+    <delete dir="${build.dir}" />
+    <delete dir="${libs.unpacked.dir}" />
+    <delete dir="${doc.dir}" />
+    <delete dir="${dist.dir}" />
   </target>
 
 </project>
