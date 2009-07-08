@@ -22,6 +22,8 @@
 
 package multiplexer;
 option optimize_for = SPEED;
+option java_package = "multiplexer.protocol";
+option java_outer_classname = "Protocol";
 
 message MultiplexerPeerDescription {
 

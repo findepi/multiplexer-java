@@ -11,10 +11,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import junit.framework.TestCase;
 import multiplexer.jmx.internal.RawMessageCodecs;
-import multiplexer.protocol.Classes;
+import multiplexer.protocol.Protocol;
 import multiplexer.protocol.Constants;
-import multiplexer.protocol.Classes.MultiplexerMessage;
-import multiplexer.protocol.Classes.WelcomeMessage;
+import multiplexer.protocol.Protocol.MultiplexerMessage;
+import multiplexer.protocol.Protocol.WelcomeMessage;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.ChannelFactory;
@@ -150,7 +150,7 @@ public class TestSimpleNettyMultiplexerInteroperability extends TestCase {
 			pipeline.addLast("rawMessageDecoder",
 				new RawMessageCodecs.RawMessageFrameDecoder());
 			pipeline.addLast("multiplexerMessageDecoder", new ProtobufDecoder(
-				Classes.MultiplexerMessage.getDefaultInstance()));
+				Protocol.MultiplexerMessage.getDefaultInstance()));
 
 			// Protocol handler
 			pipeline.addLast("multiplexerProtocolHandler",

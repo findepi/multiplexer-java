@@ -1,7 +1,7 @@
 package multiplexer.jmx.internal;
 
 import multiplexer.protocol.Constants.MessageTypes;
-import multiplexer.protocol.Classes.MultiplexerMessage;
+import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;

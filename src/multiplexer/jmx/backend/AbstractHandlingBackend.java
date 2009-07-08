@@ -1,7 +1,7 @@
 package multiplexer.jmx.backend;
 
 import multiplexer.jmx.internal.Connection;
-import multiplexer.protocol.Classes.MultiplexerMessage;
+import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 /**
  * @author Piotr Findeisen

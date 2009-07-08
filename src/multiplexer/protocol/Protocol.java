@@ -2,8 +2,8 @@
 
 package multiplexer.protocol;
 
-public final class Classes {
-  private Classes() {}
+public final class Protocol {
+  private Protocol() {}
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
   }
@@ -23,13 +23,13 @@ public final class Classes {
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_MultiplexerPeerDescription_descriptor;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_MultiplexerPeerDescription_descriptor;
     }
     
     @Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_MultiplexerPeerDescription_fieldAccessorTable;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_MultiplexerPeerDescription_fieldAccessorTable;
     }
     
     // required uint32 type = 1;
@@ -122,46 +122,46 @@ public final class Classes {
       return size;
     }
     
-    public static multiplexer.protocol.Classes.MultiplexerPeerDescription parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerPeerDescription parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerPeerDescription parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerPeerDescription parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerPeerDescription parseFrom(byte[] data)
+    public static multiplexer.protocol.Protocol.MultiplexerPeerDescription parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerPeerDescription parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerPeerDescription parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerPeerDescription parseFrom(java.io.InputStream input)
+    public static multiplexer.protocol.Protocol.MultiplexerPeerDescription parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerPeerDescription parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerPeerDescription parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerPeerDescription parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerPeerDescription parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerPeerDescription parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerPeerDescription parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
@@ -171,7 +171,7 @@ public final class Classes {
     
     public static Builder newBuilder() { return new Builder(); }
     public Builder newBuilderForType() { return new Builder(); }
-    public static Builder newBuilder(multiplexer.protocol.Classes.MultiplexerPeerDescription prototype) {
+    public static Builder newBuilder(multiplexer.protocol.Protocol.MultiplexerPeerDescription prototype) {
       return new Builder().mergeFrom(prototype);
     }
     
@@ -180,16 +180,16 @@ public final class Classes {
       // Construct using multiplexer.Multiplexer.MultiplexerPeerDescription.newBuilder()
       private Builder() {}
       
-      multiplexer.protocol.Classes.MultiplexerPeerDescription result = new multiplexer.protocol.Classes.MultiplexerPeerDescription();
+      multiplexer.protocol.Protocol.MultiplexerPeerDescription result = new multiplexer.protocol.Protocol.MultiplexerPeerDescription();
       
       @Override
-      protected multiplexer.protocol.Classes.MultiplexerPeerDescription internalGetResult() {
+      protected multiplexer.protocol.Protocol.MultiplexerPeerDescription internalGetResult() {
         return result;
       }
       
       @Override
       public Builder clear() {
-        result = new multiplexer.protocol.Classes.MultiplexerPeerDescription();
+        result = new multiplexer.protocol.Protocol.MultiplexerPeerDescription();
         return this;
       }
       
@@ -201,14 +201,14 @@ public final class Classes {
       @Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return multiplexer.protocol.Classes.MultiplexerPeerDescription.getDescriptor();
+        return multiplexer.protocol.Protocol.MultiplexerPeerDescription.getDescriptor();
       }
       
-      public multiplexer.protocol.Classes.MultiplexerPeerDescription getDefaultInstanceForType() {
-        return multiplexer.protocol.Classes.MultiplexerPeerDescription.getDefaultInstance();
+      public multiplexer.protocol.Protocol.MultiplexerPeerDescription getDefaultInstanceForType() {
+        return multiplexer.protocol.Protocol.MultiplexerPeerDescription.getDefaultInstance();
       }
       
-      public multiplexer.protocol.Classes.MultiplexerPeerDescription build() {
+      public multiplexer.protocol.Protocol.MultiplexerPeerDescription build() {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
             result);
@@ -216,7 +216,7 @@ public final class Classes {
         return buildPartial();
       }
       
-      private multiplexer.protocol.Classes.MultiplexerPeerDescription buildParsed()
+      private multiplexer.protocol.Protocol.MultiplexerPeerDescription buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
@@ -225,24 +225,24 @@ public final class Classes {
         return buildPartial();
       }
       
-      public multiplexer.protocol.Classes.MultiplexerPeerDescription buildPartial() {
-        multiplexer.protocol.Classes.MultiplexerPeerDescription returnMe = result;
+      public multiplexer.protocol.Protocol.MultiplexerPeerDescription buildPartial() {
+        multiplexer.protocol.Protocol.MultiplexerPeerDescription returnMe = result;
         result = null;
         return returnMe;
       }
       
       @Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof multiplexer.protocol.Classes.MultiplexerPeerDescription) {
-          return mergeFrom((multiplexer.protocol.Classes.MultiplexerPeerDescription)other);
+        if (other instanceof multiplexer.protocol.Protocol.MultiplexerPeerDescription) {
+          return mergeFrom((multiplexer.protocol.Protocol.MultiplexerPeerDescription)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(multiplexer.protocol.Classes.MultiplexerPeerDescription other) {
-        if (other == multiplexer.protocol.Classes.MultiplexerPeerDescription.getDefaultInstance()) return this;
+      public Builder mergeFrom(multiplexer.protocol.Protocol.MultiplexerPeerDescription other) {
+        if (other == multiplexer.protocol.Protocol.MultiplexerPeerDescription.getDefaultInstance()) return this;
         if (other.hasType()) {
           setType(other.getType());
         }
@@ -409,7 +409,7 @@ public final class Classes {
     }
     
     static {
-      multiplexer.protocol.Classes.getDescriptor();
+      multiplexer.protocol.Protocol.getDescriptor();
     }
   }
   
@@ -429,13 +429,13 @@ public final class Classes {
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_MultiplexerMessageDescription_descriptor;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_MultiplexerMessageDescription_descriptor;
     }
     
     @Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_MultiplexerMessageDescription_fieldAccessorTable;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_MultiplexerMessageDescription_fieldAccessorTable;
     }
     
     public static final class RoutingRule extends
@@ -454,13 +454,13 @@ public final class Classes {
       
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return multiplexer.protocol.Classes.internal_static_multiplexer_MultiplexerMessageDescription_RoutingRule_descriptor;
+        return multiplexer.protocol.Protocol.internal_static_multiplexer_MultiplexerMessageDescription_RoutingRule_descriptor;
       }
       
       @Override
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return multiplexer.protocol.Classes.internal_static_multiplexer_MultiplexerMessageDescription_RoutingRule_fieldAccessorTable;
+        return multiplexer.protocol.Protocol.internal_static_multiplexer_MultiplexerMessageDescription_RoutingRule_fieldAccessorTable;
       }
       
       public static enum Whom {
@@ -489,7 +489,7 @@ public final class Classes {
         }
         public static final com.google.protobuf.Descriptors.EnumDescriptor
             getDescriptor() {
-          return multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.getDescriptor().getEnumTypes().get(0);
+          return multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.getDescriptor().getEnumTypes().get(0);
         }
         
         private static final Whom[] VALUES = {
@@ -511,7 +511,7 @@ public final class Classes {
         }
         
         static {
-          multiplexer.protocol.Classes.getDescriptor();
+          multiplexer.protocol.Protocol.getDescriptor();
         }
       }
       
@@ -529,9 +529,9 @@ public final class Classes {
       
       // optional .multiplexer.MultiplexerMessageDescription.RoutingRule.Whom whom = 2 [default = ANY];
       private boolean hasWhom;
-      private multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Whom whom_ = multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Whom.ANY;
+      private multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Whom whom_ = multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Whom.ANY;
       public boolean hasWhom() { return hasWhom; }
-      public multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Whom getWhom() { return whom_; }
+      public multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Whom getWhom() { return whom_; }
       
       // optional bool delivery_error_is_error = 3 [default = true];
       private boolean hasDeliveryErrorIsError;
@@ -616,46 +616,46 @@ public final class Classes {
         return size;
       }
       
-      public static multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule parseFrom(
+      public static multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule parseFrom(
           com.google.protobuf.ByteString data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return newBuilder().mergeFrom(data).buildParsed();
       }
-      public static multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule parseFrom(
+      public static multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule parseFrom(
           com.google.protobuf.ByteString data,
           com.google.protobuf.ExtensionRegistry extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return newBuilder().mergeFrom(data, extensionRegistry)
                  .buildParsed();
       }
-      public static multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule parseFrom(byte[] data)
+      public static multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule parseFrom(byte[] data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return newBuilder().mergeFrom(data).buildParsed();
       }
-      public static multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule parseFrom(
+      public static multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule parseFrom(
           byte[] data,
           com.google.protobuf.ExtensionRegistry extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return newBuilder().mergeFrom(data, extensionRegistry)
                  .buildParsed();
       }
-      public static multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule parseFrom(java.io.InputStream input)
+      public static multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule parseFrom(java.io.InputStream input)
           throws java.io.IOException {
         return newBuilder().mergeFrom(input).buildParsed();
       }
-      public static multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule parseFrom(
+      public static multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule parseFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistry extensionRegistry)
           throws java.io.IOException {
         return newBuilder().mergeFrom(input, extensionRegistry)
                  .buildParsed();
       }
-      public static multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule parseFrom(
+      public static multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule parseFrom(
           com.google.protobuf.CodedInputStream input)
           throws java.io.IOException {
         return newBuilder().mergeFrom(input).buildParsed();
       }
-      public static multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule parseFrom(
+      public static multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule parseFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistry extensionRegistry)
           throws java.io.IOException {
@@ -665,7 +665,7 @@ public final class Classes {
       
       public static Builder newBuilder() { return new Builder(); }
       public Builder newBuilderForType() { return new Builder(); }
-      public static Builder newBuilder(multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule prototype) {
+      public static Builder newBuilder(multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule prototype) {
         return new Builder().mergeFrom(prototype);
       }
       
@@ -674,16 +674,16 @@ public final class Classes {
         // Construct using multiplexer.Multiplexer.MultiplexerMessageDescription.RoutingRule.newBuilder()
         private Builder() {}
         
-        multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule result = new multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule();
+        multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule result = new multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule();
         
         @Override
-        protected multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule internalGetResult() {
+        protected multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule internalGetResult() {
           return result;
         }
         
         @Override
         public Builder clear() {
-          result = new multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule();
+          result = new multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule();
           return this;
         }
         
@@ -695,14 +695,14 @@ public final class Classes {
         @Override
         public com.google.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-          return multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.getDescriptor();
+          return multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.getDescriptor();
         }
         
-        public multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule getDefaultInstanceForType() {
-          return multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.getDefaultInstance();
+        public multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule getDefaultInstanceForType() {
+          return multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.getDefaultInstance();
         }
         
-        public multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule build() {
+        public multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule build() {
           if (!isInitialized()) {
             throw new com.google.protobuf.UninitializedMessageException(
               result);
@@ -710,7 +710,7 @@ public final class Classes {
           return buildPartial();
         }
         
-        private multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule buildParsed()
+        private multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule buildParsed()
             throws com.google.protobuf.InvalidProtocolBufferException {
           if (!isInitialized()) {
             throw new com.google.protobuf.UninitializedMessageException(
@@ -719,24 +719,24 @@ public final class Classes {
           return buildPartial();
         }
         
-        public multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule buildPartial() {
-          multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule returnMe = result;
+        public multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule buildPartial() {
+          multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule returnMe = result;
           result = null;
           return returnMe;
         }
         
         @Override
         public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule) {
-            return mergeFrom((multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule)other);
+          if (other instanceof multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule) {
+            return mergeFrom((multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule)other);
           } else {
             super.mergeFrom(other);
             return this;
           }
         }
         
-        public Builder mergeFrom(multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule other) {
-          if (other == multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.getDefaultInstance()) return this;
+        public Builder mergeFrom(multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule other) {
+          if (other == multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.getDefaultInstance()) return this;
           if (other.hasPeer()) {
             setPeer(other.getPeer());
           }
@@ -795,7 +795,7 @@ public final class Classes {
               }
               case 16: {
                 int rawValue = input.readEnum();
-                multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Whom value = multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Whom.valueOf(rawValue);
+                multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Whom value = multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Whom.valueOf(rawValue);
                 if (value == null) {
                   unknownFields.mergeVarintField(2, rawValue);
                 } else {
@@ -864,17 +864,17 @@ public final class Classes {
         public boolean hasWhom() {
           return result.hasWhom();
         }
-        public multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Whom getWhom() {
+        public multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Whom getWhom() {
           return result.getWhom();
         }
-        public Builder setWhom(multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Whom value) {
+        public Builder setWhom(multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Whom value) {
           result.hasWhom = true;
           result.whom_ = value;
           return this;
         }
         public Builder clearWhom() {
           result.hasWhom = false;
-          result.whom_ = multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Whom.ANY;
+          result.whom_ = multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Whom.ANY;
           return this;
         }
         
@@ -934,7 +934,7 @@ public final class Classes {
       }
       
       static {
-        multiplexer.protocol.Classes.getDescriptor();
+        multiplexer.protocol.Protocol.getDescriptor();
       }
     }
     
@@ -957,13 +957,13 @@ public final class Classes {
     public java.lang.String getComment() { return comment_; }
     
     // repeated .multiplexer.MultiplexerMessageDescription.RoutingRule to = 4;
-    private java.util.List<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule> to_ =
+    private java.util.List<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule> to_ =
       java.util.Collections.emptyList();
-    public java.util.List<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule> getToList() {
+    public java.util.List<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule> getToList() {
       return to_;
     }
     public int getToCount() { return to_.size(); }
-    public multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule getTo(int index) {
+    public multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule getTo(int index) {
       return to_.get(index);
     }
     
@@ -986,7 +986,7 @@ public final class Classes {
       if (hasComment()) {
         output.writeString(3, getComment());
       }
-      for (multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule element : getToList()) {
+      for (multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule element : getToList()) {
         output.writeMessage(4, element);
       }
       getUnknownFields().writeTo(output);
@@ -1011,7 +1011,7 @@ public final class Classes {
         size += com.google.protobuf.CodedOutputStream
           .computeStringSize(3, getComment());
       }
-      for (multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule element : getToList()) {
+      for (multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule element : getToList()) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(4, element);
       }
@@ -1020,46 +1020,46 @@ public final class Classes {
       return size;
     }
     
-    public static multiplexer.protocol.Classes.MultiplexerMessageDescription parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerMessageDescription parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessageDescription parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerMessageDescription parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessageDescription parseFrom(byte[] data)
+    public static multiplexer.protocol.Protocol.MultiplexerMessageDescription parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessageDescription parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerMessageDescription parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessageDescription parseFrom(java.io.InputStream input)
+    public static multiplexer.protocol.Protocol.MultiplexerMessageDescription parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessageDescription parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerMessageDescription parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessageDescription parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerMessageDescription parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessageDescription parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerMessageDescription parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
@@ -1069,7 +1069,7 @@ public final class Classes {
     
     public static Builder newBuilder() { return new Builder(); }
     public Builder newBuilderForType() { return new Builder(); }
-    public static Builder newBuilder(multiplexer.protocol.Classes.MultiplexerMessageDescription prototype) {
+    public static Builder newBuilder(multiplexer.protocol.Protocol.MultiplexerMessageDescription prototype) {
       return new Builder().mergeFrom(prototype);
     }
     
@@ -1078,16 +1078,16 @@ public final class Classes {
       // Construct using multiplexer.Multiplexer.MultiplexerMessageDescription.newBuilder()
       private Builder() {}
       
-      multiplexer.protocol.Classes.MultiplexerMessageDescription result = new multiplexer.protocol.Classes.MultiplexerMessageDescription();
+      multiplexer.protocol.Protocol.MultiplexerMessageDescription result = new multiplexer.protocol.Protocol.MultiplexerMessageDescription();
       
       @Override
-      protected multiplexer.protocol.Classes.MultiplexerMessageDescription internalGetResult() {
+      protected multiplexer.protocol.Protocol.MultiplexerMessageDescription internalGetResult() {
         return result;
       }
       
       @Override
       public Builder clear() {
-        result = new multiplexer.protocol.Classes.MultiplexerMessageDescription();
+        result = new multiplexer.protocol.Protocol.MultiplexerMessageDescription();
         return this;
       }
       
@@ -1099,14 +1099,14 @@ public final class Classes {
       @Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return multiplexer.protocol.Classes.MultiplexerMessageDescription.getDescriptor();
+        return multiplexer.protocol.Protocol.MultiplexerMessageDescription.getDescriptor();
       }
       
-      public multiplexer.protocol.Classes.MultiplexerMessageDescription getDefaultInstanceForType() {
-        return multiplexer.protocol.Classes.MultiplexerMessageDescription.getDefaultInstance();
+      public multiplexer.protocol.Protocol.MultiplexerMessageDescription getDefaultInstanceForType() {
+        return multiplexer.protocol.Protocol.MultiplexerMessageDescription.getDefaultInstance();
       }
       
-      public multiplexer.protocol.Classes.MultiplexerMessageDescription build() {
+      public multiplexer.protocol.Protocol.MultiplexerMessageDescription build() {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
             result);
@@ -1114,7 +1114,7 @@ public final class Classes {
         return buildPartial();
       }
       
-      private multiplexer.protocol.Classes.MultiplexerMessageDescription buildParsed()
+      private multiplexer.protocol.Protocol.MultiplexerMessageDescription buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
@@ -1123,28 +1123,28 @@ public final class Classes {
         return buildPartial();
       }
       
-      public multiplexer.protocol.Classes.MultiplexerMessageDescription buildPartial() {
+      public multiplexer.protocol.Protocol.MultiplexerMessageDescription buildPartial() {
         if (result.to_ != java.util.Collections.EMPTY_LIST) {
           result.to_ =
             java.util.Collections.unmodifiableList(result.to_);
         }
-        multiplexer.protocol.Classes.MultiplexerMessageDescription returnMe = result;
+        multiplexer.protocol.Protocol.MultiplexerMessageDescription returnMe = result;
         result = null;
         return returnMe;
       }
       
       @Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof multiplexer.protocol.Classes.MultiplexerMessageDescription) {
-          return mergeFrom((multiplexer.protocol.Classes.MultiplexerMessageDescription)other);
+        if (other instanceof multiplexer.protocol.Protocol.MultiplexerMessageDescription) {
+          return mergeFrom((multiplexer.protocol.Protocol.MultiplexerMessageDescription)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(multiplexer.protocol.Classes.MultiplexerMessageDescription other) {
-        if (other == multiplexer.protocol.Classes.MultiplexerMessageDescription.getDefaultInstance()) return this;
+      public Builder mergeFrom(multiplexer.protocol.Protocol.MultiplexerMessageDescription other) {
+        if (other == multiplexer.protocol.Protocol.MultiplexerMessageDescription.getDefaultInstance()) return this;
         if (other.hasType()) {
           setType(other.getType());
         }
@@ -1156,7 +1156,7 @@ public final class Classes {
         }
         if (!other.to_.isEmpty()) {
           if (result.to_.isEmpty()) {
-            result.to_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule>();
+            result.to_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule>();
           }
           result.to_.addAll(other.to_);
         }
@@ -1207,7 +1207,7 @@ public final class Classes {
               break;
             }
             case 34: {
-              multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Builder subBuilder = multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.newBuilder();
+              multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Builder subBuilder = multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
               addTo(subBuilder.buildPartial());
               break;
@@ -1272,41 +1272,41 @@ public final class Classes {
       }
       
       // repeated .multiplexer.MultiplexerMessageDescription.RoutingRule to = 4;
-      public java.util.List<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule> getToList() {
+      public java.util.List<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule> getToList() {
         return java.util.Collections.unmodifiableList(result.to_);
       }
       public int getToCount() {
         return result.getToCount();
       }
-      public multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule getTo(int index) {
+      public multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule getTo(int index) {
         return result.getTo(index);
       }
-      public Builder setTo(int index, multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule value) {
+      public Builder setTo(int index, multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule value) {
         result.to_.set(index, value);
         return this;
       }
-      public Builder setTo(int index, multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Builder builderForValue) {
+      public Builder setTo(int index, multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Builder builderForValue) {
         result.to_.set(index, builderForValue.build());
         return this;
       }
-      public Builder addTo(multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule value) {
+      public Builder addTo(multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule value) {
         if (result.to_.isEmpty()) {
-          result.to_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule>();
+          result.to_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule>();
         }
         result.to_.add(value);
         return this;
       }
-      public Builder addTo(multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Builder builderForValue) {
+      public Builder addTo(multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Builder builderForValue) {
         if (result.to_.isEmpty()) {
-          result.to_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule>();
+          result.to_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule>();
         }
         result.to_.add(builderForValue.build());
         return this;
       }
       public Builder addAllTo(
-          java.lang.Iterable<? extends multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule> values) {
+          java.lang.Iterable<? extends multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule> values) {
         if (result.to_.isEmpty()) {
-          result.to_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule>();
+          result.to_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule>();
         }
         super.addAll(values, result.to_);
         return this;
@@ -1318,7 +1318,7 @@ public final class Classes {
     }
     
     static {
-      multiplexer.protocol.Classes.getDescriptor();
+      multiplexer.protocol.Protocol.getDescriptor();
     }
   }
   
@@ -1338,13 +1338,13 @@ public final class Classes {
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_LoggingMethod_descriptor;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_LoggingMethod_descriptor;
     }
     
     @Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_LoggingMethod_fieldAccessorTable;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_LoggingMethod_fieldAccessorTable;
     }
     
     public static enum Values {
@@ -1375,7 +1375,7 @@ public final class Classes {
       }
       public static final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptor() {
-        return multiplexer.protocol.Classes.LoggingMethod.getDescriptor().getEnumTypes().get(0);
+        return multiplexer.protocol.Protocol.LoggingMethod.getDescriptor().getEnumTypes().get(0);
       }
       
       private static final Values[] VALUES = {
@@ -1397,7 +1397,7 @@ public final class Classes {
       }
       
       static {
-        multiplexer.protocol.Classes.getDescriptor();
+        multiplexer.protocol.Protocol.getDescriptor();
       }
     }
     
@@ -1424,46 +1424,46 @@ public final class Classes {
       return size;
     }
     
-    public static multiplexer.protocol.Classes.LoggingMethod parseFrom(
+    public static multiplexer.protocol.Protocol.LoggingMethod parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.LoggingMethod parseFrom(
+    public static multiplexer.protocol.Protocol.LoggingMethod parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.LoggingMethod parseFrom(byte[] data)
+    public static multiplexer.protocol.Protocol.LoggingMethod parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.LoggingMethod parseFrom(
+    public static multiplexer.protocol.Protocol.LoggingMethod parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.LoggingMethod parseFrom(java.io.InputStream input)
+    public static multiplexer.protocol.Protocol.LoggingMethod parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.LoggingMethod parseFrom(
+    public static multiplexer.protocol.Protocol.LoggingMethod parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.LoggingMethod parseFrom(
+    public static multiplexer.protocol.Protocol.LoggingMethod parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.LoggingMethod parseFrom(
+    public static multiplexer.protocol.Protocol.LoggingMethod parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
@@ -1473,7 +1473,7 @@ public final class Classes {
     
     public static Builder newBuilder() { return new Builder(); }
     public Builder newBuilderForType() { return new Builder(); }
-    public static Builder newBuilder(multiplexer.protocol.Classes.LoggingMethod prototype) {
+    public static Builder newBuilder(multiplexer.protocol.Protocol.LoggingMethod prototype) {
       return new Builder().mergeFrom(prototype);
     }
     
@@ -1482,16 +1482,16 @@ public final class Classes {
       // Construct using multiplexer.Multiplexer.LoggingMethod.newBuilder()
       private Builder() {}
       
-      multiplexer.protocol.Classes.LoggingMethod result = new multiplexer.protocol.Classes.LoggingMethod();
+      multiplexer.protocol.Protocol.LoggingMethod result = new multiplexer.protocol.Protocol.LoggingMethod();
       
       @Override
-      protected multiplexer.protocol.Classes.LoggingMethod internalGetResult() {
+      protected multiplexer.protocol.Protocol.LoggingMethod internalGetResult() {
         return result;
       }
       
       @Override
       public Builder clear() {
-        result = new multiplexer.protocol.Classes.LoggingMethod();
+        result = new multiplexer.protocol.Protocol.LoggingMethod();
         return this;
       }
       
@@ -1503,14 +1503,14 @@ public final class Classes {
       @Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return multiplexer.protocol.Classes.LoggingMethod.getDescriptor();
+        return multiplexer.protocol.Protocol.LoggingMethod.getDescriptor();
       }
       
-      public multiplexer.protocol.Classes.LoggingMethod getDefaultInstanceForType() {
-        return multiplexer.protocol.Classes.LoggingMethod.getDefaultInstance();
+      public multiplexer.protocol.Protocol.LoggingMethod getDefaultInstanceForType() {
+        return multiplexer.protocol.Protocol.LoggingMethod.getDefaultInstance();
       }
       
-      public multiplexer.protocol.Classes.LoggingMethod build() {
+      public multiplexer.protocol.Protocol.LoggingMethod build() {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
             result);
@@ -1518,7 +1518,7 @@ public final class Classes {
         return buildPartial();
       }
       
-      private multiplexer.protocol.Classes.LoggingMethod buildParsed()
+      private multiplexer.protocol.Protocol.LoggingMethod buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
@@ -1527,24 +1527,24 @@ public final class Classes {
         return buildPartial();
       }
       
-      public multiplexer.protocol.Classes.LoggingMethod buildPartial() {
-        multiplexer.protocol.Classes.LoggingMethod returnMe = result;
+      public multiplexer.protocol.Protocol.LoggingMethod buildPartial() {
+        multiplexer.protocol.Protocol.LoggingMethod returnMe = result;
         result = null;
         return returnMe;
       }
       
       @Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof multiplexer.protocol.Classes.LoggingMethod) {
-          return mergeFrom((multiplexer.protocol.Classes.LoggingMethod)other);
+        if (other instanceof multiplexer.protocol.Protocol.LoggingMethod) {
+          return mergeFrom((multiplexer.protocol.Protocol.LoggingMethod)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(multiplexer.protocol.Classes.LoggingMethod other) {
-        if (other == multiplexer.protocol.Classes.LoggingMethod.getDefaultInstance()) return this;
+      public Builder mergeFrom(multiplexer.protocol.Protocol.LoggingMethod other) {
+        if (other == multiplexer.protocol.Protocol.LoggingMethod.getDefaultInstance()) return this;
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -1586,7 +1586,7 @@ public final class Classes {
     }
     
     static {
-      multiplexer.protocol.Classes.getDescriptor();
+      multiplexer.protocol.Protocol.getDescriptor();
     }
   }
   
@@ -1606,13 +1606,13 @@ public final class Classes {
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_Compression_descriptor;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_Compression_descriptor;
     }
     
     @Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_Compression_fieldAccessorTable;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_Compression_fieldAccessorTable;
     }
     
     public static enum Values {
@@ -1641,7 +1641,7 @@ public final class Classes {
       }
       public static final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptor() {
-        return multiplexer.protocol.Classes.Compression.getDescriptor().getEnumTypes().get(0);
+        return multiplexer.protocol.Protocol.Compression.getDescriptor().getEnumTypes().get(0);
       }
       
       private static final Values[] VALUES = {
@@ -1663,7 +1663,7 @@ public final class Classes {
       }
       
       static {
-        multiplexer.protocol.Classes.getDescriptor();
+        multiplexer.protocol.Protocol.getDescriptor();
       }
     }
     
@@ -1690,46 +1690,46 @@ public final class Classes {
       return size;
     }
     
-    public static multiplexer.protocol.Classes.Compression parseFrom(
+    public static multiplexer.protocol.Protocol.Compression parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.Compression parseFrom(
+    public static multiplexer.protocol.Protocol.Compression parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.Compression parseFrom(byte[] data)
+    public static multiplexer.protocol.Protocol.Compression parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.Compression parseFrom(
+    public static multiplexer.protocol.Protocol.Compression parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.Compression parseFrom(java.io.InputStream input)
+    public static multiplexer.protocol.Protocol.Compression parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.Compression parseFrom(
+    public static multiplexer.protocol.Protocol.Compression parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.Compression parseFrom(
+    public static multiplexer.protocol.Protocol.Compression parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.Compression parseFrom(
+    public static multiplexer.protocol.Protocol.Compression parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
@@ -1739,7 +1739,7 @@ public final class Classes {
     
     public static Builder newBuilder() { return new Builder(); }
     public Builder newBuilderForType() { return new Builder(); }
-    public static Builder newBuilder(multiplexer.protocol.Classes.Compression prototype) {
+    public static Builder newBuilder(multiplexer.protocol.Protocol.Compression prototype) {
       return new Builder().mergeFrom(prototype);
     }
     
@@ -1748,16 +1748,16 @@ public final class Classes {
       // Construct using multiplexer.Multiplexer.Compression.newBuilder()
       private Builder() {}
       
-      multiplexer.protocol.Classes.Compression result = new multiplexer.protocol.Classes.Compression();
+      multiplexer.protocol.Protocol.Compression result = new multiplexer.protocol.Protocol.Compression();
       
       @Override
-      protected multiplexer.protocol.Classes.Compression internalGetResult() {
+      protected multiplexer.protocol.Protocol.Compression internalGetResult() {
         return result;
       }
       
       @Override
       public Builder clear() {
-        result = new multiplexer.protocol.Classes.Compression();
+        result = new multiplexer.protocol.Protocol.Compression();
         return this;
       }
       
@@ -1769,14 +1769,14 @@ public final class Classes {
       @Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return multiplexer.protocol.Classes.Compression.getDescriptor();
+        return multiplexer.protocol.Protocol.Compression.getDescriptor();
       }
       
-      public multiplexer.protocol.Classes.Compression getDefaultInstanceForType() {
-        return multiplexer.protocol.Classes.Compression.getDefaultInstance();
+      public multiplexer.protocol.Protocol.Compression getDefaultInstanceForType() {
+        return multiplexer.protocol.Protocol.Compression.getDefaultInstance();
       }
       
-      public multiplexer.protocol.Classes.Compression build() {
+      public multiplexer.protocol.Protocol.Compression build() {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
             result);
@@ -1784,7 +1784,7 @@ public final class Classes {
         return buildPartial();
       }
       
-      private multiplexer.protocol.Classes.Compression buildParsed()
+      private multiplexer.protocol.Protocol.Compression buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
@@ -1793,24 +1793,24 @@ public final class Classes {
         return buildPartial();
       }
       
-      public multiplexer.protocol.Classes.Compression buildPartial() {
-        multiplexer.protocol.Classes.Compression returnMe = result;
+      public multiplexer.protocol.Protocol.Compression buildPartial() {
+        multiplexer.protocol.Protocol.Compression returnMe = result;
         result = null;
         return returnMe;
       }
       
       @Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof multiplexer.protocol.Classes.Compression) {
-          return mergeFrom((multiplexer.protocol.Classes.Compression)other);
+        if (other instanceof multiplexer.protocol.Protocol.Compression) {
+          return mergeFrom((multiplexer.protocol.Protocol.Compression)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(multiplexer.protocol.Classes.Compression other) {
-        if (other == multiplexer.protocol.Classes.Compression.getDefaultInstance()) return this;
+      public Builder mergeFrom(multiplexer.protocol.Protocol.Compression other) {
+        if (other == multiplexer.protocol.Protocol.Compression.getDefaultInstance()) return this;
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -1852,7 +1852,7 @@ public final class Classes {
     }
     
     static {
-      multiplexer.protocol.Classes.getDescriptor();
+      multiplexer.protocol.Protocol.getDescriptor();
     }
   }
   
@@ -1872,13 +1872,13 @@ public final class Classes {
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_MultiplexerMessage_descriptor;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_MultiplexerMessage_descriptor;
     }
     
     @Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_MultiplexerMessage_fieldAccessorTable;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_MultiplexerMessage_fieldAccessorTable;
     }
     
     // optional uint64 id = 1;
@@ -1925,9 +1925,9 @@ public final class Classes {
     
     // optional .multiplexer.Compression.Values compression = 24 [default = NO_COMPRESSION];
     private boolean hasCompression;
-    private multiplexer.protocol.Classes.Compression.Values compression_ = multiplexer.protocol.Classes.Compression.Values.NO_COMPRESSION;
+    private multiplexer.protocol.Protocol.Compression.Values compression_ = multiplexer.protocol.Protocol.Compression.Values.NO_COMPRESSION;
     public boolean hasCompression() { return hasCompression; }
-    public multiplexer.protocol.Classes.Compression.Values getCompression() { return compression_; }
+    public multiplexer.protocol.Protocol.Compression.Values getCompression() { return compression_; }
     
     // optional uint32 timestamp = 6;
     private boolean hasTimestamp;
@@ -1948,21 +1948,21 @@ public final class Classes {
     public com.google.protobuf.ByteString getWorkflow() { return workflow_; }
     
     // repeated .multiplexer.MultiplexerMessageDescription.RoutingRule override_rrules = 20;
-    private java.util.List<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule> overrideRrules_ =
+    private java.util.List<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule> overrideRrules_ =
       java.util.Collections.emptyList();
-    public java.util.List<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule> getOverrideRrulesList() {
+    public java.util.List<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule> getOverrideRrulesList() {
       return overrideRrules_;
     }
     public int getOverrideRrulesCount() { return overrideRrules_.size(); }
-    public multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule getOverrideRrules(int index) {
+    public multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule getOverrideRrules(int index) {
       return overrideRrules_.get(index);
     }
     
     // optional .multiplexer.LoggingMethod.Values logging_method = 23 [default = BOTH];
     private boolean hasLoggingMethod;
-    private multiplexer.protocol.Classes.LoggingMethod.Values loggingMethod_ = multiplexer.protocol.Classes.LoggingMethod.Values.BOTH;
+    private multiplexer.protocol.Protocol.LoggingMethod.Values loggingMethod_ = multiplexer.protocol.Protocol.LoggingMethod.Values.BOTH;
     public boolean hasLoggingMethod() { return hasLoggingMethod; }
-    public multiplexer.protocol.Classes.LoggingMethod.Values getLoggingMethod() { return loggingMethod_; }
+    public multiplexer.protocol.Protocol.LoggingMethod.Values getLoggingMethod() { return loggingMethod_; }
     
     @Override
     public final boolean isInitialized() {
@@ -1997,7 +1997,7 @@ public final class Classes {
       if (hasWorkflow()) {
         output.writeBytes(8, getWorkflow());
       }
-      for (multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule element : getOverrideRrulesList()) {
+      for (multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule element : getOverrideRrulesList()) {
         output.writeMessage(20, element);
       }
       if (hasReportDeliveryError()) {
@@ -2054,7 +2054,7 @@ public final class Classes {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(8, getWorkflow());
       }
-      for (multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule element : getOverrideRrulesList()) {
+      for (multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule element : getOverrideRrulesList()) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(20, element);
       }
@@ -2079,46 +2079,46 @@ public final class Classes {
       return size;
     }
     
-    public static multiplexer.protocol.Classes.MultiplexerMessage parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerMessage parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessage parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerMessage parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessage parseFrom(byte[] data)
+    public static multiplexer.protocol.Protocol.MultiplexerMessage parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessage parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerMessage parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessage parseFrom(java.io.InputStream input)
+    public static multiplexer.protocol.Protocol.MultiplexerMessage parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessage parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerMessage parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessage parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerMessage parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerMessage parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerMessage parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
@@ -2128,7 +2128,7 @@ public final class Classes {
     
     public static Builder newBuilder() { return new Builder(); }
     public Builder newBuilderForType() { return new Builder(); }
-    public static Builder newBuilder(multiplexer.protocol.Classes.MultiplexerMessage prototype) {
+    public static Builder newBuilder(multiplexer.protocol.Protocol.MultiplexerMessage prototype) {
       return new Builder().mergeFrom(prototype);
     }
     
@@ -2137,16 +2137,16 @@ public final class Classes {
       // Construct using multiplexer.Multiplexer.MultiplexerMessage.newBuilder()
       private Builder() {}
       
-      multiplexer.protocol.Classes.MultiplexerMessage result = new multiplexer.protocol.Classes.MultiplexerMessage();
+      multiplexer.protocol.Protocol.MultiplexerMessage result = new multiplexer.protocol.Protocol.MultiplexerMessage();
       
       @Override
-      protected multiplexer.protocol.Classes.MultiplexerMessage internalGetResult() {
+      protected multiplexer.protocol.Protocol.MultiplexerMessage internalGetResult() {
         return result;
       }
       
       @Override
       public Builder clear() {
-        result = new multiplexer.protocol.Classes.MultiplexerMessage();
+        result = new multiplexer.protocol.Protocol.MultiplexerMessage();
         return this;
       }
       
@@ -2158,14 +2158,14 @@ public final class Classes {
       @Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return multiplexer.protocol.Classes.MultiplexerMessage.getDescriptor();
+        return multiplexer.protocol.Protocol.MultiplexerMessage.getDescriptor();
       }
       
-      public multiplexer.protocol.Classes.MultiplexerMessage getDefaultInstanceForType() {
-        return multiplexer.protocol.Classes.MultiplexerMessage.getDefaultInstance();
+      public multiplexer.protocol.Protocol.MultiplexerMessage getDefaultInstanceForType() {
+        return multiplexer.protocol.Protocol.MultiplexerMessage.getDefaultInstance();
       }
       
-      public multiplexer.protocol.Classes.MultiplexerMessage build() {
+      public multiplexer.protocol.Protocol.MultiplexerMessage build() {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
             result);
@@ -2173,7 +2173,7 @@ public final class Classes {
         return buildPartial();
       }
       
-      private multiplexer.protocol.Classes.MultiplexerMessage buildParsed()
+      private multiplexer.protocol.Protocol.MultiplexerMessage buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
@@ -2182,28 +2182,28 @@ public final class Classes {
         return buildPartial();
       }
       
-      public multiplexer.protocol.Classes.MultiplexerMessage buildPartial() {
+      public multiplexer.protocol.Protocol.MultiplexerMessage buildPartial() {
         if (result.overrideRrules_ != java.util.Collections.EMPTY_LIST) {
           result.overrideRrules_ =
             java.util.Collections.unmodifiableList(result.overrideRrules_);
         }
-        multiplexer.protocol.Classes.MultiplexerMessage returnMe = result;
+        multiplexer.protocol.Protocol.MultiplexerMessage returnMe = result;
         result = null;
         return returnMe;
       }
       
       @Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof multiplexer.protocol.Classes.MultiplexerMessage) {
-          return mergeFrom((multiplexer.protocol.Classes.MultiplexerMessage)other);
+        if (other instanceof multiplexer.protocol.Protocol.MultiplexerMessage) {
+          return mergeFrom((multiplexer.protocol.Protocol.MultiplexerMessage)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(multiplexer.protocol.Classes.MultiplexerMessage other) {
-        if (other == multiplexer.protocol.Classes.MultiplexerMessage.getDefaultInstance()) return this;
+      public Builder mergeFrom(multiplexer.protocol.Protocol.MultiplexerMessage other) {
+        if (other == multiplexer.protocol.Protocol.MultiplexerMessage.getDefaultInstance()) return this;
         if (other.hasId()) {
           setId(other.getId());
         }
@@ -2239,7 +2239,7 @@ public final class Classes {
         }
         if (!other.overrideRrules_.isEmpty()) {
           if (result.overrideRrules_.isEmpty()) {
-            result.overrideRrules_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule>();
+            result.overrideRrules_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule>();
           }
           result.overrideRrules_.addAll(other.overrideRrules_);
         }
@@ -2313,7 +2313,7 @@ public final class Classes {
               break;
             }
             case 162: {
-              multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Builder subBuilder = multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.newBuilder();
+              multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Builder subBuilder = multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
               addOverrideRrules(subBuilder.buildPartial());
               break;
@@ -2328,7 +2328,7 @@ public final class Classes {
             }
             case 184: {
               int rawValue = input.readEnum();
-              multiplexer.protocol.Classes.LoggingMethod.Values value = multiplexer.protocol.Classes.LoggingMethod.Values.valueOf(rawValue);
+              multiplexer.protocol.Protocol.LoggingMethod.Values value = multiplexer.protocol.Protocol.LoggingMethod.Values.valueOf(rawValue);
               if (value == null) {
                 unknownFields.mergeVarintField(23, rawValue);
               } else {
@@ -2338,7 +2338,7 @@ public final class Classes {
             }
             case 192: {
               int rawValue = input.readEnum();
-              multiplexer.protocol.Classes.Compression.Values value = multiplexer.protocol.Classes.Compression.Values.valueOf(rawValue);
+              multiplexer.protocol.Protocol.Compression.Values value = multiplexer.protocol.Protocol.Compression.Values.valueOf(rawValue);
               if (value == null) {
                 unknownFields.mergeVarintField(24, rawValue);
               } else {
@@ -2481,17 +2481,17 @@ public final class Classes {
       public boolean hasCompression() {
         return result.hasCompression();
       }
-      public multiplexer.protocol.Classes.Compression.Values getCompression() {
+      public multiplexer.protocol.Protocol.Compression.Values getCompression() {
         return result.getCompression();
       }
-      public Builder setCompression(multiplexer.protocol.Classes.Compression.Values value) {
+      public Builder setCompression(multiplexer.protocol.Protocol.Compression.Values value) {
         result.hasCompression = true;
         result.compression_ = value;
         return this;
       }
       public Builder clearCompression() {
         result.hasCompression = false;
-        result.compression_ = multiplexer.protocol.Classes.Compression.Values.NO_COMPRESSION;
+        result.compression_ = multiplexer.protocol.Protocol.Compression.Values.NO_COMPRESSION;
         return this;
       }
       
@@ -2550,41 +2550,41 @@ public final class Classes {
       }
       
       // repeated .multiplexer.MultiplexerMessageDescription.RoutingRule override_rrules = 20;
-      public java.util.List<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule> getOverrideRrulesList() {
+      public java.util.List<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule> getOverrideRrulesList() {
         return java.util.Collections.unmodifiableList(result.overrideRrules_);
       }
       public int getOverrideRrulesCount() {
         return result.getOverrideRrulesCount();
       }
-      public multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule getOverrideRrules(int index) {
+      public multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule getOverrideRrules(int index) {
         return result.getOverrideRrules(index);
       }
-      public Builder setOverrideRrules(int index, multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule value) {
+      public Builder setOverrideRrules(int index, multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule value) {
         result.overrideRrules_.set(index, value);
         return this;
       }
-      public Builder setOverrideRrules(int index, multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Builder builderForValue) {
+      public Builder setOverrideRrules(int index, multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Builder builderForValue) {
         result.overrideRrules_.set(index, builderForValue.build());
         return this;
       }
-      public Builder addOverrideRrules(multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule value) {
+      public Builder addOverrideRrules(multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule value) {
         if (result.overrideRrules_.isEmpty()) {
-          result.overrideRrules_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule>();
+          result.overrideRrules_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule>();
         }
         result.overrideRrules_.add(value);
         return this;
       }
-      public Builder addOverrideRrules(multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Builder builderForValue) {
+      public Builder addOverrideRrules(multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Builder builderForValue) {
         if (result.overrideRrules_.isEmpty()) {
-          result.overrideRrules_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule>();
+          result.overrideRrules_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule>();
         }
         result.overrideRrules_.add(builderForValue.build());
         return this;
       }
       public Builder addAllOverrideRrules(
-          java.lang.Iterable<? extends multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule> values) {
+          java.lang.Iterable<? extends multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule> values) {
         if (result.overrideRrules_.isEmpty()) {
-          result.overrideRrules_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule>();
+          result.overrideRrules_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule>();
         }
         super.addAll(values, result.overrideRrules_);
         return this;
@@ -2598,23 +2598,23 @@ public final class Classes {
       public boolean hasLoggingMethod() {
         return result.hasLoggingMethod();
       }
-      public multiplexer.protocol.Classes.LoggingMethod.Values getLoggingMethod() {
+      public multiplexer.protocol.Protocol.LoggingMethod.Values getLoggingMethod() {
         return result.getLoggingMethod();
       }
-      public Builder setLoggingMethod(multiplexer.protocol.Classes.LoggingMethod.Values value) {
+      public Builder setLoggingMethod(multiplexer.protocol.Protocol.LoggingMethod.Values value) {
         result.hasLoggingMethod = true;
         result.loggingMethod_ = value;
         return this;
       }
       public Builder clearLoggingMethod() {
         result.hasLoggingMethod = false;
-        result.loggingMethod_ = multiplexer.protocol.Classes.LoggingMethod.Values.BOTH;
+        result.loggingMethod_ = multiplexer.protocol.Protocol.LoggingMethod.Values.BOTH;
         return this;
       }
     }
     
     static {
-      multiplexer.protocol.Classes.getDescriptor();
+      multiplexer.protocol.Protocol.getDescriptor();
     }
   }
   
@@ -2634,13 +2634,13 @@ public final class Classes {
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_WelcomeMessage_descriptor;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_WelcomeMessage_descriptor;
     }
     
     @Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_WelcomeMessage_fieldAccessorTable;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_WelcomeMessage_fieldAccessorTable;
     }
     
     // required uint32 type = 1;
@@ -2707,46 +2707,46 @@ public final class Classes {
       return size;
     }
     
-    public static multiplexer.protocol.Classes.WelcomeMessage parseFrom(
+    public static multiplexer.protocol.Protocol.WelcomeMessage parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.WelcomeMessage parseFrom(
+    public static multiplexer.protocol.Protocol.WelcomeMessage parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.WelcomeMessage parseFrom(byte[] data)
+    public static multiplexer.protocol.Protocol.WelcomeMessage parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.WelcomeMessage parseFrom(
+    public static multiplexer.protocol.Protocol.WelcomeMessage parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.WelcomeMessage parseFrom(java.io.InputStream input)
+    public static multiplexer.protocol.Protocol.WelcomeMessage parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.WelcomeMessage parseFrom(
+    public static multiplexer.protocol.Protocol.WelcomeMessage parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.WelcomeMessage parseFrom(
+    public static multiplexer.protocol.Protocol.WelcomeMessage parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.WelcomeMessage parseFrom(
+    public static multiplexer.protocol.Protocol.WelcomeMessage parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
@@ -2756,7 +2756,7 @@ public final class Classes {
     
     public static Builder newBuilder() { return new Builder(); }
     public Builder newBuilderForType() { return new Builder(); }
-    public static Builder newBuilder(multiplexer.protocol.Classes.WelcomeMessage prototype) {
+    public static Builder newBuilder(multiplexer.protocol.Protocol.WelcomeMessage prototype) {
       return new Builder().mergeFrom(prototype);
     }
     
@@ -2765,16 +2765,16 @@ public final class Classes {
       // Construct using multiplexer.Multiplexer.WelcomeMessage.newBuilder()
       private Builder() {}
       
-      multiplexer.protocol.Classes.WelcomeMessage result = new multiplexer.protocol.Classes.WelcomeMessage();
+      multiplexer.protocol.Protocol.WelcomeMessage result = new multiplexer.protocol.Protocol.WelcomeMessage();
       
       @Override
-      protected multiplexer.protocol.Classes.WelcomeMessage internalGetResult() {
+      protected multiplexer.protocol.Protocol.WelcomeMessage internalGetResult() {
         return result;
       }
       
       @Override
       public Builder clear() {
-        result = new multiplexer.protocol.Classes.WelcomeMessage();
+        result = new multiplexer.protocol.Protocol.WelcomeMessage();
         return this;
       }
       
@@ -2786,14 +2786,14 @@ public final class Classes {
       @Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return multiplexer.protocol.Classes.WelcomeMessage.getDescriptor();
+        return multiplexer.protocol.Protocol.WelcomeMessage.getDescriptor();
       }
       
-      public multiplexer.protocol.Classes.WelcomeMessage getDefaultInstanceForType() {
-        return multiplexer.protocol.Classes.WelcomeMessage.getDefaultInstance();
+      public multiplexer.protocol.Protocol.WelcomeMessage getDefaultInstanceForType() {
+        return multiplexer.protocol.Protocol.WelcomeMessage.getDefaultInstance();
       }
       
-      public multiplexer.protocol.Classes.WelcomeMessage build() {
+      public multiplexer.protocol.Protocol.WelcomeMessage build() {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
             result);
@@ -2801,7 +2801,7 @@ public final class Classes {
         return buildPartial();
       }
       
-      private multiplexer.protocol.Classes.WelcomeMessage buildParsed()
+      private multiplexer.protocol.Protocol.WelcomeMessage buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
@@ -2810,24 +2810,24 @@ public final class Classes {
         return buildPartial();
       }
       
-      public multiplexer.protocol.Classes.WelcomeMessage buildPartial() {
-        multiplexer.protocol.Classes.WelcomeMessage returnMe = result;
+      public multiplexer.protocol.Protocol.WelcomeMessage buildPartial() {
+        multiplexer.protocol.Protocol.WelcomeMessage returnMe = result;
         result = null;
         return returnMe;
       }
       
       @Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof multiplexer.protocol.Classes.WelcomeMessage) {
-          return mergeFrom((multiplexer.protocol.Classes.WelcomeMessage)other);
+        if (other instanceof multiplexer.protocol.Protocol.WelcomeMessage) {
+          return mergeFrom((multiplexer.protocol.Protocol.WelcomeMessage)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(multiplexer.protocol.Classes.WelcomeMessage other) {
-        if (other == multiplexer.protocol.Classes.WelcomeMessage.getDefaultInstance()) return this;
+      public Builder mergeFrom(multiplexer.protocol.Protocol.WelcomeMessage other) {
+        if (other == multiplexer.protocol.Protocol.WelcomeMessage.getDefaultInstance()) return this;
         if (other.hasType()) {
           setType(other.getType());
         }
@@ -2944,7 +2944,7 @@ public final class Classes {
     }
     
     static {
-      multiplexer.protocol.Classes.getDescriptor();
+      multiplexer.protocol.Protocol.getDescriptor();
     }
   }
   
@@ -2964,13 +2964,13 @@ public final class Classes {
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_BackendForPacketSearch_descriptor;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_BackendForPacketSearch_descriptor;
     }
     
     @Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_BackendForPacketSearch_fieldAccessorTable;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_BackendForPacketSearch_fieldAccessorTable;
     }
     
     // required uint32 packet_type = 1;
@@ -3010,46 +3010,46 @@ public final class Classes {
       return size;
     }
     
-    public static multiplexer.protocol.Classes.BackendForPacketSearch parseFrom(
+    public static multiplexer.protocol.Protocol.BackendForPacketSearch parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.BackendForPacketSearch parseFrom(
+    public static multiplexer.protocol.Protocol.BackendForPacketSearch parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.BackendForPacketSearch parseFrom(byte[] data)
+    public static multiplexer.protocol.Protocol.BackendForPacketSearch parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.BackendForPacketSearch parseFrom(
+    public static multiplexer.protocol.Protocol.BackendForPacketSearch parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.BackendForPacketSearch parseFrom(java.io.InputStream input)
+    public static multiplexer.protocol.Protocol.BackendForPacketSearch parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.BackendForPacketSearch parseFrom(
+    public static multiplexer.protocol.Protocol.BackendForPacketSearch parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.BackendForPacketSearch parseFrom(
+    public static multiplexer.protocol.Protocol.BackendForPacketSearch parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.BackendForPacketSearch parseFrom(
+    public static multiplexer.protocol.Protocol.BackendForPacketSearch parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
@@ -3059,7 +3059,7 @@ public final class Classes {
     
     public static Builder newBuilder() { return new Builder(); }
     public Builder newBuilderForType() { return new Builder(); }
-    public static Builder newBuilder(multiplexer.protocol.Classes.BackendForPacketSearch prototype) {
+    public static Builder newBuilder(multiplexer.protocol.Protocol.BackendForPacketSearch prototype) {
       return new Builder().mergeFrom(prototype);
     }
     
@@ -3068,16 +3068,16 @@ public final class Classes {
       // Construct using multiplexer.Multiplexer.BackendForPacketSearch.newBuilder()
       private Builder() {}
       
-      multiplexer.protocol.Classes.BackendForPacketSearch result = new multiplexer.protocol.Classes.BackendForPacketSearch();
+      multiplexer.protocol.Protocol.BackendForPacketSearch result = new multiplexer.protocol.Protocol.BackendForPacketSearch();
       
       @Override
-      protected multiplexer.protocol.Classes.BackendForPacketSearch internalGetResult() {
+      protected multiplexer.protocol.Protocol.BackendForPacketSearch internalGetResult() {
         return result;
       }
       
       @Override
       public Builder clear() {
-        result = new multiplexer.protocol.Classes.BackendForPacketSearch();
+        result = new multiplexer.protocol.Protocol.BackendForPacketSearch();
         return this;
       }
       
@@ -3089,14 +3089,14 @@ public final class Classes {
       @Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return multiplexer.protocol.Classes.BackendForPacketSearch.getDescriptor();
+        return multiplexer.protocol.Protocol.BackendForPacketSearch.getDescriptor();
       }
       
-      public multiplexer.protocol.Classes.BackendForPacketSearch getDefaultInstanceForType() {
-        return multiplexer.protocol.Classes.BackendForPacketSearch.getDefaultInstance();
+      public multiplexer.protocol.Protocol.BackendForPacketSearch getDefaultInstanceForType() {
+        return multiplexer.protocol.Protocol.BackendForPacketSearch.getDefaultInstance();
       }
       
-      public multiplexer.protocol.Classes.BackendForPacketSearch build() {
+      public multiplexer.protocol.Protocol.BackendForPacketSearch build() {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
             result);
@@ -3104,7 +3104,7 @@ public final class Classes {
         return buildPartial();
       }
       
-      private multiplexer.protocol.Classes.BackendForPacketSearch buildParsed()
+      private multiplexer.protocol.Protocol.BackendForPacketSearch buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
@@ -3113,24 +3113,24 @@ public final class Classes {
         return buildPartial();
       }
       
-      public multiplexer.protocol.Classes.BackendForPacketSearch buildPartial() {
-        multiplexer.protocol.Classes.BackendForPacketSearch returnMe = result;
+      public multiplexer.protocol.Protocol.BackendForPacketSearch buildPartial() {
+        multiplexer.protocol.Protocol.BackendForPacketSearch returnMe = result;
         result = null;
         return returnMe;
       }
       
       @Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof multiplexer.protocol.Classes.BackendForPacketSearch) {
-          return mergeFrom((multiplexer.protocol.Classes.BackendForPacketSearch)other);
+        if (other instanceof multiplexer.protocol.Protocol.BackendForPacketSearch) {
+          return mergeFrom((multiplexer.protocol.Protocol.BackendForPacketSearch)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(multiplexer.protocol.Classes.BackendForPacketSearch other) {
-        if (other == multiplexer.protocol.Classes.BackendForPacketSearch.getDefaultInstance()) return this;
+      public Builder mergeFrom(multiplexer.protocol.Protocol.BackendForPacketSearch other) {
+        if (other == multiplexer.protocol.Protocol.BackendForPacketSearch.getDefaultInstance()) return this;
         if (other.hasPacketType()) {
           setPacketType(other.getPacketType());
         }
@@ -3197,7 +3197,7 @@ public final class Classes {
     }
     
     static {
-      multiplexer.protocol.Classes.getDescriptor();
+      multiplexer.protocol.Protocol.getDescriptor();
     }
   }
   
@@ -3217,13 +3217,13 @@ public final class Classes {
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_DeliveryError_descriptor;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_DeliveryError_descriptor;
     }
     
     @Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_DeliveryError_fieldAccessorTable;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_DeliveryError_fieldAccessorTable;
     }
     
     // required uint64 packet_id = 1;
@@ -3257,9 +3257,9 @@ public final class Classes {
     
     // optional .multiplexer.MultiplexerMessage original_message = 20;
     private boolean hasOriginalMessage;
-    private multiplexer.protocol.Classes.MultiplexerMessage originalMessage_ = multiplexer.protocol.Classes.MultiplexerMessage.getDefaultInstance();
+    private multiplexer.protocol.Protocol.MultiplexerMessage originalMessage_ = multiplexer.protocol.Protocol.MultiplexerMessage.getDefaultInstance();
     public boolean hasOriginalMessage() { return hasOriginalMessage; }
-    public multiplexer.protocol.Classes.MultiplexerMessage getOriginalMessage() { return originalMessage_; }
+    public multiplexer.protocol.Protocol.MultiplexerMessage getOriginalMessage() { return originalMessage_; }
     
     @Override
     public final boolean isInitialized() {
@@ -3323,46 +3323,46 @@ public final class Classes {
       return size;
     }
     
-    public static multiplexer.protocol.Classes.DeliveryError parseFrom(
+    public static multiplexer.protocol.Protocol.DeliveryError parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.DeliveryError parseFrom(
+    public static multiplexer.protocol.Protocol.DeliveryError parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.DeliveryError parseFrom(byte[] data)
+    public static multiplexer.protocol.Protocol.DeliveryError parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.DeliveryError parseFrom(
+    public static multiplexer.protocol.Protocol.DeliveryError parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.DeliveryError parseFrom(java.io.InputStream input)
+    public static multiplexer.protocol.Protocol.DeliveryError parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.DeliveryError parseFrom(
+    public static multiplexer.protocol.Protocol.DeliveryError parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.DeliveryError parseFrom(
+    public static multiplexer.protocol.Protocol.DeliveryError parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.DeliveryError parseFrom(
+    public static multiplexer.protocol.Protocol.DeliveryError parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
@@ -3372,7 +3372,7 @@ public final class Classes {
     
     public static Builder newBuilder() { return new Builder(); }
     public Builder newBuilderForType() { return new Builder(); }
-    public static Builder newBuilder(multiplexer.protocol.Classes.DeliveryError prototype) {
+    public static Builder newBuilder(multiplexer.protocol.Protocol.DeliveryError prototype) {
       return new Builder().mergeFrom(prototype);
     }
     
@@ -3381,16 +3381,16 @@ public final class Classes {
       // Construct using multiplexer.Multiplexer.DeliveryError.newBuilder()
       private Builder() {}
       
-      multiplexer.protocol.Classes.DeliveryError result = new multiplexer.protocol.Classes.DeliveryError();
+      multiplexer.protocol.Protocol.DeliveryError result = new multiplexer.protocol.Protocol.DeliveryError();
       
       @Override
-      protected multiplexer.protocol.Classes.DeliveryError internalGetResult() {
+      protected multiplexer.protocol.Protocol.DeliveryError internalGetResult() {
         return result;
       }
       
       @Override
       public Builder clear() {
-        result = new multiplexer.protocol.Classes.DeliveryError();
+        result = new multiplexer.protocol.Protocol.DeliveryError();
         return this;
       }
       
@@ -3402,14 +3402,14 @@ public final class Classes {
       @Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return multiplexer.protocol.Classes.DeliveryError.getDescriptor();
+        return multiplexer.protocol.Protocol.DeliveryError.getDescriptor();
       }
       
-      public multiplexer.protocol.Classes.DeliveryError getDefaultInstanceForType() {
-        return multiplexer.protocol.Classes.DeliveryError.getDefaultInstance();
+      public multiplexer.protocol.Protocol.DeliveryError getDefaultInstanceForType() {
+        return multiplexer.protocol.Protocol.DeliveryError.getDefaultInstance();
       }
       
-      public multiplexer.protocol.Classes.DeliveryError build() {
+      public multiplexer.protocol.Protocol.DeliveryError build() {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
             result);
@@ -3417,7 +3417,7 @@ public final class Classes {
         return buildPartial();
       }
       
-      private multiplexer.protocol.Classes.DeliveryError buildParsed()
+      private multiplexer.protocol.Protocol.DeliveryError buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
@@ -3426,28 +3426,28 @@ public final class Classes {
         return buildPartial();
       }
       
-      public multiplexer.protocol.Classes.DeliveryError buildPartial() {
+      public multiplexer.protocol.Protocol.DeliveryError buildPartial() {
         if (result.failedType_ != java.util.Collections.EMPTY_LIST) {
           result.failedType_ =
             java.util.Collections.unmodifiableList(result.failedType_);
         }
-        multiplexer.protocol.Classes.DeliveryError returnMe = result;
+        multiplexer.protocol.Protocol.DeliveryError returnMe = result;
         result = null;
         return returnMe;
       }
       
       @Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof multiplexer.protocol.Classes.DeliveryError) {
-          return mergeFrom((multiplexer.protocol.Classes.DeliveryError)other);
+        if (other instanceof multiplexer.protocol.Protocol.DeliveryError) {
+          return mergeFrom((multiplexer.protocol.Protocol.DeliveryError)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(multiplexer.protocol.Classes.DeliveryError other) {
-        if (other == multiplexer.protocol.Classes.DeliveryError.getDefaultInstance()) return this;
+      public Builder mergeFrom(multiplexer.protocol.Protocol.DeliveryError other) {
+        if (other == multiplexer.protocol.Protocol.DeliveryError.getDefaultInstance()) return this;
         if (other.hasPacketId()) {
           setPacketId(other.getPacketId());
         }
@@ -3517,7 +3517,7 @@ public final class Classes {
               break;
             }
             case 162: {
-              multiplexer.protocol.Classes.MultiplexerMessage.Builder subBuilder = multiplexer.protocol.Classes.MultiplexerMessage.newBuilder();
+              multiplexer.protocol.Protocol.MultiplexerMessage.Builder subBuilder = multiplexer.protocol.Protocol.MultiplexerMessage.newBuilder();
               if (hasOriginalMessage()) {
                 subBuilder.mergeFrom(getOriginalMessage());
               }
@@ -3622,24 +3622,24 @@ public final class Classes {
       public boolean hasOriginalMessage() {
         return result.hasOriginalMessage();
       }
-      public multiplexer.protocol.Classes.MultiplexerMessage getOriginalMessage() {
+      public multiplexer.protocol.Protocol.MultiplexerMessage getOriginalMessage() {
         return result.getOriginalMessage();
       }
-      public Builder setOriginalMessage(multiplexer.protocol.Classes.MultiplexerMessage value) {
+      public Builder setOriginalMessage(multiplexer.protocol.Protocol.MultiplexerMessage value) {
         result.hasOriginalMessage = true;
         result.originalMessage_ = value;
         return this;
       }
-      public Builder setOriginalMessage(multiplexer.protocol.Classes.MultiplexerMessage.Builder builderForValue) {
+      public Builder setOriginalMessage(multiplexer.protocol.Protocol.MultiplexerMessage.Builder builderForValue) {
         result.hasOriginalMessage = true;
         result.originalMessage_ = builderForValue.build();
         return this;
       }
-      public Builder mergeOriginalMessage(multiplexer.protocol.Classes.MultiplexerMessage value) {
+      public Builder mergeOriginalMessage(multiplexer.protocol.Protocol.MultiplexerMessage value) {
         if (result.hasOriginalMessage() &&
-            result.originalMessage_ != multiplexer.protocol.Classes.MultiplexerMessage.getDefaultInstance()) {
+            result.originalMessage_ != multiplexer.protocol.Protocol.MultiplexerMessage.getDefaultInstance()) {
           result.originalMessage_ =
-            multiplexer.protocol.Classes.MultiplexerMessage.newBuilder(result.originalMessage_).mergeFrom(value).buildPartial();
+            multiplexer.protocol.Protocol.MultiplexerMessage.newBuilder(result.originalMessage_).mergeFrom(value).buildPartial();
         } else {
           result.originalMessage_ = value;
         }
@@ -3648,13 +3648,13 @@ public final class Classes {
       }
       public Builder clearOriginalMessage() {
         result.hasOriginalMessage = false;
-        result.originalMessage_ = multiplexer.protocol.Classes.MultiplexerMessage.getDefaultInstance();
+        result.originalMessage_ = multiplexer.protocol.Protocol.MultiplexerMessage.getDefaultInstance();
         return this;
       }
     }
     
     static {
-      multiplexer.protocol.Classes.getDescriptor();
+      multiplexer.protocol.Protocol.getDescriptor();
     }
   }
   
@@ -3674,43 +3674,43 @@ public final class Classes {
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_MultiplexerRules_descriptor;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_MultiplexerRules_descriptor;
     }
     
     @Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_MultiplexerRules_fieldAccessorTable;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_MultiplexerRules_fieldAccessorTable;
     }
     
     // repeated .multiplexer.MultiplexerMessageDescription type = 1;
-    private java.util.List<multiplexer.protocol.Classes.MultiplexerMessageDescription> type_ =
+    private java.util.List<multiplexer.protocol.Protocol.MultiplexerMessageDescription> type_ =
       java.util.Collections.emptyList();
-    public java.util.List<multiplexer.protocol.Classes.MultiplexerMessageDescription> getTypeList() {
+    public java.util.List<multiplexer.protocol.Protocol.MultiplexerMessageDescription> getTypeList() {
       return type_;
     }
     public int getTypeCount() { return type_.size(); }
-    public multiplexer.protocol.Classes.MultiplexerMessageDescription getType(int index) {
+    public multiplexer.protocol.Protocol.MultiplexerMessageDescription getType(int index) {
       return type_.get(index);
     }
     
     // repeated .multiplexer.MultiplexerPeerDescription peer = 2;
-    private java.util.List<multiplexer.protocol.Classes.MultiplexerPeerDescription> peer_ =
+    private java.util.List<multiplexer.protocol.Protocol.MultiplexerPeerDescription> peer_ =
       java.util.Collections.emptyList();
-    public java.util.List<multiplexer.protocol.Classes.MultiplexerPeerDescription> getPeerList() {
+    public java.util.List<multiplexer.protocol.Protocol.MultiplexerPeerDescription> getPeerList() {
       return peer_;
     }
     public int getPeerCount() { return peer_.size(); }
-    public multiplexer.protocol.Classes.MultiplexerPeerDescription getPeer(int index) {
+    public multiplexer.protocol.Protocol.MultiplexerPeerDescription getPeer(int index) {
       return peer_.get(index);
     }
     
     @Override
     public final boolean isInitialized() {
-      for (multiplexer.protocol.Classes.MultiplexerMessageDescription element : getTypeList()) {
+      for (multiplexer.protocol.Protocol.MultiplexerMessageDescription element : getTypeList()) {
         if (!element.isInitialized()) return false;
       }
-      for (multiplexer.protocol.Classes.MultiplexerPeerDescription element : getPeerList()) {
+      for (multiplexer.protocol.Protocol.MultiplexerPeerDescription element : getPeerList()) {
         if (!element.isInitialized()) return false;
       }
       return true;
@@ -3719,10 +3719,10 @@ public final class Classes {
     @Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      for (multiplexer.protocol.Classes.MultiplexerMessageDescription element : getTypeList()) {
+      for (multiplexer.protocol.Protocol.MultiplexerMessageDescription element : getTypeList()) {
         output.writeMessage(1, element);
       }
-      for (multiplexer.protocol.Classes.MultiplexerPeerDescription element : getPeerList()) {
+      for (multiplexer.protocol.Protocol.MultiplexerPeerDescription element : getPeerList()) {
         output.writeMessage(2, element);
       }
       getUnknownFields().writeTo(output);
@@ -3735,11 +3735,11 @@ public final class Classes {
       if (size != -1) return size;
     
       size = 0;
-      for (multiplexer.protocol.Classes.MultiplexerMessageDescription element : getTypeList()) {
+      for (multiplexer.protocol.Protocol.MultiplexerMessageDescription element : getTypeList()) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, element);
       }
-      for (multiplexer.protocol.Classes.MultiplexerPeerDescription element : getPeerList()) {
+      for (multiplexer.protocol.Protocol.MultiplexerPeerDescription element : getPeerList()) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(2, element);
       }
@@ -3748,46 +3748,46 @@ public final class Classes {
       return size;
     }
     
-    public static multiplexer.protocol.Classes.MultiplexerRules parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerRules parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerRules parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerRules parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerRules parseFrom(byte[] data)
+    public static multiplexer.protocol.Protocol.MultiplexerRules parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerRules parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerRules parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerRules parseFrom(java.io.InputStream input)
+    public static multiplexer.protocol.Protocol.MultiplexerRules parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerRules parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerRules parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerRules parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerRules parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.MultiplexerRules parseFrom(
+    public static multiplexer.protocol.Protocol.MultiplexerRules parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
@@ -3797,7 +3797,7 @@ public final class Classes {
     
     public static Builder newBuilder() { return new Builder(); }
     public Builder newBuilderForType() { return new Builder(); }
-    public static Builder newBuilder(multiplexer.protocol.Classes.MultiplexerRules prototype) {
+    public static Builder newBuilder(multiplexer.protocol.Protocol.MultiplexerRules prototype) {
       return new Builder().mergeFrom(prototype);
     }
     
@@ -3806,16 +3806,16 @@ public final class Classes {
       // Construct using multiplexer.Multiplexer.MultiplexerRules.newBuilder()
       private Builder() {}
       
-      multiplexer.protocol.Classes.MultiplexerRules result = new multiplexer.protocol.Classes.MultiplexerRules();
+      multiplexer.protocol.Protocol.MultiplexerRules result = new multiplexer.protocol.Protocol.MultiplexerRules();
       
       @Override
-      protected multiplexer.protocol.Classes.MultiplexerRules internalGetResult() {
+      protected multiplexer.protocol.Protocol.MultiplexerRules internalGetResult() {
         return result;
       }
       
       @Override
       public Builder clear() {
-        result = new multiplexer.protocol.Classes.MultiplexerRules();
+        result = new multiplexer.protocol.Protocol.MultiplexerRules();
         return this;
       }
       
@@ -3827,14 +3827,14 @@ public final class Classes {
       @Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return multiplexer.protocol.Classes.MultiplexerRules.getDescriptor();
+        return multiplexer.protocol.Protocol.MultiplexerRules.getDescriptor();
       }
       
-      public multiplexer.protocol.Classes.MultiplexerRules getDefaultInstanceForType() {
-        return multiplexer.protocol.Classes.MultiplexerRules.getDefaultInstance();
+      public multiplexer.protocol.Protocol.MultiplexerRules getDefaultInstanceForType() {
+        return multiplexer.protocol.Protocol.MultiplexerRules.getDefaultInstance();
       }
       
-      public multiplexer.protocol.Classes.MultiplexerRules build() {
+      public multiplexer.protocol.Protocol.MultiplexerRules build() {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
             result);
@@ -3842,7 +3842,7 @@ public final class Classes {
         return buildPartial();
       }
       
-      private multiplexer.protocol.Classes.MultiplexerRules buildParsed()
+      private multiplexer.protocol.Protocol.MultiplexerRules buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
@@ -3851,7 +3851,7 @@ public final class Classes {
         return buildPartial();
       }
       
-      public multiplexer.protocol.Classes.MultiplexerRules buildPartial() {
+      public multiplexer.protocol.Protocol.MultiplexerRules buildPartial() {
         if (result.type_ != java.util.Collections.EMPTY_LIST) {
           result.type_ =
             java.util.Collections.unmodifiableList(result.type_);
@@ -3860,32 +3860,32 @@ public final class Classes {
           result.peer_ =
             java.util.Collections.unmodifiableList(result.peer_);
         }
-        multiplexer.protocol.Classes.MultiplexerRules returnMe = result;
+        multiplexer.protocol.Protocol.MultiplexerRules returnMe = result;
         result = null;
         return returnMe;
       }
       
       @Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof multiplexer.protocol.Classes.MultiplexerRules) {
-          return mergeFrom((multiplexer.protocol.Classes.MultiplexerRules)other);
+        if (other instanceof multiplexer.protocol.Protocol.MultiplexerRules) {
+          return mergeFrom((multiplexer.protocol.Protocol.MultiplexerRules)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(multiplexer.protocol.Classes.MultiplexerRules other) {
-        if (other == multiplexer.protocol.Classes.MultiplexerRules.getDefaultInstance()) return this;
+      public Builder mergeFrom(multiplexer.protocol.Protocol.MultiplexerRules other) {
+        if (other == multiplexer.protocol.Protocol.MultiplexerRules.getDefaultInstance()) return this;
         if (!other.type_.isEmpty()) {
           if (result.type_.isEmpty()) {
-            result.type_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerMessageDescription>();
+            result.type_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerMessageDescription>();
           }
           result.type_.addAll(other.type_);
         }
         if (!other.peer_.isEmpty()) {
           if (result.peer_.isEmpty()) {
-            result.peer_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerPeerDescription>();
+            result.peer_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerPeerDescription>();
           }
           result.peer_.addAll(other.peer_);
         }
@@ -3924,13 +3924,13 @@ public final class Classes {
               break;
             }
             case 10: {
-              multiplexer.protocol.Classes.MultiplexerMessageDescription.Builder subBuilder = multiplexer.protocol.Classes.MultiplexerMessageDescription.newBuilder();
+              multiplexer.protocol.Protocol.MultiplexerMessageDescription.Builder subBuilder = multiplexer.protocol.Protocol.MultiplexerMessageDescription.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
               addType(subBuilder.buildPartial());
               break;
             }
             case 18: {
-              multiplexer.protocol.Classes.MultiplexerPeerDescription.Builder subBuilder = multiplexer.protocol.Classes.MultiplexerPeerDescription.newBuilder();
+              multiplexer.protocol.Protocol.MultiplexerPeerDescription.Builder subBuilder = multiplexer.protocol.Protocol.MultiplexerPeerDescription.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
               addPeer(subBuilder.buildPartial());
               break;
@@ -3941,41 +3941,41 @@ public final class Classes {
       
       
       // repeated .multiplexer.MultiplexerMessageDescription type = 1;
-      public java.util.List<multiplexer.protocol.Classes.MultiplexerMessageDescription> getTypeList() {
+      public java.util.List<multiplexer.protocol.Protocol.MultiplexerMessageDescription> getTypeList() {
         return java.util.Collections.unmodifiableList(result.type_);
       }
       public int getTypeCount() {
         return result.getTypeCount();
       }
-      public multiplexer.protocol.Classes.MultiplexerMessageDescription getType(int index) {
+      public multiplexer.protocol.Protocol.MultiplexerMessageDescription getType(int index) {
         return result.getType(index);
       }
-      public Builder setType(int index, multiplexer.protocol.Classes.MultiplexerMessageDescription value) {
+      public Builder setType(int index, multiplexer.protocol.Protocol.MultiplexerMessageDescription value) {
         result.type_.set(index, value);
         return this;
       }
-      public Builder setType(int index, multiplexer.protocol.Classes.MultiplexerMessageDescription.Builder builderForValue) {
+      public Builder setType(int index, multiplexer.protocol.Protocol.MultiplexerMessageDescription.Builder builderForValue) {
         result.type_.set(index, builderForValue.build());
         return this;
       }
-      public Builder addType(multiplexer.protocol.Classes.MultiplexerMessageDescription value) {
+      public Builder addType(multiplexer.protocol.Protocol.MultiplexerMessageDescription value) {
         if (result.type_.isEmpty()) {
-          result.type_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerMessageDescription>();
+          result.type_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerMessageDescription>();
         }
         result.type_.add(value);
         return this;
       }
-      public Builder addType(multiplexer.protocol.Classes.MultiplexerMessageDescription.Builder builderForValue) {
+      public Builder addType(multiplexer.protocol.Protocol.MultiplexerMessageDescription.Builder builderForValue) {
         if (result.type_.isEmpty()) {
-          result.type_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerMessageDescription>();
+          result.type_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerMessageDescription>();
         }
         result.type_.add(builderForValue.build());
         return this;
       }
       public Builder addAllType(
-          java.lang.Iterable<? extends multiplexer.protocol.Classes.MultiplexerMessageDescription> values) {
+          java.lang.Iterable<? extends multiplexer.protocol.Protocol.MultiplexerMessageDescription> values) {
         if (result.type_.isEmpty()) {
-          result.type_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerMessageDescription>();
+          result.type_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerMessageDescription>();
         }
         super.addAll(values, result.type_);
         return this;
@@ -3986,41 +3986,41 @@ public final class Classes {
       }
       
       // repeated .multiplexer.MultiplexerPeerDescription peer = 2;
-      public java.util.List<multiplexer.protocol.Classes.MultiplexerPeerDescription> getPeerList() {
+      public java.util.List<multiplexer.protocol.Protocol.MultiplexerPeerDescription> getPeerList() {
         return java.util.Collections.unmodifiableList(result.peer_);
       }
       public int getPeerCount() {
         return result.getPeerCount();
       }
-      public multiplexer.protocol.Classes.MultiplexerPeerDescription getPeer(int index) {
+      public multiplexer.protocol.Protocol.MultiplexerPeerDescription getPeer(int index) {
         return result.getPeer(index);
       }
-      public Builder setPeer(int index, multiplexer.protocol.Classes.MultiplexerPeerDescription value) {
+      public Builder setPeer(int index, multiplexer.protocol.Protocol.MultiplexerPeerDescription value) {
         result.peer_.set(index, value);
         return this;
       }
-      public Builder setPeer(int index, multiplexer.protocol.Classes.MultiplexerPeerDescription.Builder builderForValue) {
+      public Builder setPeer(int index, multiplexer.protocol.Protocol.MultiplexerPeerDescription.Builder builderForValue) {
         result.peer_.set(index, builderForValue.build());
         return this;
       }
-      public Builder addPeer(multiplexer.protocol.Classes.MultiplexerPeerDescription value) {
+      public Builder addPeer(multiplexer.protocol.Protocol.MultiplexerPeerDescription value) {
         if (result.peer_.isEmpty()) {
-          result.peer_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerPeerDescription>();
+          result.peer_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerPeerDescription>();
         }
         result.peer_.add(value);
         return this;
       }
-      public Builder addPeer(multiplexer.protocol.Classes.MultiplexerPeerDescription.Builder builderForValue) {
+      public Builder addPeer(multiplexer.protocol.Protocol.MultiplexerPeerDescription.Builder builderForValue) {
         if (result.peer_.isEmpty()) {
-          result.peer_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerPeerDescription>();
+          result.peer_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerPeerDescription>();
         }
         result.peer_.add(builderForValue.build());
         return this;
       }
       public Builder addAllPeer(
-          java.lang.Iterable<? extends multiplexer.protocol.Classes.MultiplexerPeerDescription> values) {
+          java.lang.Iterable<? extends multiplexer.protocol.Protocol.MultiplexerPeerDescription> values) {
         if (result.peer_.isEmpty()) {
-          result.peer_ = new java.util.ArrayList<multiplexer.protocol.Classes.MultiplexerPeerDescription>();
+          result.peer_ = new java.util.ArrayList<multiplexer.protocol.Protocol.MultiplexerPeerDescription>();
         }
         super.addAll(values, result.peer_);
         return this;
@@ -4032,7 +4032,7 @@ public final class Classes {
     }
     
     static {
-      multiplexer.protocol.Classes.getDescriptor();
+      multiplexer.protocol.Protocol.getDescriptor();
     }
   }
   
@@ -4052,13 +4052,13 @@ public final class Classes {
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_SearchCollectedLogs_descriptor;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_SearchCollectedLogs_descriptor;
     }
     
     @Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_SearchCollectedLogs_fieldAccessorTable;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_SearchCollectedLogs_fieldAccessorTable;
     }
     
     // optional bytes workflow = 1;
@@ -4136,46 +4136,46 @@ public final class Classes {
       return size;
     }
     
-    public static multiplexer.protocol.Classes.SearchCollectedLogs parseFrom(
+    public static multiplexer.protocol.Protocol.SearchCollectedLogs parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.SearchCollectedLogs parseFrom(
+    public static multiplexer.protocol.Protocol.SearchCollectedLogs parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.SearchCollectedLogs parseFrom(byte[] data)
+    public static multiplexer.protocol.Protocol.SearchCollectedLogs parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.SearchCollectedLogs parseFrom(
+    public static multiplexer.protocol.Protocol.SearchCollectedLogs parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.SearchCollectedLogs parseFrom(java.io.InputStream input)
+    public static multiplexer.protocol.Protocol.SearchCollectedLogs parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.SearchCollectedLogs parseFrom(
+    public static multiplexer.protocol.Protocol.SearchCollectedLogs parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.SearchCollectedLogs parseFrom(
+    public static multiplexer.protocol.Protocol.SearchCollectedLogs parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.SearchCollectedLogs parseFrom(
+    public static multiplexer.protocol.Protocol.SearchCollectedLogs parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
@@ -4185,7 +4185,7 @@ public final class Classes {
     
     public static Builder newBuilder() { return new Builder(); }
     public Builder newBuilderForType() { return new Builder(); }
-    public static Builder newBuilder(multiplexer.protocol.Classes.SearchCollectedLogs prototype) {
+    public static Builder newBuilder(multiplexer.protocol.Protocol.SearchCollectedLogs prototype) {
       return new Builder().mergeFrom(prototype);
     }
     
@@ -4194,16 +4194,16 @@ public final class Classes {
       // Construct using multiplexer.Multiplexer.SearchCollectedLogs.newBuilder()
       private Builder() {}
       
-      multiplexer.protocol.Classes.SearchCollectedLogs result = new multiplexer.protocol.Classes.SearchCollectedLogs();
+      multiplexer.protocol.Protocol.SearchCollectedLogs result = new multiplexer.protocol.Protocol.SearchCollectedLogs();
       
       @Override
-      protected multiplexer.protocol.Classes.SearchCollectedLogs internalGetResult() {
+      protected multiplexer.protocol.Protocol.SearchCollectedLogs internalGetResult() {
         return result;
       }
       
       @Override
       public Builder clear() {
-        result = new multiplexer.protocol.Classes.SearchCollectedLogs();
+        result = new multiplexer.protocol.Protocol.SearchCollectedLogs();
         return this;
       }
       
@@ -4215,14 +4215,14 @@ public final class Classes {
       @Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return multiplexer.protocol.Classes.SearchCollectedLogs.getDescriptor();
+        return multiplexer.protocol.Protocol.SearchCollectedLogs.getDescriptor();
       }
       
-      public multiplexer.protocol.Classes.SearchCollectedLogs getDefaultInstanceForType() {
-        return multiplexer.protocol.Classes.SearchCollectedLogs.getDefaultInstance();
+      public multiplexer.protocol.Protocol.SearchCollectedLogs getDefaultInstanceForType() {
+        return multiplexer.protocol.Protocol.SearchCollectedLogs.getDefaultInstance();
       }
       
-      public multiplexer.protocol.Classes.SearchCollectedLogs build() {
+      public multiplexer.protocol.Protocol.SearchCollectedLogs build() {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
             result);
@@ -4230,7 +4230,7 @@ public final class Classes {
         return buildPartial();
       }
       
-      private multiplexer.protocol.Classes.SearchCollectedLogs buildParsed()
+      private multiplexer.protocol.Protocol.SearchCollectedLogs buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
@@ -4239,24 +4239,24 @@ public final class Classes {
         return buildPartial();
       }
       
-      public multiplexer.protocol.Classes.SearchCollectedLogs buildPartial() {
-        multiplexer.protocol.Classes.SearchCollectedLogs returnMe = result;
+      public multiplexer.protocol.Protocol.SearchCollectedLogs buildPartial() {
+        multiplexer.protocol.Protocol.SearchCollectedLogs returnMe = result;
         result = null;
         return returnMe;
       }
       
       @Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof multiplexer.protocol.Classes.SearchCollectedLogs) {
-          return mergeFrom((multiplexer.protocol.Classes.SearchCollectedLogs)other);
+        if (other instanceof multiplexer.protocol.Protocol.SearchCollectedLogs) {
+          return mergeFrom((multiplexer.protocol.Protocol.SearchCollectedLogs)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(multiplexer.protocol.Classes.SearchCollectedLogs other) {
-        if (other == multiplexer.protocol.Classes.SearchCollectedLogs.getDefaultInstance()) return this;
+      public Builder mergeFrom(multiplexer.protocol.Protocol.SearchCollectedLogs other) {
+        if (other == multiplexer.protocol.Protocol.SearchCollectedLogs.getDefaultInstance()) return this;
         if (other.hasWorkflow()) {
           setWorkflow(other.getWorkflow());
         }
@@ -4398,7 +4398,7 @@ public final class Classes {
     }
     
     static {
-      multiplexer.protocol.Classes.getDescriptor();
+      multiplexer.protocol.Protocol.getDescriptor();
     }
   }
   
@@ -4418,13 +4418,13 @@ public final class Classes {
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_ReplayCollectedEvents_descriptor;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_ReplayCollectedEvents_descriptor;
     }
     
     @Override
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return multiplexer.protocol.Classes.internal_static_multiplexer_ReplayCollectedEvents_fieldAccessorTable;
+      return multiplexer.protocol.Protocol.internal_static_multiplexer_ReplayCollectedEvents_fieldAccessorTable;
     }
     
     // optional uint64 from_timestamp = 1 [default = 0];
@@ -4494,46 +4494,46 @@ public final class Classes {
       return size;
     }
     
-    public static multiplexer.protocol.Classes.ReplayCollectedEvents parseFrom(
+    public static multiplexer.protocol.Protocol.ReplayCollectedEvents parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.ReplayCollectedEvents parseFrom(
+    public static multiplexer.protocol.Protocol.ReplayCollectedEvents parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.ReplayCollectedEvents parseFrom(byte[] data)
+    public static multiplexer.protocol.Protocol.ReplayCollectedEvents parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static multiplexer.protocol.Classes.ReplayCollectedEvents parseFrom(
+    public static multiplexer.protocol.Protocol.ReplayCollectedEvents parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.ReplayCollectedEvents parseFrom(java.io.InputStream input)
+    public static multiplexer.protocol.Protocol.ReplayCollectedEvents parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.ReplayCollectedEvents parseFrom(
+    public static multiplexer.protocol.Protocol.ReplayCollectedEvents parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static multiplexer.protocol.Classes.ReplayCollectedEvents parseFrom(
+    public static multiplexer.protocol.Protocol.ReplayCollectedEvents parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static multiplexer.protocol.Classes.ReplayCollectedEvents parseFrom(
+    public static multiplexer.protocol.Protocol.ReplayCollectedEvents parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistry extensionRegistry)
         throws java.io.IOException {
@@ -4543,7 +4543,7 @@ public final class Classes {
     
     public static Builder newBuilder() { return new Builder(); }
     public Builder newBuilderForType() { return new Builder(); }
-    public static Builder newBuilder(multiplexer.protocol.Classes.ReplayCollectedEvents prototype) {
+    public static Builder newBuilder(multiplexer.protocol.Protocol.ReplayCollectedEvents prototype) {
       return new Builder().mergeFrom(prototype);
     }
     
@@ -4552,16 +4552,16 @@ public final class Classes {
       // Construct using multiplexer.Multiplexer.ReplayCollectedEvents.newBuilder()
       private Builder() {}
       
-      multiplexer.protocol.Classes.ReplayCollectedEvents result = new multiplexer.protocol.Classes.ReplayCollectedEvents();
+      multiplexer.protocol.Protocol.ReplayCollectedEvents result = new multiplexer.protocol.Protocol.ReplayCollectedEvents();
       
       @Override
-      protected multiplexer.protocol.Classes.ReplayCollectedEvents internalGetResult() {
+      protected multiplexer.protocol.Protocol.ReplayCollectedEvents internalGetResult() {
         return result;
       }
       
       @Override
       public Builder clear() {
-        result = new multiplexer.protocol.Classes.ReplayCollectedEvents();
+        result = new multiplexer.protocol.Protocol.ReplayCollectedEvents();
         return this;
       }
       
@@ -4573,14 +4573,14 @@ public final class Classes {
       @Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return multiplexer.protocol.Classes.ReplayCollectedEvents.getDescriptor();
+        return multiplexer.protocol.Protocol.ReplayCollectedEvents.getDescriptor();
       }
       
-      public multiplexer.protocol.Classes.ReplayCollectedEvents getDefaultInstanceForType() {
-        return multiplexer.protocol.Classes.ReplayCollectedEvents.getDefaultInstance();
+      public multiplexer.protocol.Protocol.ReplayCollectedEvents getDefaultInstanceForType() {
+        return multiplexer.protocol.Protocol.ReplayCollectedEvents.getDefaultInstance();
       }
       
-      public multiplexer.protocol.Classes.ReplayCollectedEvents build() {
+      public multiplexer.protocol.Protocol.ReplayCollectedEvents build() {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
             result);
@@ -4588,7 +4588,7 @@ public final class Classes {
         return buildPartial();
       }
       
-      private multiplexer.protocol.Classes.ReplayCollectedEvents buildParsed()
+      private multiplexer.protocol.Protocol.ReplayCollectedEvents buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw new com.google.protobuf.UninitializedMessageException(
@@ -4597,28 +4597,28 @@ public final class Classes {
         return buildPartial();
       }
       
-      public multiplexer.protocol.Classes.ReplayCollectedEvents buildPartial() {
+      public multiplexer.protocol.Protocol.ReplayCollectedEvents buildPartial() {
         if (result.eventType_ != java.util.Collections.EMPTY_LIST) {
           result.eventType_ =
             java.util.Collections.unmodifiableList(result.eventType_);
         }
-        multiplexer.protocol.Classes.ReplayCollectedEvents returnMe = result;
+        multiplexer.protocol.Protocol.ReplayCollectedEvents returnMe = result;
         result = null;
         return returnMe;
       }
       
       @Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof multiplexer.protocol.Classes.ReplayCollectedEvents) {
-          return mergeFrom((multiplexer.protocol.Classes.ReplayCollectedEvents)other);
+        if (other instanceof multiplexer.protocol.Protocol.ReplayCollectedEvents) {
+          return mergeFrom((multiplexer.protocol.Protocol.ReplayCollectedEvents)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(multiplexer.protocol.Classes.ReplayCollectedEvents other) {
-        if (other == multiplexer.protocol.Classes.ReplayCollectedEvents.getDefaultInstance()) return this;
+      public Builder mergeFrom(multiplexer.protocol.Protocol.ReplayCollectedEvents other) {
+        if (other == multiplexer.protocol.Protocol.ReplayCollectedEvents.getDefaultInstance()) return this;
         if (other.hasFromTimestamp()) {
           setFromTimestamp(other.getFromTimestamp());
         }
@@ -4754,7 +4754,7 @@ public final class Classes {
     }
     
     static {
-      multiplexer.protocol.Classes.getDescriptor();
+      multiplexer.protocol.Protocol.getDescriptor();
     }
   }
   
@@ -4883,96 +4883,96 @@ public final class Classes {
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_multiplexer_MultiplexerPeerDescription_descriptor,
               new java.lang.String[] { "Type", "Name", "Comment", "QueueSize", "IsPassive", },
-              multiplexer.protocol.Classes.MultiplexerPeerDescription.class,
-              multiplexer.protocol.Classes.MultiplexerPeerDescription.Builder.class);
+              multiplexer.protocol.Protocol.MultiplexerPeerDescription.class,
+              multiplexer.protocol.Protocol.MultiplexerPeerDescription.Builder.class);
           internal_static_multiplexer_MultiplexerMessageDescription_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_multiplexer_MultiplexerMessageDescription_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_multiplexer_MultiplexerMessageDescription_descriptor,
               new java.lang.String[] { "Type", "Name", "Comment", "To", },
-              multiplexer.protocol.Classes.MultiplexerMessageDescription.class,
-              multiplexer.protocol.Classes.MultiplexerMessageDescription.Builder.class);
+              multiplexer.protocol.Protocol.MultiplexerMessageDescription.class,
+              multiplexer.protocol.Protocol.MultiplexerMessageDescription.Builder.class);
           internal_static_multiplexer_MultiplexerMessageDescription_RoutingRule_descriptor =
             internal_static_multiplexer_MultiplexerMessageDescription_descriptor.getNestedTypes().get(0);
           internal_static_multiplexer_MultiplexerMessageDescription_RoutingRule_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_multiplexer_MultiplexerMessageDescription_RoutingRule_descriptor,
               new java.lang.String[] { "Peer", "PeerType", "Whom", "DeliveryErrorIsError", "ReportDeliveryError", "IncludeOriginalPacketInReport", },
-              multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.class,
-              multiplexer.protocol.Classes.MultiplexerMessageDescription.RoutingRule.Builder.class);
+              multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.class,
+              multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.Builder.class);
           internal_static_multiplexer_LoggingMethod_descriptor =
             getDescriptor().getMessageTypes().get(2);
           internal_static_multiplexer_LoggingMethod_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_multiplexer_LoggingMethod_descriptor,
               new java.lang.String[] { },
-              multiplexer.protocol.Classes.LoggingMethod.class,
-              multiplexer.protocol.Classes.LoggingMethod.Builder.class);
+              multiplexer.protocol.Protocol.LoggingMethod.class,
+              multiplexer.protocol.Protocol.LoggingMethod.Builder.class);
           internal_static_multiplexer_Compression_descriptor =
             getDescriptor().getMessageTypes().get(3);
           internal_static_multiplexer_Compression_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_multiplexer_Compression_descriptor,
               new java.lang.String[] { },
-              multiplexer.protocol.Classes.Compression.class,
-              multiplexer.protocol.Classes.Compression.Builder.class);
+              multiplexer.protocol.Protocol.Compression.class,
+              multiplexer.protocol.Protocol.Compression.Builder.class);
           internal_static_multiplexer_MultiplexerMessage_descriptor =
             getDescriptor().getMessageTypes().get(4);
           internal_static_multiplexer_MultiplexerMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_multiplexer_MultiplexerMessage_descriptor,
               new java.lang.String[] { "Id", "From", "To", "ReportDeliveryError", "IncludeOriginalPacketInReport", "Type", "Message", "Compression", "Timestamp", "References", "Workflow", "OverrideRrules", "LoggingMethod", },
-              multiplexer.protocol.Classes.MultiplexerMessage.class,
-              multiplexer.protocol.Classes.MultiplexerMessage.Builder.class);
+              multiplexer.protocol.Protocol.MultiplexerMessage.class,
+              multiplexer.protocol.Protocol.MultiplexerMessage.Builder.class);
           internal_static_multiplexer_WelcomeMessage_descriptor =
             getDescriptor().getMessageTypes().get(5);
           internal_static_multiplexer_WelcomeMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_multiplexer_WelcomeMessage_descriptor,
               new java.lang.String[] { "Type", "Id", "MultiplexerPassword", },
-              multiplexer.protocol.Classes.WelcomeMessage.class,
-              multiplexer.protocol.Classes.WelcomeMessage.Builder.class);
+              multiplexer.protocol.Protocol.WelcomeMessage.class,
+              multiplexer.protocol.Protocol.WelcomeMessage.Builder.class);
           internal_static_multiplexer_BackendForPacketSearch_descriptor =
             getDescriptor().getMessageTypes().get(6);
           internal_static_multiplexer_BackendForPacketSearch_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_multiplexer_BackendForPacketSearch_descriptor,
               new java.lang.String[] { "PacketType", },
-              multiplexer.protocol.Classes.BackendForPacketSearch.class,
-              multiplexer.protocol.Classes.BackendForPacketSearch.Builder.class);
+              multiplexer.protocol.Protocol.BackendForPacketSearch.class,
+              multiplexer.protocol.Protocol.BackendForPacketSearch.Builder.class);
           internal_static_multiplexer_DeliveryError_descriptor =
             getDescriptor().getMessageTypes().get(7);
           internal_static_multiplexer_DeliveryError_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_multiplexer_DeliveryError_descriptor,
               new java.lang.String[] { "PacketId", "FailedType", "FailedTo", "IsKnownType", "OriginalMessage", },
-              multiplexer.protocol.Classes.DeliveryError.class,
-              multiplexer.protocol.Classes.DeliveryError.Builder.class);
+              multiplexer.protocol.Protocol.DeliveryError.class,
+              multiplexer.protocol.Protocol.DeliveryError.Builder.class);
           internal_static_multiplexer_MultiplexerRules_descriptor =
             getDescriptor().getMessageTypes().get(8);
           internal_static_multiplexer_MultiplexerRules_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_multiplexer_MultiplexerRules_descriptor,
               new java.lang.String[] { "Type", "Peer", },
-              multiplexer.protocol.Classes.MultiplexerRules.class,
-              multiplexer.protocol.Classes.MultiplexerRules.Builder.class);
+              multiplexer.protocol.Protocol.MultiplexerRules.class,
+              multiplexer.protocol.Protocol.MultiplexerRules.Builder.class);
           internal_static_multiplexer_SearchCollectedLogs_descriptor =
             getDescriptor().getMessageTypes().get(9);
           internal_static_multiplexer_SearchCollectedLogs_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_multiplexer_SearchCollectedLogs_descriptor,
               new java.lang.String[] { "Workflow", "Limit", "Offset", "Query", },
-              multiplexer.protocol.Classes.SearchCollectedLogs.class,
-              multiplexer.protocol.Classes.SearchCollectedLogs.Builder.class);
+              multiplexer.protocol.Protocol.SearchCollectedLogs.class,
+              multiplexer.protocol.Protocol.SearchCollectedLogs.Builder.class);
           internal_static_multiplexer_ReplayCollectedEvents_descriptor =
             getDescriptor().getMessageTypes().get(10);
           internal_static_multiplexer_ReplayCollectedEvents_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_multiplexer_ReplayCollectedEvents_descriptor,
               new java.lang.String[] { "FromTimestamp", "ToTimestamp", "EventType", },
-              multiplexer.protocol.Classes.ReplayCollectedEvents.class,
-              multiplexer.protocol.Classes.ReplayCollectedEvents.Builder.class);
+              multiplexer.protocol.Protocol.ReplayCollectedEvents.class,
+              multiplexer.protocol.Protocol.ReplayCollectedEvents.Builder.class);
           return null;
         }
       };

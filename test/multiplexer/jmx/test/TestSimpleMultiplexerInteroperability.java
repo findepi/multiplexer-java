@@ -14,8 +14,8 @@ import java.util.zip.CRC32;
 
 import junit.framework.TestCase;
 import multiplexer.protocol.Constants;
-import multiplexer.protocol.Classes.MultiplexerMessage;
-import multiplexer.protocol.Classes.WelcomeMessage;
+import multiplexer.protocol.Protocol.MultiplexerMessage;
+import multiplexer.protocol.Protocol.WelcomeMessage;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ByteString.Output;

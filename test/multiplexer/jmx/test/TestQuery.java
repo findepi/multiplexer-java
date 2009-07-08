@@ -10,7 +10,7 @@ import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.exceptions.OperationFailedException;
 import multiplexer.jmx.internal.IncomingMessageData;
 import multiplexer.protocol.Constants.MessageTypes;
-import multiplexer.protocol.Classes.MultiplexerMessage;
+import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 import com.google.protobuf.ByteString;
 

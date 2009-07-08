@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.internal.IncomingMessageData;
-import multiplexer.protocol.Classes.MultiplexerMessage;
+import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Constants.MessageTypes;
 
 import org.jboss.netty.channel.ChannelFuture;
@@ -16,10 +16,10 @@ import org.slf4j.LoggerFactory;
 import com.google.protobuf.ByteString;
 
 /**
- * Abstract base class for backends providing services through Classes
+ * Abstract base class for backends providing services through Multiplexer
  * connections. A subclass needs to define only
  * {@link AbstractBackend#handleMessage} method in order to have fully working
- * Classes backend that supports {@code PING} and {@code
+ * Multiplexer backend that supports {@code PING} and {@code
  * BACKEND_FOR_PACKET_SEARCH} messages and sends {@code BACKEND_ERROR} on
  * errors.
  * 
@@ -46,7 +46,7 @@ public abstract class AbstractBackend implements Runnable {
 		.getLogger(AbstractBackend.class);
 
 	/**
-	 * A handler to Classes server connections.
+	 * A handler to Multiplexer server connections.
 	 */
 	protected final JmxClient connection;
 

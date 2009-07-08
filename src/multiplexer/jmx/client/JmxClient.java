@@ -23,9 +23,9 @@ import multiplexer.jmx.internal.MessageReceivedListener;
 import multiplexer.jmx.util.TimeoutCounter;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Constants.PeerTypes;
-import multiplexer.protocol.Classes.BackendForPacketSearch;
-import multiplexer.protocol.Classes.MultiplexerMessage;
-import multiplexer.protocol.Classes.MultiplexerMessage.Builder;
+import multiplexer.protocol.Protocol.BackendForPacketSearch;
+import multiplexer.protocol.Protocol.MultiplexerMessage;
+import multiplexer.protocol.Protocol.MultiplexerMessage.Builder;
 
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.util.Timeout;
@@ -36,11 +36,11 @@ import org.slf4j.LoggerFactory;
 import com.google.protobuf.ByteString;
 
 /**
- * A Classes server's client class. It provides methods for connecting with
- * a specified address, creating, sending and receiving Classes messages.
- * {@code event} method sends a specified message to all connected Classes
- * servers while {@code query} method is useful for getting a remote backend
- * solve a task.
+ * A Multiplexer server's client class. It provides methods for connecting with
+ * a specified address, creating, sending and receiving
+ * {@link MultiplexerMessage}s. {@code event} method sends a specified message
+ * to all connected Multiplexer servers while {@code query} method is useful for
+ * getting a remote backend solve a task.
  * 
  * @author Kasia Findeisen
  * @author Piotr Findeisen
@@ -132,7 +132,7 @@ public class JmxClient {
 	 *            use {@code MultiplexerMessage.newBuilder()} to obtain a
 	 *            builder. Use {@code builder.setAttributeName(name)} to set
 	 *            {@code attributeName}. {@link MultiplexerMessage}'s attributes
-	 *            are defined in {@code Classes.proto} ->
+	 *            are defined in {@code Multiplexer.proto} ->
 	 *            {@link MultiplexerMessage}.
 	 */
 	public MultiplexerMessage createMessage(MultiplexerMessage.Builder message) {
@@ -167,9 +167,10 @@ public class JmxClient {
 		SendingMethod sendingMethod) throws NoPeerForTypeException {
 		return connectionsManager.sendMessage(message, sendingMethod);
 	}
-	
+
 	// TODO javadoc
-	public ChannelFutureGroup send(MultiplexerMessage message, SendingMethod.ViaConnection method) {
+	public ChannelFutureGroup send(MultiplexerMessage message,
+		SendingMethod.ViaConnection method) {
 		return connectionsManager.sendMessage(message, method);
 	}
 
@@ -248,7 +249,7 @@ public class JmxClient {
 	}
 
 	/**
-	 * Sends a specified {@code message} through all connected Classes
+	 * Sends a specified {@code message} through all connected Multiplexer
 	 * servers.
 	 * 
 	 * @param message
@@ -268,22 +269,22 @@ public class JmxClient {
 	 * backend.
 	 * 
 	 * This is a 3-phase algorithm, however it may end at any stage on proper
-	 * conditions. In phase 1, the message is sent through one Classes. If
-	 * the answer doesn't appear within specified amount of time ({@code
-	 * timeout}), the algorithm enters phase 2. A special message, aimed to find
-	 * a proper backend is sent through all connected Mulitplexer servers
-	 * (method {@code event}). If an answer from the backend comes within a
-	 * specified amount of time ({@code timeout}), the algorithm enters phase 3.
-	 * The message is sent directly to the backend, and another {@code timeout}
-	 * is given to receive the answer.
+	 * conditions. In phase 1, the message is sent through one Multiplexer. If the
+	 * answer doesn't appear within specified amount of time ({@code timeout}),
+	 * the algorithm enters phase 2. A special message, aimed to find a proper
+	 * backend is sent through all connected Mulitplexer servers (method {@code
+	 * event}). If an answer from the backend comes within a specified amount of
+	 * time ({@code timeout}), the algorithm enters phase 3. The message is sent
+	 * directly to the backend, and another {@code timeout} is given to receive
+	 * the answer.
 	 * 
 	 * The algorithm only reads it's own messages. Other messages,
 	 * simultaneously received by the {@code Client}, are not affected.
 	 * 
 	 * @param message
-	 *            the request to be sent over Classes connection
+	 *            the request to be sent over Multiplexer connection
 	 * @param messageType
-	 *            type of the request, from which a Classes can deduce the
+	 *            type of the request, from which a Multiplexer can deduce the
 	 *            right backend type
 	 * @param timeout
 	 *            each of the 3 phases of the algorithm has this time limit,

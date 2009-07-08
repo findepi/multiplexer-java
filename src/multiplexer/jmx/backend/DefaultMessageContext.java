@@ -3,8 +3,8 @@ package multiplexer.jmx.backend;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.internal.Connection;
-import multiplexer.protocol.Classes.MultiplexerMessage;
-import multiplexer.protocol.Classes.MultiplexerMessage.Builder;
+import multiplexer.protocol.Protocol.MultiplexerMessage;
+import multiplexer.protocol.Protocol.MultiplexerMessage.Builder;
 
 /**
  * Default full implementation of {@link MessageContext}.

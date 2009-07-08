@@ -11,7 +11,7 @@ import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.internal.IncomingMessageData;
-import multiplexer.protocol.Classes.MultiplexerMessage;
+import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 import org.jboss.netty.channel.ChannelFuture;
 

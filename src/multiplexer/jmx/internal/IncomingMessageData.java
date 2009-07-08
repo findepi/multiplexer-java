@@ -1,6 +1,6 @@
 package multiplexer.jmx.internal;
 
-import multiplexer.protocol.Classes.MultiplexerMessage;
+import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 /**
  * @author Piotr Findeisen

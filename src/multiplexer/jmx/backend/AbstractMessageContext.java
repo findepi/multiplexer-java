@@ -1,8 +1,8 @@
 package multiplexer.jmx.backend;
 
 import multiplexer.protocol.Constants.MessageTypes;
-import multiplexer.protocol.Classes.MultiplexerMessage;
-import multiplexer.protocol.Classes.MultiplexerMessage.Builder;
+import multiplexer.protocol.Protocol.MultiplexerMessage;
+import multiplexer.protocol.Protocol.MultiplexerMessage.Builder;
 
 import com.google.protobuf.ByteString;
 

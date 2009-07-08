@@ -15,11 +15,11 @@ import multiplexer.jmx.client.ChannelFutureSet;
 import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.util.RecentLongPool;
-import multiplexer.protocol.Classes;
+import multiplexer.protocol.Protocol;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Constants.PeerTypes;
-import multiplexer.protocol.Classes.MultiplexerMessage;
-import multiplexer.protocol.Classes.WelcomeMessage;
+import multiplexer.protocol.Protocol.MultiplexerMessage;
+import multiplexer.protocol.Protocol.WelcomeMessage;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -42,11 +42,11 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 /**
- * A class for connections management, instantiated by any Classes server's
+ * A class for connections management, instantiated by any Multiplexer server's
  * client.
  * 
  * It is responsible for establishing, keeping and closing connections. It
- * handles all system messages accordingly to the Classes's protocol.
+ * handles all system messages accordingly to the Multiplexer's protocol.
  * 
  * Any incoming message which is not a system message is forwarded to the client
  * (client must provide a {@link MessageReceivedListener}). Also, the
@@ -134,7 +134,7 @@ public class ConnectionsManager {
 			private ProtobufEncoder multiplexerMessageEncoder = new ProtobufEncoder();
 			// Decoders
 			private ProtobufDecoder multiplexerMessageDecoder = new ProtobufDecoder(
-				Classes.MultiplexerMessage.getDefaultInstance());
+				Protocol.MultiplexerMessage.getDefaultInstance());
 			// Protocol handler
 			private MultiplexerProtocolHandler multiplexerProtocolHandler = new MultiplexerProtocolHandler(
 				ConnectionsManager.this);
