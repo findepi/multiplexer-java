@@ -22,6 +22,8 @@
 
 package multiplexer;
 option optimize_for = SPEED;
+
+// Note that this options correspond to properties set in build.xml.
 option java_package = "multiplexer.protocol";
 option java_outer_classname = "Protocol";
 

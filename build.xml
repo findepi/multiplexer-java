@@ -16,6 +16,12 @@
   <property name="system.rules" value="system.rules" />
   <property name="constants.src"
             value="${src}/multiplexer/protocol/Constants.java" />
+  <property name="protocol.proto.src" location="Multiplexer.proto" />
+  <!-- the property ${protocol.protobuf.classes} must match generation options
+       set up in ${protocol.proto.src} -->
+  <property name="protocol.protobuf.classes"
+            location="${src}/multiplexer/protocol/Protocol.java" />
+
 
   <property name="test.rules" value="test.rules" />
   <property name="test.constants.src"
@@ -103,7 +109,9 @@
               targetfile="${constants.src}" />
   </target>
 
-  <!-- test-constants -->
+  <!-- - - - - - - - - - - - - - - - - - 
+          target: test-constants                      
+         - - - - - - - - - - - - - - - - - -->
   <target name="test-constants"
           depends="init,test-constants.check"
           unless="test-constants.notRequired">
@@ -118,10 +126,30 @@
   </target>
 
   <!-- - - - - - - - - - - - - - - - - - 
+          target: protocol                      
+         - - - - - - - - - - - - - - - - - -->
+  <target name="protocol"
+          depends="protocol.check"
+          unless="protocol.notRequired">
+    <exec executable="protoc" failonerror="true">
+      <arg value="-I" />
+      <arg value="${basedir}" />
+      <arg value="--java_out" />
+      <arg value="${src}" />
+      <arg value="${protocol.proto.src}" />
+    </exec>
+  </target>
+  <target name="protocol.check">
+    <uptodate property="protocol.notRequired"
+              srcfile="${protocol.proto.src}"
+              targetfile="${protocol.protobuf.classes}" />
+  </target>
+
+  <!-- - - - - - - - - - - - - - - - - - 
           target: sources                      
          - - - - - - - - - - - - - - - - - -->
   <target name="sources"
-          depends="constants"
+          depends="constants,protocol"
           description="create the sources that are generated" />
 
   <!-- - - - - - - - - - - - - - - - - - 
