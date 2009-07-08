@@ -82,7 +82,7 @@ public abstract class AbstractMessageContext implements MessageContext {
 		return responseSent;
 	}
 
-	protected void setResponseSent(boolean sent) {
+	public void setResponseSent(boolean sent) {
 		this.responseSent = sent;
 	}
 

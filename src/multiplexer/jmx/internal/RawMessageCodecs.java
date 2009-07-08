@@ -64,6 +64,7 @@ public final class RawMessageCodecs {
 
 			switch (state) {
 			case READ_HEADER:
+				// TODO this should be possible without copying the header from buffer
 				buffer.readBytes(this.header);
 				ByteBuffer header = ByteBuffer.wrap(this.header);
 				header.order(ByteOrder.LITTLE_ENDIAN);

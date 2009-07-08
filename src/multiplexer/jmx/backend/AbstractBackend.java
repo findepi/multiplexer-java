@@ -1,17 +1,13 @@
 package multiplexer.jmx.backend;
 
-import static multiplexer.jmx.util.Stacks.stackTraceToByteString;
-
 import java.net.SocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import multiplexer.jmx.client.JmxClient;
-import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
-import multiplexer.jmx.internal.Connection;
 import multiplexer.jmx.internal.IncomingMessageData;
-import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Classes.MultiplexerMessage;
+import multiplexer.protocol.Constants.MessageTypes;
 
 import org.jboss.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
@@ -62,8 +58,7 @@ public abstract class AbstractBackend implements Runnable {
 	private volatile Thread thread;
 	protected IncomingMessageData lastIncomingRequest;
 	protected MultiplexerMessage lastMessage;
-	private boolean responseSent;
-	private boolean responseRequired;
+	private MessageContext currentContext;
 
 	protected AbstractBackend(int peerType) {
 		connection = new JmxClient(peerType);
@@ -137,8 +132,6 @@ public abstract class AbstractBackend implements Runnable {
 		if (lastMessage == null) {
 			throw new NullPointerException("lastMessage");
 		}
-		responseSent = false;
-		responseRequired = true;
 
 		try {
 			switch (lastMessage.getType()) {
@@ -183,10 +176,13 @@ public abstract class AbstractBackend implements Runnable {
 
 	private void handleOrdinaryMessage() throws Exception {
 		assert lastMessage.getType() > MessageTypes.MAX_MULTIPLEXER_META_PACKET;
+		currentContext = new DefaultMessageContext(lastMessage, connection,
+			lastIncomingRequest.getConnection());
 		boolean responseMissing;
 		try {
 			handleMessage(lastMessage);
-			responseMissing = !responseSent && responseRequired;
+			responseMissing = !currentContext.hasSentResponse()
+				&& currentContext.isResponseRequired();
 		} catch (Exception e) {
 			logger.warn("handleMessage threw", e);
 			reportError(e);
@@ -199,14 +195,14 @@ public abstract class AbstractBackend implements Runnable {
 	}
 
 	protected void reportError(Throwable e) throws NoPeerForTypeException {
-		reply(createResponse(MessageTypes.BACKEND_ERROR,
-			stackTraceToByteString(e)));
+		assert currentContext != null;
+		currentContext.reportError(e);
 	}
 
 	protected void reportError(String explanation)
 		throws NoPeerForTypeException {
-		reply(createResponse(MessageTypes.BACKEND_ERROR, ByteString
-			.copyFromUtf8(explanation)));
+		assert currentContext != null;
+		currentContext.reportError(explanation);
 	}
 
 	protected void handleException(Exception e) throws Exception {
@@ -214,39 +210,28 @@ public abstract class AbstractBackend implements Runnable {
 	}
 
 	protected void noResponse() {
-		responseRequired = false;
+		currentContext.setResponseRequired(false);
 	}
 
 	protected MultiplexerMessage.Builder createResponse() {
-		assert lastMessage != null;
-		MultiplexerMessage.Builder builder = connection.createMessageBuilder()
-			.setTo(lastMessage.getFrom()).setReferences(lastMessage.getId());
-		if (lastMessage.hasWorkflow())
-			builder.setWorkflow(lastMessage.getWorkflow());
-		return builder;
+		return currentContext.createResponse();
 	}
 
 	protected MultiplexerMessage.Builder createResponse(int packetType) {
-		return createResponse().setType(packetType);
+		return currentContext.createResponse(packetType);
 	}
 
 	protected MultiplexerMessage.Builder createResponse(int packetType,
 		ByteString message) {
-		assert message != null;
-		return createResponse(packetType).setMessage(message);
+		return currentContext.createResponse(packetType, message);
 	}
 
 	protected void reply(MultiplexerMessage.Builder message) {
-		Connection conn = lastIncomingRequest.getConnection();
-		assert conn != null;
-		assert message.hasType() || message.hasTo();
-		assert message.hasId();
-		connection.send(message.build(), SendingMethod.via(conn));
-		setResponseSent(true);
+		currentContext.reply(message);
 	}
 
 	protected void setResponseSent(boolean sent) {
-		responseSent = sent;
+		currentContext.setResponseSent(sent);
 	}
 
 	/**
@@ -283,5 +268,4 @@ public abstract class AbstractBackend implements Runnable {
 	public boolean isCancelled() {
 		return cancelled.get();
 	}
-
 }

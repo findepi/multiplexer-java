@@ -22,6 +22,8 @@ public interface MessageContext {
 	MultiplexerMessage.Builder createResponse(int packetType, ByteString message);
 
 	void reply(MultiplexerMessage.Builder message);
+	
+	void setResponseSent(boolean sent);
 
 	boolean hasSentResponse();
 
