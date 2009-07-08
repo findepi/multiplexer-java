@@ -36,6 +36,9 @@ import com.google.protobuf.ByteString.Output;
 
 public class TestSimpleNettyMultiplexerInteroperability extends TestCase {
 
+	// TODO use MultiplexerProtocolHandler from multiplexer.jmx.internal, not the custom on
+	// TODO write test covering MultiplexerProtocolHandler and other pipeline elements
+	
 	public void testSimpleNettyConnection() throws Exception {
 		final int PYTHON_TEST_SERVER = TestConstants.PeerTypes.TEST_SERVER;
 		final int CONNECTION_WELCOME = Constants.MessageTypes.CONNECTION_WELCOME;
