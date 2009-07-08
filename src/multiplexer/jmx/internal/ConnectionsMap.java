@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
+import multiplexer.protocol.Constants.PeerTypes;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.group.ChannelGroup;
@@ -18,10 +19,9 @@ import com.google.common.collect.LinkedListMultimap;
 /**
  * A class for managing groups of {@link Channel}s, indexed by connected peers'
  * types and Ids. Provides access to all {@code Channel}s as well as searching
- * by peer type (Peer types are described in
- * {@link multiplexer.jmx.test.TestConstants.PeerTypes}). Methods {@code
- * getAny(peerType)} and {@code getAll(peerType)} return one or all peers of the
- * given type respectively.
+ * by peer type (Peer types are described in {@link PeerTypes} and in any
+ * additional generated files). Methods {@code getAny(peerType)} and {@code
+ * getAll(peerType)} return one or all peers of the given type respectively.
  * 
  * For each peer (denoted by Id) only one channel can be held in the structure.
  * 
@@ -30,6 +30,7 @@ import com.google.common.collect.LinkedListMultimap;
  * @author Kasia Findeisen
  * @author Piotr Findeisen
  */
+// TODO napisać w README jak generować pliki z PeerTypes/MessageTypes
 public class ConnectionsMap {
 
 	/**
