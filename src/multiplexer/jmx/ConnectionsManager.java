@@ -337,6 +337,7 @@ class ConnectionsManager {
 
 	public ChannelFutureGroup sendMessage(MultiplexerMessage message,
 		SendingMethod method) throws NoPeerForTypeException {
+
 		if (method == SendingMethod.THROUGH_ONE) {
 			Channel channel;
 			channel = connectionsMap.getAny(PeerTypes.MULTIPLEXER);
@@ -351,10 +352,14 @@ class ConnectionsManager {
 				channelFutureGroup.add(sendMessage(message, channel));
 			}
 			return channelFutureGroup;
-		} else {
-			return new ChannelFutureGroup(sendMessage(message, method
-				.getConnection().getChannel()));
 		}
+		throw new RuntimeException("Unsupported SendingMethod");
+	}
+
+	public ChannelFutureGroup sendMessage(MultiplexerMessage message,
+		SendingMethod.ViaConnection method) {
+		return new ChannelFutureGroup(sendMessage(message, method
+			.getConnection().getChannel()));
 	}
 
 	public void flushAll() throws InterruptedException {

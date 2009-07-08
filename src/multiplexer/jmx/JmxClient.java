@@ -162,6 +162,11 @@ public class JmxClient {
 		SendingMethod sendingMethod) throws NoPeerForTypeException {
 		return connectionsManager.sendMessage(message, sendingMethod);
 	}
+	
+	// TODO javadoc
+	public ChannelFutureGroup send(MultiplexerMessage message, SendingMethod.ViaConnection method) {
+		return connectionsManager.sendMessage(message, method);
+	}
 
 	/**
 	 * Attempts to send synchronously all pending messages.

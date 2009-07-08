@@ -1,16 +1,17 @@
 package multiplexer.jmx;
 
-import java.io.PrintWriter;
+import static multiplexer.jmx.internal.Stacks.stackTraceToByteString;
+
 import java.net.SocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.jboss.netty.channel.ChannelFuture;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import multiplexer.Multiplexer.MultiplexerMessage;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.protocol.Constants.MessageTypes;
+
+import org.jboss.netty.channel.ChannelFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 
@@ -194,7 +195,8 @@ public abstract class AbstractBackend implements Runnable {
 	}
 
 	protected void reportError(Throwable e) throws NoPeerForTypeException {
-		reply(createResponse(MessageTypes.BACKEND_ERROR, serializeStackTrace(e)));
+		reply(createResponse(MessageTypes.BACKEND_ERROR,
+			stackTraceToByteString(e)));
 	}
 
 	protected void reportError(String explanation)
@@ -205,14 +207,6 @@ public abstract class AbstractBackend implements Runnable {
 
 	protected void handleException(Exception e) throws Exception {
 		throw e;
-	}
-
-	protected static ByteString serializeStackTrace(Throwable e) {
-		ByteString.Output output = ByteString.newOutput();
-		PrintWriter writer = new PrintWriter(output);
-		e.printStackTrace(writer);
-		writer.close(); // force flush
-		return output.toByteString();
 	}
 
 	protected void noResponse() {
@@ -238,14 +232,17 @@ public abstract class AbstractBackend implements Runnable {
 		return createResponse(packetType).setMessage(message);
 	}
 
-	protected void reply(MultiplexerMessage.Builder message)
-		throws NoPeerForTypeException {
+	protected void reply(MultiplexerMessage.Builder message) {
 		Connection conn = lastIncomingRequest.getConnection();
 		assert conn != null;
 		assert message.hasType() || message.hasTo();
 		assert message.hasId();
 		connection.send(message.build(), SendingMethod.via(conn));
-		responseSent = true;
+		setResponseSent(true);
+	}
+
+	protected void setResponseSent(boolean sent) {
+		responseSent = sent;
 	}
 
 	/**
