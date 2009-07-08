@@ -1,9 +1,8 @@
-package multiplexer.jmx.internal;
+package multiplexer.jmx.util;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import multiplexer.jmx.TimeoutCounter;
 
 /**
  * @author Piotr Findeisen

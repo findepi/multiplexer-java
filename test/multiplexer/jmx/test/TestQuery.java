@@ -4,13 +4,13 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
-import multiplexer.Multiplexer.MultiplexerMessage;
-import multiplexer.jmx.AbstractBackend;
-import multiplexer.jmx.IncomingMessageData;
-import multiplexer.jmx.JmxClient;
+import multiplexer.jmx.backend.AbstractBackend;
+import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.exceptions.OperationFailedException;
+import multiplexer.jmx.internal.IncomingMessageData;
 import multiplexer.protocol.Constants.MessageTypes;
+import multiplexer.protocol.Classes.MultiplexerMessage;
 
 import com.google.protobuf.ByteString;
 

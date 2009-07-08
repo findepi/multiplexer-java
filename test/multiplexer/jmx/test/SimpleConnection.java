@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.zip.CRC32;
 
-import multiplexer.Multiplexer.MultiplexerMessage;
-import multiplexer.Multiplexer.WelcomeMessage;
+import multiplexer.protocol.Classes.MultiplexerMessage;
+import multiplexer.protocol.Classes.WelcomeMessage;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ByteString.Output;
@@ -214,7 +214,7 @@ def test():
     print "validating welcome message"
     assert msg.type == types.CONNECTION_WELCOME
     welcome = parse(WelcomeMessage, msg.message)
-    assert welcome.type == peers.MULTIPLEXER, "we have connected to Multiplexer"
+    assert welcome.type == peers.MULTIPLEXER, "we have connected to Classes"
     c.peer_id = welcome.id
 
     # send out invitation

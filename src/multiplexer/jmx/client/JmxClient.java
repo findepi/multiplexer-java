@@ -1,6 +1,6 @@
-package multiplexer.jmx;
+package multiplexer.jmx.client;
 
-import static multiplexer.jmx.internal.Queues.pollUninterruptibly;
+import static multiplexer.jmx.util.Queues.pollUninterruptibly;
 
 import java.net.SocketAddress;
 import java.util.ArrayList;
@@ -12,15 +12,20 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import multiplexer.Multiplexer.BackendForPacketSearch;
-import multiplexer.Multiplexer.MultiplexerMessage;
-import multiplexer.Multiplexer.MultiplexerMessage.Builder;
 import multiplexer.jmx.exceptions.BackendUnreachableException;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.exceptions.OperationFailedException;
 import multiplexer.jmx.exceptions.OperationTimeoutException;
+import multiplexer.jmx.internal.Connection;
+import multiplexer.jmx.internal.ConnectionsManager;
+import multiplexer.jmx.internal.IncomingMessageData;
+import multiplexer.jmx.internal.MessageReceivedListener;
+import multiplexer.jmx.util.TimeoutCounter;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Constants.PeerTypes;
+import multiplexer.protocol.Classes.BackendForPacketSearch;
+import multiplexer.protocol.Classes.MultiplexerMessage;
+import multiplexer.protocol.Classes.MultiplexerMessage.Builder;
 
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.util.Timeout;
@@ -31,9 +36,9 @@ import org.slf4j.LoggerFactory;
 import com.google.protobuf.ByteString;
 
 /**
- * A Multiplexer server's client class. It provides methods for connecting with
- * a specified address, creating, sending and receiving Multiplexer messages.
- * {@code event} method sends a specified message to all connected Multiplexer
+ * A Classes server's client class. It provides methods for connecting with
+ * a specified address, creating, sending and receiving Classes messages.
+ * {@code event} method sends a specified message to all connected Classes
  * servers while {@code query} method is useful for getting a remote backend
  * solve a task.
  * 
@@ -127,7 +132,7 @@ public class JmxClient {
 	 *            use {@code MultiplexerMessage.newBuilder()} to obtain a
 	 *            builder. Use {@code builder.setAttributeName(name)} to set
 	 *            {@code attributeName}. {@link MultiplexerMessage}'s attributes
-	 *            are defined in {@code Multiplexer.proto} ->
+	 *            are defined in {@code Classes.proto} ->
 	 *            {@link MultiplexerMessage}.
 	 */
 	public MultiplexerMessage createMessage(MultiplexerMessage.Builder message) {
@@ -243,7 +248,7 @@ public class JmxClient {
 	}
 
 	/**
-	 * Sends a specified {@code message} through all connected Multiplexer
+	 * Sends a specified {@code message} through all connected Classes
 	 * servers.
 	 * 
 	 * @param message
@@ -263,7 +268,7 @@ public class JmxClient {
 	 * backend.
 	 * 
 	 * This is a 3-phase algorithm, however it may end at any stage on proper
-	 * conditions. In phase 1, the message is sent through one Multiplexer. If
+	 * conditions. In phase 1, the message is sent through one Classes. If
 	 * the answer doesn't appear within specified amount of time ({@code
 	 * timeout}), the algorithm enters phase 2. A special message, aimed to find
 	 * a proper backend is sent through all connected Mulitplexer servers
@@ -276,9 +281,9 @@ public class JmxClient {
 	 * simultaneously received by the {@code Client}, are not affected.
 	 * 
 	 * @param message
-	 *            the request to be sent over Multiplexer connection
+	 *            the request to be sent over Classes connection
 	 * @param messageType
-	 *            type of the request, from which a Multiplexer can deduce the
+	 *            type of the request, from which a Classes can deduce the
 	 *            right backend type
 	 * @param timeout
 	 *            each of the 3 phases of the algorithm has this time limit,

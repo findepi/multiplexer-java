@@ -1,4 +1,4 @@
-package multiplexer.jmx;
+package multiplexer.jmx.internal;
 
 import java.net.SocketAddress;
 import java.util.Iterator;
@@ -10,13 +10,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import multiplexer.Multiplexer;
-import multiplexer.Multiplexer.MultiplexerMessage;
-import multiplexer.Multiplexer.WelcomeMessage;
+import multiplexer.jmx.client.ChannelFutureGroup;
+import multiplexer.jmx.client.ChannelFutureSet;
+import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.util.RecentLongPool;
+import multiplexer.protocol.Classes;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Constants.PeerTypes;
+import multiplexer.protocol.Classes.MultiplexerMessage;
+import multiplexer.protocol.Classes.WelcomeMessage;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -39,11 +42,11 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 /**
- * A class for connections management, instantiated by any Multiplexer server's
+ * A class for connections management, instantiated by any Classes server's
  * client.
  * 
  * It is responsible for establishing, keeping and closing connections. It
- * handles all system messages accordingly to the Multiplexer's protocol.
+ * handles all system messages accordingly to the Classes's protocol.
  * 
  * Any incoming message which is not a system message is forwarded to the client
  * (client must provide a {@link MessageReceivedListener}). Also, the
@@ -57,7 +60,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
  * @author Kasia Findeisen
  * @author Piotr Findeisen
  */
-class ConnectionsManager {
+public class ConnectionsManager {
 
 	private static final Logger logger = LoggerFactory
 		.getLogger(ConnectionsManager.class);
@@ -131,7 +134,7 @@ class ConnectionsManager {
 			private ProtobufEncoder multiplexerMessageEncoder = new ProtobufEncoder();
 			// Decoders
 			private ProtobufDecoder multiplexerMessageDecoder = new ProtobufDecoder(
-				Multiplexer.MultiplexerMessage.getDefaultInstance());
+				Classes.MultiplexerMessage.getDefaultInstance());
 			// Protocol handler
 			private MultiplexerProtocolHandler multiplexerProtocolHandler = new MultiplexerProtocolHandler(
 				ConnectionsManager.this);
@@ -389,7 +392,7 @@ class ConnectionsManager {
 		sendMessage(heartbit, channel);
 	}
 
-	Timer getTimer() {
+	public Timer getTimer() {
 		return idleTimer;
 	}
 

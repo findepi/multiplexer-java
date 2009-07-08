@@ -1,4 +1,4 @@
-package multiplexer.jmx;
+package multiplexer.jmx.internal;
 
 import org.jboss.netty.channel.Channel;
 
@@ -6,7 +6,7 @@ import org.jboss.netty.channel.Channel;
  * Wrapper around {@link Channel}.
  * @author Piotr Findeisen
  */
-class Connection {
+public class Connection {
 
 	private final Channel channel;
 	

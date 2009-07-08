@@ -11,9 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import multiplexer.Multiplexer.MultiplexerMessageDescription;
-import multiplexer.Multiplexer.MultiplexerPeerDescription;
-import multiplexer.Multiplexer.MultiplexerRules;
+import multiplexer.protocol.Classes.MultiplexerMessageDescription;
+import multiplexer.protocol.Classes.MultiplexerPeerDescription;
+import multiplexer.protocol.Classes.MultiplexerRules;
 
 import com.google.protobuf.TextFormat;
 

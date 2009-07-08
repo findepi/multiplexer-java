@@ -1,4 +1,6 @@
-package multiplexer.jmx;
+package multiplexer.jmx.client;
+
+import multiplexer.jmx.internal.Connection;
 
 /**
  * TODO javadoc

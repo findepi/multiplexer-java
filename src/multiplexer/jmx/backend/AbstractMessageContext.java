@@ -1,11 +1,12 @@
-package multiplexer.jmx;
+package multiplexer.jmx.backend;
 
-import multiplexer.Multiplexer.MultiplexerMessage;
-import multiplexer.Multiplexer.MultiplexerMessage.Builder;
 import multiplexer.protocol.Constants.MessageTypes;
+import multiplexer.protocol.Classes.MultiplexerMessage;
+import multiplexer.protocol.Classes.MultiplexerMessage.Builder;
 
 import com.google.protobuf.ByteString;
-import static multiplexer.jmx.internal.Stacks.stackTraceToByteString;
+
+import static multiplexer.jmx.util.Stacks.stackTraceToByteString;
 
 /**
  * Partial implementation of {@link MessageContext}.

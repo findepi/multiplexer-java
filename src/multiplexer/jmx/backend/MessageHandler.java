@@ -1,6 +1,6 @@
-package multiplexer.jmx;
+package multiplexer.jmx.backend;
 
-import multiplexer.Multiplexer.MultiplexerMessage;
+import multiplexer.protocol.Classes.MultiplexerMessage;
 
 /**
  * @author Piotr Findeisen

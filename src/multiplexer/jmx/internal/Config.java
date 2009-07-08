@@ -1,4 +1,4 @@
-package multiplexer.jmx;
+package multiplexer.jmx.internal;
 
 public class Config {
 

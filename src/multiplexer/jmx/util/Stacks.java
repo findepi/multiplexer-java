@@ -1,4 +1,4 @@
-package multiplexer.jmx.internal;
+package multiplexer.jmx.util;
 
 import java.io.PrintWriter;
 

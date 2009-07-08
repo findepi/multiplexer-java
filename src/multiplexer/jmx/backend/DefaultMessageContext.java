@@ -1,7 +1,10 @@
-package multiplexer.jmx;
+package multiplexer.jmx.backend;
 
-import multiplexer.Multiplexer.MultiplexerMessage;
-import multiplexer.Multiplexer.MultiplexerMessage.Builder;
+import multiplexer.jmx.client.JmxClient;
+import multiplexer.jmx.client.SendingMethod;
+import multiplexer.jmx.internal.Connection;
+import multiplexer.protocol.Classes.MultiplexerMessage;
+import multiplexer.protocol.Classes.MultiplexerMessage.Builder;
 
 /**
  * Default full implementation of {@link MessageContext}.

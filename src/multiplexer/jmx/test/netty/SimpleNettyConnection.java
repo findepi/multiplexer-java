@@ -10,10 +10,10 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import multiplexer.Multiplexer;
-import multiplexer.Multiplexer.MultiplexerMessage;
-import multiplexer.Multiplexer.WelcomeMessage;
-import multiplexer.jmx.RawMessageCodecs;
+import multiplexer.jmx.internal.RawMessageCodecs;
+import multiplexer.protocol.Classes;
+import multiplexer.protocol.Classes.MultiplexerMessage;
+import multiplexer.protocol.Classes.WelcomeMessage;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.channel.ChannelFactory;
@@ -70,7 +70,7 @@ public class SimpleNettyConnection {
 		pipeline.addLast("rawMessageDecoder",
 			new RawMessageCodecs.RawMessageFrameDecoder());
 		pipeline.addLast("multiplexerMessageDecoder", new ProtobufDecoder(
-			Multiplexer.MultiplexerMessage.getDefaultInstance()));
+			Classes.MultiplexerMessage.getDefaultInstance()));
 
 		// Protocol handler
 		pipeline.addLast("multiplexerProtocolHandler",

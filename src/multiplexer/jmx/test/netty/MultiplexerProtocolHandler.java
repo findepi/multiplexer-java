@@ -1,6 +1,6 @@
 package multiplexer.jmx.test.netty;
 
-import multiplexer.Multiplexer.MultiplexerMessage;
+import multiplexer.protocol.Classes.MultiplexerMessage;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelPipelineCoverage;

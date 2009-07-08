@@ -1,4 +1,4 @@
-package multiplexer.jmx;
+package multiplexer.jmx.internal;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

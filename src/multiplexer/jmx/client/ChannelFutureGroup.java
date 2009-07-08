@@ -1,10 +1,12 @@
-package multiplexer.jmx;
+package multiplexer.jmx.client;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import multiplexer.jmx.util.TimeoutCounter;
 
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;

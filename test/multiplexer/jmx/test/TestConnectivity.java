@@ -6,12 +6,12 @@ import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
-import multiplexer.Multiplexer.MultiplexerMessage;
-import multiplexer.jmx.AbstractBackend;
-import multiplexer.jmx.IncomingMessageData;
-import multiplexer.jmx.JmxClient;
-import multiplexer.jmx.SendingMethod;
+import multiplexer.jmx.backend.AbstractBackend;
+import multiplexer.jmx.client.JmxClient;
+import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
+import multiplexer.jmx.internal.IncomingMessageData;
+import multiplexer.protocol.Classes.MultiplexerMessage;
 
 import org.jboss.netty.channel.ChannelFuture;
 

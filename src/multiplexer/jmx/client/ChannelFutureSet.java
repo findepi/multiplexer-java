@@ -1,4 +1,4 @@
-package multiplexer.jmx;
+package multiplexer.jmx.client;
 
 import java.util.Collection;
 import java.util.Set;

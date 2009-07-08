@@ -1,4 +1,4 @@
-package multiplexer.jmx;
+package multiplexer.jmx.util;
 
 import java.util.concurrent.TimeUnit;
 

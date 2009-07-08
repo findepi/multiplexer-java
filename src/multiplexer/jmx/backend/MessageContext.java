@@ -1,6 +1,7 @@
-package multiplexer.jmx;
+package multiplexer.jmx.backend;
 
-import multiplexer.Multiplexer.MultiplexerMessage;
+import multiplexer.jmx.client.JmxClient;
+import multiplexer.protocol.Classes.MultiplexerMessage;
 
 import com.google.protobuf.ByteString;
 
