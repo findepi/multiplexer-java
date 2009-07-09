@@ -177,7 +177,7 @@ public final class Protocol {
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      // Construct using multiplexer.Multiplexer.MultiplexerPeerDescription.newBuilder()
+      // Construct using multiplexer.protocol.Protocol.MultiplexerPeerDescription.newBuilder()
       private Builder() {}
       
       multiplexer.protocol.Protocol.MultiplexerPeerDescription result = new multiplexer.protocol.Protocol.MultiplexerPeerDescription();
@@ -671,7 +671,7 @@ public final class Protocol {
       
       public static final class Builder extends
           com.google.protobuf.GeneratedMessage.Builder<Builder> {
-        // Construct using multiplexer.Multiplexer.MultiplexerMessageDescription.RoutingRule.newBuilder()
+        // Construct using multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule.newBuilder()
         private Builder() {}
         
         multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule result = new multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule();
@@ -1075,7 +1075,7 @@ public final class Protocol {
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      // Construct using multiplexer.Multiplexer.MultiplexerMessageDescription.newBuilder()
+      // Construct using multiplexer.protocol.Protocol.MultiplexerMessageDescription.newBuilder()
       private Builder() {}
       
       multiplexer.protocol.Protocol.MultiplexerMessageDescription result = new multiplexer.protocol.Protocol.MultiplexerMessageDescription();
@@ -1479,7 +1479,7 @@ public final class Protocol {
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      // Construct using multiplexer.Multiplexer.LoggingMethod.newBuilder()
+      // Construct using multiplexer.protocol.Protocol.LoggingMethod.newBuilder()
       private Builder() {}
       
       multiplexer.protocol.Protocol.LoggingMethod result = new multiplexer.protocol.Protocol.LoggingMethod();
@@ -1745,7 +1745,7 @@ public final class Protocol {
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      // Construct using multiplexer.Multiplexer.Compression.newBuilder()
+      // Construct using multiplexer.protocol.Protocol.Compression.newBuilder()
       private Builder() {}
       
       multiplexer.protocol.Protocol.Compression result = new multiplexer.protocol.Protocol.Compression();
@@ -2134,7 +2134,7 @@ public final class Protocol {
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      // Construct using multiplexer.Multiplexer.MultiplexerMessage.newBuilder()
+      // Construct using multiplexer.protocol.Protocol.MultiplexerMessage.newBuilder()
       private Builder() {}
       
       multiplexer.protocol.Protocol.MultiplexerMessage result = new multiplexer.protocol.Protocol.MultiplexerMessage();
@@ -2762,7 +2762,7 @@ public final class Protocol {
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      // Construct using multiplexer.Multiplexer.WelcomeMessage.newBuilder()
+      // Construct using multiplexer.protocol.Protocol.WelcomeMessage.newBuilder()
       private Builder() {}
       
       multiplexer.protocol.Protocol.WelcomeMessage result = new multiplexer.protocol.Protocol.WelcomeMessage();
@@ -3065,7 +3065,7 @@ public final class Protocol {
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      // Construct using multiplexer.Multiplexer.BackendForPacketSearch.newBuilder()
+      // Construct using multiplexer.protocol.Protocol.BackendForPacketSearch.newBuilder()
       private Builder() {}
       
       multiplexer.protocol.Protocol.BackendForPacketSearch result = new multiplexer.protocol.Protocol.BackendForPacketSearch();
@@ -3378,7 +3378,7 @@ public final class Protocol {
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      // Construct using multiplexer.Multiplexer.DeliveryError.newBuilder()
+      // Construct using multiplexer.protocol.Protocol.DeliveryError.newBuilder()
       private Builder() {}
       
       multiplexer.protocol.Protocol.DeliveryError result = new multiplexer.protocol.Protocol.DeliveryError();
@@ -3803,7 +3803,7 @@ public final class Protocol {
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      // Construct using multiplexer.Multiplexer.MultiplexerRules.newBuilder()
+      // Construct using multiplexer.protocol.Protocol.MultiplexerRules.newBuilder()
       private Builder() {}
       
       multiplexer.protocol.Protocol.MultiplexerRules result = new multiplexer.protocol.Protocol.MultiplexerRules();
@@ -4191,7 +4191,7 @@ public final class Protocol {
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      // Construct using multiplexer.Multiplexer.SearchCollectedLogs.newBuilder()
+      // Construct using multiplexer.protocol.Protocol.SearchCollectedLogs.newBuilder()
       private Builder() {}
       
       multiplexer.protocol.Protocol.SearchCollectedLogs result = new multiplexer.protocol.Protocol.SearchCollectedLogs();
@@ -4549,7 +4549,7 @@ public final class Protocol {
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      // Construct using multiplexer.Multiplexer.ReplayCollectedEvents.newBuilder()
+      // Construct using multiplexer.protocol.Protocol.ReplayCollectedEvents.newBuilder()
       private Builder() {}
       
       multiplexer.protocol.Protocol.ReplayCollectedEvents result = new multiplexer.protocol.Protocol.ReplayCollectedEvents();
@@ -4871,7 +4871,7 @@ public final class Protocol {
       "t\030\003 \001(\r:\0010\022\r\n\005query\030\004 \001(\014\"\\\n\025ReplayColle" +
       "ctedEvents\022\031\n\016from_timestamp\030\001 \001(\004:\0010\022\024\n" +
       "\014to_timestamp\030\002 \001(\004\022\022\n\nevent_type\030\003 \003(\rB" +
-      "\002H\001";
+      "\"\n\024multiplexer.protocolB\010ProtocolH\001";
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
         public com.google.protobuf.ExtensionRegistry assignDescriptors(

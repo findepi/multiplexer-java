@@ -203,4 +203,3 @@ message ReplayCollectedEvents {
     repeated uint32 event_type = 3;
 }
 
-
