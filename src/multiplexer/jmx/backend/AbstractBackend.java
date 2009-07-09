@@ -132,6 +132,8 @@ public abstract class AbstractBackend implements Runnable {
 		if (lastMessage == null) {
 			throw new NullPointerException("lastMessage");
 		}
+		currentContext = new DefaultMessageContext(lastMessage, connection,
+			lastIncomingRequest.getConnection());
 
 		try {
 			switch (lastMessage.getType()) {
@@ -176,8 +178,6 @@ public abstract class AbstractBackend implements Runnable {
 
 	private void handleOrdinaryMessage() throws Exception {
 		assert lastMessage.getType() > MessageTypes.MAX_MULTIPLEXER_META_PACKET;
-		currentContext = new DefaultMessageContext(lastMessage, connection,
-			lastIncomingRequest.getConnection());
 		boolean responseMissing;
 		try {
 			handleMessage(lastMessage);
