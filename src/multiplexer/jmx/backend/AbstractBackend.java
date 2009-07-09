@@ -106,13 +106,14 @@ public abstract class AbstractBackend implements Runnable {
 					runOne();
 				}
 			} catch (InterruptedException e) {
-				if (!isCancelled()) {
-					throw e;
+				if (isCancelled()) {
+					return;
 				} else {
 					logger
 						.warn(
-							"interruption ignored, use AbstractBackend.cancel to stop the backend",
+							"worker interruped, use AbstractBackend.cancel to stop the backend cleanly",
 							e);
+					throw e;
 				}
 			}
 		} catch (Exception e) {
