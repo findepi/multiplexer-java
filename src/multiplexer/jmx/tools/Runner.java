@@ -2,6 +2,8 @@ package multiplexer.jmx.tools;
 
 import java.util.Arrays;
 
+import multiplexer.jmx.server.JmxServer;
+
 /**
  * Simple class to be used as a command line/script entry-point of the
  * Multiplexer jar, so that users don't need to know all the class names.
@@ -15,6 +17,13 @@ public class Runner {
 	// TODO(findepi) make this a default class in our jars
 
 	private static SubCommand[] subCommands = {
+
+		new SubCommand("server", "runs Multiplexer server") {
+			@Override
+			void run(String[] args) throws Exception {
+				JmxServer.main(args);
+			}
+		},
 
 		new SubCommand("compile-constants",
 			"compiles Multiplexer rules file into Java constants definitions") {
@@ -54,6 +63,9 @@ public class Runner {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
+		
+		// TODO(findepi) set up logging?
+		
 		if (args.length == 0) {
 			printHelpAndExit();
 			return;
