@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import multiplexer.jmx.exceptions.NoPeerForPeerIdException;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.protocol.Constants.PeerTypes;
 
@@ -135,6 +136,7 @@ public class ConnectionsMap {
 	 */
 	public synchronized Channel getAny(int peerType)
 		throws NoPeerForTypeException {
+
 		List<Channel> list = channelsByType.get(peerType);
 		if (list == null || list.size() == 0)
 			throw new NoPeerForTypeException();
@@ -166,6 +168,22 @@ public class ConnectionsMap {
 		if (list == null || list.size() == 0)
 			throw new NoPeerForTypeException();
 		return list.iterator();
+	}
+
+	/**
+	 * TODO(findepi) javadoc
+	 * 
+	 * @throws NoPeerForPeerIdException 
+	 */
+	public Channel getByPeerId(long peerId) throws NoPeerForPeerIdException {
+		Channel channel;
+		synchronized (this) {
+			channel = channelsByPeerId.get(peerId);
+		}
+		if (channel == null)
+			throw new NoPeerForPeerIdException();
+
+		return channel;
 	}
 
 	/**

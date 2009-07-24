@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import multiplexer.jmx.client.ChannelFutureGroup;
 import multiplexer.jmx.client.ChannelFutureSet;
 import multiplexer.jmx.client.SendingMethod;
+import multiplexer.jmx.exceptions.NoPeerForPeerIdException;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.util.RecentLongPool;
 import multiplexer.protocol.Protocol;
@@ -363,6 +364,13 @@ public class ConnectionsManager {
 		SendingMethod.ViaConnection method) {
 		return new ChannelFutureGroup(sendMessage(message, method
 			.getConnection().getChannel()));
+	}
+
+	public ChannelFutureGroup sendMessage(MultiplexerMessage message,
+		SendingMethod.ViaPeer method) throws NoPeerForPeerIdException {
+
+		return new ChannelFutureGroup(sendMessage(message, connectionsMap
+			.getByPeerId(method.getPeerId())));
 	}
 
 	public void flushAll() throws InterruptedException {
