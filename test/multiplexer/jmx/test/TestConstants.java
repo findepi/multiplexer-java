@@ -15,8 +15,8 @@ public class TestConstants {
 		public final static int LOG_RECEIVER_EXAMPLE = 111;
 		public final static int ECHO_SERVER = 112;
 
-		private static class MapHolder {
-			public final static Map<String, Integer> constants;
+		private static class ConstantsByNameMapHolder {
+			public final static Map<String, Integer> map;
 			static {
 				Map<String, Integer> tmp = new HashMap<String, Integer>();
 				tmp.put("WEBSITE", WEBSITE);
@@ -27,12 +27,39 @@ public class TestConstants {
 				tmp.put("EVENTS_COLLECTOR", EVENTS_COLLECTOR);
 				tmp.put("LOG_RECEIVER_EXAMPLE", LOG_RECEIVER_EXAMPLE);
 				tmp.put("ECHO_SERVER", ECHO_SERVER);
-				constants = Collections.unmodifiableMap(tmp);
+				map = Collections.unmodifiableMap(tmp);
 			}
 		}
 
+		private static class ConstantsNamesMapHolder {
+			public final static Map<Integer, String> map;
+			static {
+				Map<Integer, String> tmp = new HashMap<Integer, String>();
+				tmp.put(WEBSITE, "WEBSITE");
+				tmp.put(TEST_SERVER, "TEST_SERVER");
+				tmp.put(TEST_CLIENT, "TEST_CLIENT");
+				tmp.put(LOG_STREAMER, "LOG_STREAMER");
+				tmp.put(LOG_COLLECTOR, "LOG_COLLECTOR");
+				tmp.put(EVENTS_COLLECTOR, "EVENTS_COLLECTOR");
+				tmp.put(LOG_RECEIVER_EXAMPLE, "LOG_RECEIVER_EXAMPLE");
+				tmp.put(ECHO_SERVER, "ECHO_SERVER");
+				map = Collections.unmodifiableMap(tmp);
+			}
+		}
+
+		/**
+		 * @deprecated Use {@link #getConstantsByName} instead.
+		 */
 		public static Map<String, Integer> getMap() {
-			return MapHolder.constants;
+			return getConstantsByName();
+		};
+
+		public static Map<String, Integer> getConstantsByName() {
+			return ConstantsByNameMapHolder.map;
+		};
+
+		public static Map<Integer, String> getConstantsNames() {
+			return ConstantsNamesMapHolder.map;
 		};
 	}
 
@@ -47,8 +74,8 @@ public class TestConstants {
 		public final static int SEARCH_COLLECTED_LOGS_RESPONSE = 118;
 		public final static int REPLAY_EVENTS_REQUEST = 126;
 
-		private static class MapHolder {
-			public final static Map<String, Integer> constants;
+		private static class ConstantsByNameMapHolder {
+			public final static Map<String, Integer> map;
 			static {
 				Map<String, Integer> tmp = new HashMap<String, Integer>();
 				tmp.put("TEST_REQUEST", TEST_REQUEST);
@@ -59,12 +86,39 @@ public class TestConstants {
 				tmp.put("SEARCH_COLLECTED_LOGS_REQUEST", SEARCH_COLLECTED_LOGS_REQUEST);
 				tmp.put("SEARCH_COLLECTED_LOGS_RESPONSE", SEARCH_COLLECTED_LOGS_RESPONSE);
 				tmp.put("REPLAY_EVENTS_REQUEST", REPLAY_EVENTS_REQUEST);
-				constants = Collections.unmodifiableMap(tmp);
+				map = Collections.unmodifiableMap(tmp);
 			}
 		}
 
+		private static class ConstantsNamesMapHolder {
+			public final static Map<Integer, String> map;
+			static {
+				Map<Integer, String> tmp = new HashMap<Integer, String>();
+				tmp.put(TEST_REQUEST, "TEST_REQUEST");
+				tmp.put(TEST_RESPONSE, "TEST_RESPONSE");
+				tmp.put(PICKLE_RESPONSE, "PICKLE_RESPONSE");
+				tmp.put(LOGS_STREAM, "LOGS_STREAM");
+				tmp.put(LOGS_STREAM_RESPONSE, "LOGS_STREAM_RESPONSE");
+				tmp.put(SEARCH_COLLECTED_LOGS_REQUEST, "SEARCH_COLLECTED_LOGS_REQUEST");
+				tmp.put(SEARCH_COLLECTED_LOGS_RESPONSE, "SEARCH_COLLECTED_LOGS_RESPONSE");
+				tmp.put(REPLAY_EVENTS_REQUEST, "REPLAY_EVENTS_REQUEST");
+				map = Collections.unmodifiableMap(tmp);
+			}
+		}
+
+		/**
+		 * @deprecated Use {@link #getConstantsByName} instead.
+		 */
 		public static Map<String, Integer> getMap() {
-			return MapHolder.constants;
+			return getConstantsByName();
+		};
+
+		public static Map<String, Integer> getConstantsByName() {
+			return ConstantsByNameMapHolder.map;
+		};
+
+		public static Map<Integer, String> getConstantsNames() {
+			return ConstantsNamesMapHolder.map;
 		};
 	}
 }
