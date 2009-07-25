@@ -35,7 +35,7 @@
 
   <filelist id="project.jar.dependencies" dir="${basedir}">
     <file name="${libs}/protobuf.jar" />
-    <file name="${libs}/netty-3.1.0.CR1.jar" />
+    <file name="${libs}/netty-3.1.0.GA.jar" />
     <file name="${libs}/google-collect-1.0-rc2.jar" />
     <file name="${libs}/slf4j-api-1.5.8.jar" />
     <file name="${libs}/trove-2.0.4.jar" />
