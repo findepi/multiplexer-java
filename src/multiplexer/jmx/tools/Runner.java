@@ -38,6 +38,7 @@ public class Runner {
 	protected static void printHelpAndExit() {
 		System.err.println("Usage: java ... ( -jar <this-jar> | "
 			+ Runner.class.getName() + ") subcommand args...");
+		System.err.println();
 		System.err.println("Available subcommands:");
 		int maxlen = 0;
 		for (SubCommand subCommand : subCommands)
@@ -46,12 +47,15 @@ public class Runner {
 		for (final SubCommand subCommand : subCommands) {
 			StringBuilder nameAndDescription = new StringBuilder();
 			nameAndDescription.ensureCapacity(maxlen + SUBCOMMAND_NAME_PADDING
+				+ 6 /* for extra characters */
 				+ subCommand.getDescription().length());
+			nameAndDescription.append(" * ");
 			nameAndDescription.append(subCommand.getName());
 			for (int i = maxlen + SUBCOMMAND_NAME_PADDING
 				- subCommand.getName().length(); i > 0; i--) {
 				nameAndDescription.append(" ");
 			}
+			nameAndDescription.append(" - ");
 			nameAndDescription.append(subCommand.getDescription());
 			System.err.println(nameAndDescription.toString());
 		}
@@ -63,9 +67,9 @@ public class Runner {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		
+
 		// TODO(findepi) set up logging?
-		
+
 		if (args.length == 0) {
 			printHelpAndExit();
 			return;

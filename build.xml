@@ -13,6 +13,8 @@
   <property name="debug" value="true" />
   <property name="compatibility" value="1.5" />
 
+  <property name="jmx.jar.main-class" value="multiplexer.jmx.tools.Runner" />
+
   <property name="system.rules" value="system.rules" />
   <property name="constants.src"
             value="${src}/multiplexer/protocol/Constants.java" />
@@ -194,6 +196,9 @@
          manifestencoding="utf8"
          index="true"
          basedir="${build.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="${jmx.jar.main-class}" />
+      </manifest>
     </jar>
   </target>
 
@@ -225,6 +230,9 @@
          manifestencoding="utf8"
          index="true"
          basedir="${build.dir}">
+      <manifest>
+        <attribute name="Main-Class" value="${jmx.jar.main-class}" />
+      </manifest>
       <fileset dir="${libs.unpacked.dir}" />
     </jar>
   </target>
