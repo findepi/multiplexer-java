@@ -1,7 +1,11 @@
 package multiplexer.jmx.server;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.SocketAddress;
+import java.util.Map;
 
 import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForPeerIdException;
@@ -11,13 +15,21 @@ import multiplexer.jmx.internal.MessageReceivedListener;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Constants.PeerTypes;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
+import multiplexer.protocol.Protocol.MultiplexerMessageDescription;
+import multiplexer.protocol.Protocol.MultiplexerPeerDescription;
+import multiplexer.protocol.Protocol.MultiplexerRules;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
+import com.google.protobuf.TextFormat;
+import com.google.protobuf.TextFormat.ParseException;
+
 /**
  * @author Piotr Findeisen
  */
+// TODO javadoc
 public class JmxServer implements MessageReceivedListener, Runnable {
 
 	public static final String UNKOWN_TYPE_NAME = "unknown";
@@ -27,6 +39,10 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 	protected final ConnectionsManager connectionsManager;
 	protected final SocketAddress serverAddress;
+
+	protected Map<String, Integer> peerNamesToPeerIds = Maps.newHashMap();
+	protected Map<Integer, MultiplexerMessageDescription> messageIdsToDescription = Maps
+		.newHashMap();
 
 	public JmxServer(SocketAddress serverAddress) {
 		this.serverAddress = serverAddress;
@@ -38,11 +54,82 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		// TODO(findepi) start listening on serverAddress
 	}
 
-	public void loadMessageDefinitions(File file) {
-		// TODO(findepi)
+	protected MultiplexerMessageDescription registerMessageDescription(MultiplexerMessageDescription description) {
+		assert description.hasType();
+		return messageIdsToDescription.put(description.getType(), description);
+	}
+	
+	public void loadMessageDefinitions(MultiplexerRules additionalRules) {
+		for (MultiplexerPeerDescription peer : additionalRules.getPeerList()) {
+			if (!peer.hasName() || !peer.hasType()) {
+				logger.error(
+					"MultiplexerPeerDescription without name or type:\n{}",
+					peer);
+				continue;
+			}
+			if (peerNamesToPeerIds.containsKey(peer.getName())) {
+				logger.error("Peer name '{}' already exists.", peer.getName());
+				continue;
+			}
+			peerNamesToPeerIds.put(peer.getName(), peer.getType());
+		}
+		for (MultiplexerMessageDescription msgd : additionalRules.getTypeList()) {
+
+			if (!msgd.hasType()) {
+				logger.error("MultiplexerMessageDescription without type:\n{}",
+					msgd);
+				continue;
+			}
+
+			MultiplexerMessageDescription.Builder msgdCopy = MultiplexerMessageDescription
+				.newBuilder();
+			if (msgd.hasName()) {
+				msgdCopy.setName(msgd.getName());
+			}
+			msgdCopy.setType(msgd.getType());
+			
+			// Convert the 'to' list using peer' name→ID lookup.
+			for (MultiplexerMessageDescription.RoutingRule rRule : msgd
+				.getToList()) {
+
+				if (!rRule.hasPeer()) {
+					logger.error("RoutingRule without peer name:\n{}", rRule);
+					continue;
+				}
+				if (!peerNamesToPeerIds.containsKey(rRule.getPeer())) {
+					logger.error("Unknown peer name: '{}'", rRule.getPeer());
+					continue;
+				}
+				int peerId = peerNamesToPeerIds.get(rRule.getPeer());
+				if (rRule.hasPeerType() && rRule.getPeerType() != peerId) {
+					logger
+						.error(
+							"RoutingRule has both peer name and ID but ID is wrong:\n{}",
+							rRule);
+					continue;
+				}
+
+				// Create a copy of rRule with 'peerType' set (and 'peer'
+				// cleared ─ it's no longer used).
+				msgdCopy.addTo(MultiplexerMessageDescription.RoutingRule
+					.newBuilder(rRule).clearPeer().setPeerType(peerId));
+
+			}
+			registerMessageDescription(msgdCopy.build());
+		}
 	}
 
-	public void loadMessageDefinitionsFromFile(String fileName) {
+	public void loadMessageDefinitions(File file) throws ParseException,
+		FileNotFoundException, IOException {
+		// TODO(findepi)
+		MultiplexerRules.Builder rulesBuilder = MultiplexerRules.newBuilder();
+		TextFormat.merge(new FileReader(file), rulesBuilder);
+		MultiplexerRules additionalRules = rulesBuilder.build();
+		loadMessageDefinitions(additionalRules);
+	}
+
+	public void loadMessageDefinitionsFromFile(String fileName)
+		throws ParseException, FileNotFoundException, IOException {
 		loadMessageDefinitions(new File(fileName));
 	}
 
