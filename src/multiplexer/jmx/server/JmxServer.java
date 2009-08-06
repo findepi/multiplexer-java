@@ -229,7 +229,6 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 	public void loadMessageDefinitions(File file) throws ParseException,
 		FileNotFoundException, IOException {
-		// TODO(findepi)
 		MultiplexerRules.Builder rulesBuilder = MultiplexerRules.newBuilder();
 		TextFormat.merge(new FileReader(file), rulesBuilder);
 		MultiplexerRules additionalRules = rulesBuilder.build();
@@ -257,7 +256,6 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		// routing based on overridden rules
 		if (message.getOverrideRrulesCount() != 0) {
 			assert message.getOverrideRrulesCount() > 0;
-			// TODO(findepi) routing based on overridden rules
 			schedule(message, message.getOverrideRrulesList());
 			return;
 		}
@@ -283,7 +281,6 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 		default:
 			if (message.getType() > MessageTypes.MAX_MULTIPLEXER_META_PACKET) {
-				// TODO use the generic rules
 				MultiplexerMessageDescription msgDesc = messageTypeIdsToDescription
 					.get(message.getType());
 				if (msgDesc == null) {
