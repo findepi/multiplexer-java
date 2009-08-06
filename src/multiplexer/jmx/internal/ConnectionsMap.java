@@ -10,6 +10,8 @@ import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.protocol.Constants.PeerTypes;
 
 import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.ChannelFuture;
+import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 
@@ -57,6 +59,12 @@ public class ConnectionsMap {
 	 */
 	private Map<Channel, Integer> peerTypeByChannel = new WeakHashMap<Channel, Integer>();
 
+	private ChannelFutureListener remover = new ChannelFutureListener() {
+		public void operationComplete(ChannelFuture future) throws Exception {
+			remove(future.getChannel());
+		}
+	};
+
 	/**
 	 * Adds a new channel to {@code allChannels} which is a {@link ChannelGroup}
 	 * . Any closed channel will be removed automatically.
@@ -65,6 +73,7 @@ public class ConnectionsMap {
 	 *            a new connection
 	 */
 	public void addNew(Channel channel) {
+		channel.getCloseFuture().addListener(remover);
 		allChannels.add(channel);
 	}
 
@@ -86,6 +95,7 @@ public class ConnectionsMap {
 	 *         peer wasn't connected
 	 */
 	public synchronized Channel add(Channel channel, long peerId, int peerType) {
+		channel.getCloseFuture().addListener(remover);
 		Channel oldChannel = channelsByPeerId.put(peerId, channel);
 		if (oldChannel != null) {
 			channelsByType
@@ -173,7 +183,7 @@ public class ConnectionsMap {
 	/**
 	 * TODO(findepi) javadoc
 	 * 
-	 * @throws NoPeerForPeerIdException 
+	 * @throws NoPeerForPeerIdException
 	 */
 	public Channel getByPeerId(long peerId) throws NoPeerForPeerIdException {
 		Channel channel;

@@ -1,5 +1,7 @@
 package multiplexer.jmx.internal;
 
+import static multiplexer.jmx.util.Channels.awaitSemiInterruptibly;
+
 import java.net.SocketAddress;
 import java.util.Iterator;
 import java.util.Map;
@@ -9,6 +11,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import multiplexer.jmx.client.ChannelFutureGroup;
 import multiplexer.jmx.client.ChannelFutureSet;
@@ -18,24 +21,28 @@ import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.util.RecentLongPool;
 import multiplexer.protocol.Protocol;
 import multiplexer.protocol.Constants.MessageTypes;
-import multiplexer.protocol.Constants.PeerTypes;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Protocol.WelcomeMessage;
 
+import org.jboss.netty.bootstrap.Bootstrap;
 import org.jboss.netty.bootstrap.ClientBootstrap;
+import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.Channels;
+import org.jboss.netty.channel.group.ChannelGroup;
+import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.handler.codec.protobuf.ProtobufDecoder;
 import org.jboss.netty.handler.codec.protobuf.ProtobufEncoder;
 import org.jboss.netty.handler.timeout.IdleStateHandler;
 import org.jboss.netty.util.HashedWheelTimer;
+import org.jboss.netty.util.Timeout;
 import org.jboss.netty.util.Timer;
+import org.jboss.netty.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,19 +73,25 @@ public class ConnectionsManager {
 	private static final Logger logger = LoggerFactory
 		.getLogger(ConnectionsManager.class);
 
+	private final AtomicBoolean shuttingDown = new AtomicBoolean(false);
+
 	private final long instanceId = new Random().nextLong();
 	private final int instanceType;
-	private final ClientBootstrap bootstrap;
+	private final Bootstrap bootstrap;
 	private final ConnectionsMap connectionsMap = new ConnectionsMap();
 	private MessageReceivedListener messageReceivedListener;
-	private final ChannelFutureSet channelFutureSet = new ChannelFutureSet();
+	private final ChannelFutureSet allPendingChannelFutures = new ChannelFutureSet();
 	private final Timer idleTimer = new HashedWheelTimer();
 	private final Config config = new Config();
 	private final RecentLongPool recentMsgIds = new RecentLongPool();
 
+	// TODO ChannelFuture points to Channel so the WeakHashMap is not weak at
+	// all.
 	private final Map<Channel, ChannelFuture> pendingRegistrations = new WeakHashMap<Channel, ChannelFuture>();
 
 	private final Map<Channel, SocketAddress> endpointByChannel = new WeakHashMap<Channel, SocketAddress>();
+
+	private volatile MultiplexerMessage cachedMultiplexerMessage;
 
 	/**
 	 * Constructs new ConnectionsManager with given type.
@@ -106,7 +119,7 @@ public class ConnectionsManager {
 	}
 
 	/**
-	 * Constructs new ConnectionsManager with given type.
+	 * Constructs new client-side ConnectionsManager with given type.
 	 * 
 	 * @param instanceType
 	 *            the type of the peer that this {@link ConnectionsManager} will
@@ -122,10 +135,14 @@ public class ConnectionsManager {
 	public ConnectionsManager(final int instanceType, Executor bossExecutor,
 		Executor workerExecutor) {
 
+		this(instanceType, new ClientBootstrap(
+			new NioClientSocketChannelFactory(bossExecutor, workerExecutor)));
+	}
+
+	public ConnectionsManager(final int instanceType, Bootstrap bootstrap) {
+
 		this.instanceType = instanceType;
-		ChannelFactory channelFactory = new NioClientSocketChannelFactory(
-			bossExecutor, workerExecutor);
-		bootstrap = new ClientBootstrap(channelFactory);
+		this.bootstrap = bootstrap;
 		bootstrap.setOption("tcpNoDelay", true);
 		bootstrap.setOption("keepAlive", true);
 
@@ -136,6 +153,8 @@ public class ConnectionsManager {
 			// Decoders
 			private ProtobufDecoder multiplexerMessageDecoder = new ProtobufDecoder(
 				Protocol.MultiplexerMessage.getDefaultInstance());
+			// Heartbits
+			private HeartbitHandler heartbitHandler = new HeartbitHandler();
 			// Protocol handler
 			private MultiplexerProtocolHandler multiplexerProtocolHandler = new MultiplexerProtocolHandler(
 				ConnectionsManager.this);
@@ -159,9 +178,12 @@ public class ConnectionsManager {
 					Config.INITIAL_WRITE_IDLE_TIME, Long.MAX_VALUE,
 					TimeUnit.SECONDS));
 
+				pipeline.addLast("heartbitHandler", heartbitHandler);
+
 				// Protocol handler
 				pipeline.addLast("multiplexerProtocolHandler",
 					multiplexerProtocolHandler);
+
 				return pipeline;
 			}
 		};
@@ -188,7 +210,12 @@ public class ConnectionsManager {
 		return initializeMessageBuilder(message).build();
 	}
 
-	public synchronized ChannelFuture asyncConnect(SocketAddress address) {
+	public ChannelFuture asyncConnect(SocketAddress address) {
+		return asyncConnect(address, 3, TimeUnit.SECONDS);
+	}
+
+	public synchronized ChannelFuture asyncConnect(final SocketAddress address,
+		final long reconnectTime, final TimeUnit reconnectTimeUnit) {
 		// TODO support for reconnecting; each lost connection (or a connection
 		// that could not be estabilished at all) should be retired after
 		// specific amout of time
@@ -196,16 +223,23 @@ public class ConnectionsManager {
 		// also try to reconnect immediately
 		// TODO send via(Connection) should try to reconnect to the same
 		// address, if connection is lost
-		ChannelFuture connectOperation = bootstrap.connect(address);
+		assert bootstrap instanceof ClientBootstrap;
+		ChannelFuture connectOperation = ((ClientBootstrap) bootstrap)
+			.connect(address);
 		final Channel channel = connectOperation.getChannel();
 		assert channel != null;
 		connectionsMap.addNew(channel);
 		endpointByChannel.put(channel, address);
 
-		// TODO make registrationFuture cancellable
-		final ChannelFuture registrationFuture = Channels
-			.future(channel, false);
+		final ChannelFuture registrationFuture = Channels.future(channel, true);
 		synchronized (pendingRegistrations) {
+			if (shuttingDown.get()) {
+				logger.debug("connect to {} cancelled by shutdown", address);
+				channel.close();
+				registrationFuture.setFailure(new RuntimeException(
+					"connect cancelled by shutdown"));
+				return registrationFuture;
+			}
 			pendingRegistrations.put(channel, registrationFuture);
 		}
 
@@ -221,29 +255,58 @@ public class ConnectionsManager {
 					synchronized (pendingRegistrations) {
 						pendingRegistrations.remove(channel);
 					}
+					scheduleReconnect(address, reconnectTime, reconnectTimeUnit);
 					return;
 				}
 
-				// send out welcome message
-				// TODO(findepi) In case of server's ConnectionsManager, don't
-				// send WelcomeMessage before receiving such message from the
-				// other party.
-				WelcomeMessage welcomeMessage = WelcomeMessage.newBuilder()
-					.setType(instanceType).setId(instanceId).build();
-				logger.debug("Sending welcome message\n{}", welcomeMessage);
-				ByteString message = welcomeMessage.toByteString();
-				sendMessage(createMessage(message,
-					MessageTypes.CONNECTION_WELCOME), future.getChannel());
+				// Send out welcome message.
+				sendMessage(createWelcomeMessage(), future.getChannel());
 			}
+
 		});
 		return registrationFuture;
 	}
 
+	private void scheduleReconnect(final SocketAddress address,
+		final long delay, final TimeUnit unit) {
+
+		idleTimer.newTimeout(new TimerTask() {
+			public void run(Timeout timeout) throws Exception {
+				asyncConnect(address, delay, unit);
+			}
+		}, delay, unit);
+	}
+
+	public void channelDisconnected(Channel channel) {
+		assert !channel.isConnected();
+		SocketAddress address = endpointByChannel.get(channel);
+		if (address != null) {
+			logger.warn("channel {} is disconnected now, reconnecting to {}",
+				channel, address);
+			asyncConnect(address);
+		} else {
+			logger.warn("channel {} is disconnected now", channel);
+		}
+	}
+
+	private MultiplexerMessage createWelcomeMessage() {
+		if (cachedMultiplexerMessage != null)
+			return cachedMultiplexerMessage;
+		WelcomeMessage welcomeMessage = WelcomeMessage.newBuilder().setType(
+			instanceType).setId(instanceId).setMultiplexerPassword(
+			ByteString.copyFromUtf8("3hgf#fv!2fi32rf3@%*&gubh87^%")).build();
+		logger.debug("created welcome message\n{}", welcomeMessage);
+		ByteString message = welcomeMessage.toByteString();
+		cachedMultiplexerMessage = createMessage(message,
+			MessageTypes.CONNECTION_WELCOME);
+		return cachedMultiplexerMessage;
+	}
+
 	public void messageReceived(MultiplexerMessage message, Channel channel) {
 
-		if (!recentMsgIds.add(message.getId())) {
-			logger.debug("Duplicate message received:\n{}, dropped.", message
-				.getId());
+		if (message.getType() != MessageTypes.CONNECTION_WELCOME
+			&& !recentMsgIds.add(message.getId())) {
+			logger.debug("Duplicate message received and dropped\n{}", message);
 			return;
 		}
 
@@ -253,7 +316,7 @@ public class ConnectionsManager {
 				welcome = WelcomeMessage.parseFrom(message.getMessage());
 			} catch (InvalidProtocolBufferException e) {
 				logger.warn("Malformed CONNECTION_WELCOME received.", e);
-				close(channel);
+				Channels.close(channel);
 				return;
 			}
 			int peerType = welcome.getType();
@@ -263,8 +326,15 @@ public class ConnectionsManager {
 			synchronized (pendingRegistrations) {
 				registartionFuture = pendingRegistrations.remove(channel);
 			}
-			assert registartionFuture != null;
-			registartionFuture.setSuccess();
+			assert registartionFuture != null
+				|| bootstrap instanceof ServerBootstrap : channel;
+			if (registartionFuture != null) {
+				assert bootstrap instanceof ClientBootstrap;
+				registartionFuture.setSuccess();
+			} else {
+				assert bootstrap instanceof ServerBootstrap;
+				sendMessage(createWelcomeMessage(), channel);
+			}
 
 			channel.getPipeline().replace(
 				"idleHandler",
@@ -274,10 +344,12 @@ public class ConnectionsManager {
 					.getWriteIdleTime(peerType), Long.MAX_VALUE,
 					TimeUnit.SECONDS));
 
-			if (oldChannel != null) {
+			if (oldChannel != null && oldChannel != channel) {
 				logger
-					.warn("Another CONNECTION_WELCOME received from connected peer; closing previous connection.");
-				close(oldChannel);
+					.warn(
+						"CONNECTION_WELCOME received from already connected peer over {}; closing previous connection {}:\n{}",
+						new Object[] { channel, oldChannel, welcome });
+				Channels.close(oldChannel);
 				return;
 			}
 
@@ -289,23 +361,6 @@ public class ConnectionsManager {
 				System.err.println("Unhandled message\n" + message);
 				// TODO logger?
 			}
-		}
-	}
-
-	/**
-	 * Request closing the channel and removing it from connections maps.
-	 * 
-	 * @param channel
-	 *            channel to be closed
-	 */
-	void close(Channel channel) {
-		// TODO remove `channel' from the connections maps
-		channel.close();
-		connectionsMap.remove(channel);
-
-		SocketAddress endpoint = endpointByChannel.get(channel);
-		if (endpoint != null) {
-			asyncConnect(endpoint);
 		}
 	}
 
@@ -335,20 +390,22 @@ public class ConnectionsManager {
 	private ChannelFuture sendMessage(MultiplexerMessage message,
 		Channel channel) {
 		ChannelFuture cf = channel.write(message);
-		channelFutureSet.add(cf);
+		allPendingChannelFutures.add(cf);
 		return cf;
 	}
 
 	public ChannelFutureGroup sendMessage(MultiplexerMessage message,
-		SendingMethod method) throws NoPeerForTypeException {
+		SendingMethod.ViaConnectionsOfType method)
+		throws NoPeerForTypeException {
 
-		if (method == SendingMethod.THROUGH_ONE) {
+		if (method.getQuantity() == SendingMethod.ANY) {
 			Channel channel;
-			channel = connectionsMap.getAny(PeerTypes.MULTIPLEXER);
+			channel = connectionsMap.getAny(method.getPeerType());
 			return new ChannelFutureGroup(sendMessage(message, channel));
-		} else if (method == SendingMethod.THROUGH_ALL) {
-			Iterator<Channel> channels = connectionsMap
-				.getAll(PeerTypes.MULTIPLEXER);
+
+		} else if (method.getQuantity() == SendingMethod.ALL) {
+			Iterator<Channel> channels = connectionsMap.getAll(method
+				.getPeerType());
 			Channel channel;
 			ChannelFutureGroup channelFutureGroup = new ChannelFutureGroup();
 			while (channels.hasNext()) {
@@ -388,16 +445,9 @@ public class ConnectionsManager {
 	}
 
 	private ChannelFutureGroup copyActiveChannelFutures() {
-		synchronized (channelFutureSet) {
-			return new ChannelFutureGroup(channelFutureSet);
+		synchronized (allPendingChannelFutures) {
+			return new ChannelFutureGroup(allPendingChannelFutures);
 		}
-	}
-
-	void sendHeartbit(Channel channel) {
-		MultiplexerMessage.Builder heartbitBuilder = createMessageBuilder();
-		MultiplexerMessage heartbit = heartbitBuilder.setType(
-			MessageTypes.HEARTBIT).build();
-		sendMessage(heartbit, channel);
 	}
 
 	public Timer getTimer() {
@@ -406,5 +456,16 @@ public class ConnectionsManager {
 
 	public long getInstanceId() {
 		return instanceId;
+	}
+
+	public void shutdown() throws InterruptedException {
+		shuttingDown.set(true);
+		ChannelGroup allChannels = new DefaultChannelGroup();
+		synchronized (pendingRegistrations) {
+			allChannels.addAll(pendingRegistrations.keySet());
+		}
+		allChannels.addAll(connectionsMap.getAllChannels());
+		awaitSemiInterruptibly(allChannels.close(), 3);
+		bootstrap.releaseExternalResources();
 	}
 }

@@ -30,8 +30,8 @@ public class CompileConstants {
 			usage(e.getMessage(), optionsParser);
 			System.exit(1);
 		}
-		
-		if (options.rulesFile ==null) {
+
+		if (options.rulesFile == null) {
 			usage("Input file not specified", optionsParser);
 			System.exit(1);
 		}
@@ -42,7 +42,7 @@ public class CompileConstants {
 			.newInstance();
 		compiler.compile(options);
 	}
-	
+
 	public static void usage(String error, CmdLineParser optionsParser) {
 		System.err.println(error);
 		System.err.println("java " + CompileConstants.class.getName()

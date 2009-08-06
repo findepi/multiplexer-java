@@ -70,7 +70,7 @@ public final class RawMessageCodecs {
 				header.order(ByteOrder.LITTLE_ENDIAN);
 				length = header.getInt();
 				crc = header.getInt();
-				logger.debug("next message length = {}", length);
+				logger.trace("next message length = {}", length);
 				if (length < 0) {
 					channel.close();
 					throw new Exception("length must be positive, not "
@@ -103,8 +103,9 @@ public final class RawMessageCodecs {
 		 */
 		private void checkCrc(ChannelBuffer message) throws Exception {
 			if (this.crc != (int) getCrc32(message))
+				// TODO can we throw?
 				throw new Exception("Crc checksum does not match.");
-			logger.debug("validated a checksum of message, length {}", message
+			logger.trace("validated a checksum of message, length {}", message
 				.readableBytes());
 		}
 	}

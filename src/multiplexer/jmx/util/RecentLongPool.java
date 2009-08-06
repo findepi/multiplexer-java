@@ -19,7 +19,7 @@ public class RecentLongPool {
 	private TLongHashSet ids = new TLongHashSet();
 	private Deque<Long> recent = new ArrayDeque<Long>();
 
-	public boolean add(long id) {
+	public synchronized boolean add(long id) {
 		if (ids.add(id)) {
 			recent.addFirst(id);
 			if (ids.size() > CAPACITY) {

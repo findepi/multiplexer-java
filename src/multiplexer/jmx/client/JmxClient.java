@@ -164,7 +164,7 @@ public class JmxClient {
 	 * @throws NoPeerForTypeException
 	 */
 	public ChannelFutureGroup send(MultiplexerMessage message,
-		SendingMethod sendingMethod) throws NoPeerForTypeException {
+		SendingMethod.ViaConnectionsOfType sendingMethod) throws NoPeerForTypeException {
 		return connectionsManager.sendMessage(message, sendingMethod);
 	}
 
@@ -553,5 +553,9 @@ public class JmxClient {
 
 	public long getInstanceId() {
 		return connectionsManager.getInstanceId();
+	}
+	
+	public void shutdown() throws InterruptedException {
+		connectionsManager.shutdown();
 	}
 }

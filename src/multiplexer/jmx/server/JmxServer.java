@@ -4,21 +4,36 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Formatter;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForPeerIdException;
+import multiplexer.jmx.exceptions.NoPeerForTypeException;
+import multiplexer.jmx.internal.ByteCountingHandler;
 import multiplexer.jmx.internal.Connection;
 import multiplexer.jmx.internal.ConnectionsManager;
+import multiplexer.jmx.internal.MessageCountingHandler;
 import multiplexer.jmx.internal.MessageReceivedListener;
+import multiplexer.jmx.util.LongDeltaCounter;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Constants.PeerTypes;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Protocol.MultiplexerMessageDescription;
 import multiplexer.protocol.Protocol.MultiplexerPeerDescription;
 import multiplexer.protocol.Protocol.MultiplexerRules;
+import multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule;
 
+import org.jboss.netty.bootstrap.ServerBootstrap;
+import org.jboss.netty.channel.ChannelFactory;
+import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,45 +48,138 @@ import com.google.protobuf.TextFormat.ParseException;
 public class JmxServer implements MessageReceivedListener, Runnable {
 
 	public static final String UNKOWN_TYPE_NAME = "unknown";
+	public static final String UNNAMED_TYPE_NAME = "unnamed";
 
 	private static final Logger logger = LoggerFactory
 		.getLogger(JmxServer.class);
 
-	protected final ConnectionsManager connectionsManager;
-	protected final SocketAddress serverAddress;
+	protected ConnectionsManager connectionsManager;
+	protected SocketAddress serverAddress;
 
-	protected Map<String, Integer> peerNamesToPeerIds = Maps.newHashMap();
-	protected Map<Integer, MultiplexerMessageDescription> messageIdsToDescription = Maps
+	protected Map<String, Integer> peerTypeNamesToPeerTypeIds = Maps
 		.newHashMap();
+	protected Map<Integer, MultiplexerMessageDescription> messageTypeIdsToDescription = Maps
+		.newHashMap();
+
+	protected long transferUpdateIntervalMillis = 1000;
+
+	private ServerChannelPipelineFactory channelPipelineFactory;
 
 	public JmxServer(SocketAddress serverAddress) {
 		this.serverAddress = serverAddress;
-		connectionsManager = new ConnectionsManager(PeerTypes.MULTIPLEXER);
-		connectionsManager.setMessageReceivedListener(this);
 	}
 
 	public void run() {
-		// TODO(findepi) start listening on serverAddress
+
+		logger.info("starting {} @ {}", JmxServer.class.getSimpleName(),
+			serverAddress);
+
+		try {
+			// Configure the server.
+			ChannelFactory factory = new NioServerSocketChannelFactory(
+				Executors.newCachedThreadPool(), Executors
+					.newCachedThreadPool());
+			ServerBootstrap bootstrap = new ServerBootstrap(factory);
+
+			// initialize the connectionsManager
+			connectionsManager = new ConnectionsManager(PeerTypes.MULTIPLEXER,
+				bootstrap);
+			channelPipelineFactory = new ServerChannelPipelineFactory(bootstrap
+				.getPipelineFactory());
+			bootstrap.setPipelineFactory(channelPipelineFactory);
+			connectionsManager.setMessageReceivedListener(this);
+
+			// Bind & start the server.
+			bootstrap.bind(serverAddress);
+
+			loopPrintingStatistics();
+
+		} finally {
+			try {
+				connectionsManager.shutdown();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
-	protected MultiplexerMessageDescription registerMessageDescription(MultiplexerMessageDescription description) {
-		assert description.hasType();
-		return messageIdsToDescription.put(description.getType(), description);
+	private void loopPrintingStatistics() {
+		LongDeltaCounter bytesIn = new LongDeltaCounter();
+		LongDeltaCounter bytesOut = new LongDeltaCounter();
+		LongDeltaCounter messagesIn = new LongDeltaCounter();
+		LongDeltaCounter messagesOut = new LongDeltaCounter();
+		LongDeltaCounter time = new LongDeltaCounter(System.currentTimeMillis());
+
+		final ByteCountingHandler bytesCounter = channelPipelineFactory
+			.getByteCountingHandler();
+		final MessageCountingHandler messageCounter = channelPipelineFactory
+			.getMessageCountingHandler();
+
+		for (;;) {
+			try {
+				Thread.sleep(transferUpdateIntervalMillis);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				break;
+			}
+
+			// timeDelta is double so that division results are not rounded.
+			double timeDelta = time.deltaTo(System.currentTimeMillis()) * 1.0
+				/ TimeUnit.SECONDS.toMillis(1);
+			if (timeDelta <= 0) {
+				// system clock changed?
+				continue;
+			}
+
+			System.err.format("IN: %s %9.2f msg/s      OUT: %s %9.2f msg/s%n",
+				renderBytesPerSecondCount(bytesIn.deltaTo(bytesCounter
+					.getBytesInCount())
+					/ timeDelta), messagesIn.deltaTo(messageCounter
+					.getMessagesInCount())
+					/ timeDelta, renderBytesPerSecondCount(bytesOut
+					.deltaTo(bytesCounter.getBytesOutCount())
+					/ timeDelta), messagesOut.deltaTo(messageCounter
+					.getMessagesOutCount())
+					/ timeDelta);
+		}
 	}
-	
+
+	private static String renderBytesPerSecondCount(double bytes) {
+		assert bytes >= 0;
+		Formatter formatter = new Formatter();
+		if (bytes >= 1024 * 1024) {
+			formatter.format("%7.2f MiB/s", bytes / 1024 / 1024);
+		} else if (bytes >= 1024) {
+			formatter.format("%7.2f KiB/s", bytes / 1024);
+		} else {
+			formatter.format("%7.2f B/s  ", bytes);
+		}
+		return formatter.toString();
+	}
+
+	protected MultiplexerMessageDescription registerMessageDescription(
+		MultiplexerMessageDescription description) {
+		assert description.hasType();
+		return messageTypeIdsToDescription.put(description.getType(),
+			description);
+	}
+
 	public void loadMessageDefinitions(MultiplexerRules additionalRules) {
-		for (MultiplexerPeerDescription peer : additionalRules.getPeerList()) {
-			if (!peer.hasName() || !peer.hasType()) {
+		for (MultiplexerPeerDescription peerDesc : additionalRules
+			.getPeerList()) {
+			if (!peerDesc.hasName() || !peerDesc.hasType()) {
 				logger.error(
 					"MultiplexerPeerDescription without name or type:\n{}",
-					peer);
+					peerDesc);
 				continue;
 			}
-			if (peerNamesToPeerIds.containsKey(peer.getName())) {
-				logger.error("Peer name '{}' already exists.", peer.getName());
+			if (peerTypeNamesToPeerTypeIds.containsKey(peerDesc.getName())) {
+				logger.error("Peer name '{}' already exists.", peerDesc
+					.getName());
 				continue;
 			}
-			peerNamesToPeerIds.put(peer.getName(), peer.getType());
+			peerTypeNamesToPeerTypeIds.put(peerDesc.getName(), peerDesc
+				.getType());
 		}
 		for (MultiplexerMessageDescription msgd : additionalRules.getTypeList()) {
 
@@ -87,7 +195,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 				msgdCopy.setName(msgd.getName());
 			}
 			msgdCopy.setType(msgd.getType());
-			
+
 			// Convert the 'to' list using peer' name→ID lookup.
 			for (MultiplexerMessageDescription.RoutingRule rRule : msgd
 				.getToList()) {
@@ -96,11 +204,11 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 					logger.error("RoutingRule without peer name:\n{}", rRule);
 					continue;
 				}
-				if (!peerNamesToPeerIds.containsKey(rRule.getPeer())) {
+				if (!peerTypeNamesToPeerTypeIds.containsKey(rRule.getPeer())) {
 					logger.error("Unknown peer name: '{}'", rRule.getPeer());
 					continue;
 				}
-				int peerId = peerNamesToPeerIds.get(rRule.getPeer());
+				int peerId = peerTypeNamesToPeerTypeIds.get(rRule.getPeer());
 				if (rRule.hasPeerType() && rRule.getPeerType() != peerId) {
 					logger
 						.error(
@@ -150,6 +258,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		if (message.getOverrideRrulesCount() != 0) {
 			assert message.getOverrideRrulesCount() > 0;
 			// TODO(findepi) routing based on overridden rules
+			schedule(message, message.getOverrideRrulesList());
 			return;
 		}
 
@@ -175,9 +284,17 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		default:
 			if (message.getType() > MessageTypes.MAX_MULTIPLEXER_META_PACKET) {
 				// TODO use the generic rules
-				break;
+				MultiplexerMessageDescription msgDesc = messageTypeIdsToDescription
+					.get(message.getType());
+				if (msgDesc == null) {
+					// fall through
+				} else {
+					schedule(message, msgDesc.getToList());
+					break;
+				}
+			} else {
+				// fall through
 			}
-			// fall through
 		case MessageTypes.BACKEND_ERROR:
 		case MessageTypes.DELIVERY_ERROR:
 		case MessageTypes.CONNECTION_WELCOME:
@@ -190,6 +307,20 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		case MessageTypes.BACKEND_FOR_PACKET_SEARCH:
 			// TODO
 			break;
+		}
+	}
+
+	private void schedule(MultiplexerMessage message,
+		List<RoutingRule> routingRules) {
+
+		for (RoutingRule rule : routingRules) {
+			try {
+				connectionsManager.sendMessage(message, SendingMethod.via(rule
+					.getPeerType(), rule.getWhom()));
+			} catch (NoPeerForTypeException e) {
+				// TODO should we send delivery error?
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -206,26 +337,82 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 			connectionsManager.sendMessage(message, SendingMethod.via(message
 				.getTo()));
 		} catch (NoPeerForPeerIdException e) {
-			// TODO operation failed OR ignore ?
-			// e.printStackTrace();
+			logger.warn("message #{} to {} while it's not connected", message
+				.getId(), message.getTo());
 		}
 	}
 
-	static String getMessageTypeName(int type) {
+	String getMessageTypeName(int type) {
 		String name;
 		name = MessageTypes.getConstantsNames().get(type);
 		if (name != null)
 			return name;
-		// TODO retrieve the name from the data read from a config file
+		MultiplexerMessageDescription msgDesc = messageTypeIdsToDescription
+			.get(type);
+		if (msgDesc != null) {
+			if (msgDesc.hasName())
+				return msgDesc.getName();
+			else
+				return UNNAMED_TYPE_NAME;
+		}
 		return UNKOWN_TYPE_NAME;
+	}
+
+	public long getTransferUpdateIntervalMillis() {
+		return transferUpdateIntervalMillis;
+	}
+
+	public void setTransferUpdateIntervalMillis(
+		long transferUpdateIntervalMillis) {
+		this.transferUpdateIntervalMillis = transferUpdateIntervalMillis;
+	}
+
+	public SocketAddress getServerAddress() {
+		return serverAddress;
+	}
+
+	public void setServerAddress(SocketAddress serverAddress) {
+		this.serverAddress = serverAddress;
 	}
 
 	/**
 	 * @param args
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 * @throws ParseException
 	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		throw new RuntimeException("not implemented");
+	public static void main(String[] args) throws ParseException,
+		FileNotFoundException, IOException {
+
+		Options options = new Options();
+		CmdLineParser optionsParser = new CmdLineParser(options);
+		try {
+			optionsParser.parseArgument(args);
+		} catch (CmdLineException e) {
+			usage(e.getMessage(), optionsParser);
+			System.exit(1);
+		}
+
+		// initialize the server
+		JmxServer server = new JmxServer(new InetSocketAddress(
+			options.localHost, options.localPort));
+		for (String fileName : options.rulesFiles) {
+			server.loadMessageDefinitionsFromFile(fileName);
+		}
+		server
+			.setTransferUpdateIntervalMillis(options.transferUpdateIntervalMillis);
+
+		server.run();
 	}
 
+	private static void usage(String error, CmdLineParser optionsParser) {
+		System.err.println(error);
+		System.err.println("java " + JmxServer.class.getName()
+			+ " [options...] <multiplexer rules file>");
+		System.err
+			.println("java -jar ....jar server [options...] <multiplexer rules file>");
+		System.err.println();
+		System.err.println("Available options are listed below.");
+		optionsParser.printUsage(System.err);
+	}
 }

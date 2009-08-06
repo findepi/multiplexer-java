@@ -121,7 +121,12 @@ public abstract class AbstractBackend implements Runnable {
 		} finally {
 			thread = null;
 		}
-		// TODO cleanup of JmxClient
+		
+		try {
+			connection.shutdown();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void runOne() throws Exception {
