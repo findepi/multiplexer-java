@@ -30,6 +30,7 @@ import multiplexer.protocol.Protocol.MultiplexerRules;
 import multiplexer.protocol.Protocol.MultiplexerMessageDescription.RoutingRule;
 
 import org.jboss.netty.bootstrap.ServerBootstrap;
+import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.kohsuke.args4j.CmdLineException;
@@ -55,6 +56,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 	protected ConnectionsManager connectionsManager;
 	protected SocketAddress serverAddress;
+	private SocketAddress serverEffectiveAddress;
 
 	protected Map<String, Integer> peerTypeNamesToPeerTypeIds = Maps
 		.newHashMap();
@@ -63,15 +65,23 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 	protected long transferUpdateIntervalMillis = 1000;
 
+	private volatile boolean running = true;
+
 	private ServerChannelPipelineFactory channelPipelineFactory;
+
+	private int localPort = -1;
 
 	public JmxServer(SocketAddress serverAddress) {
 		this.serverAddress = serverAddress;
 	}
 
+	public int getLocalPort() {
+		return localPort;
+	}
+
 	public void run() {
 
-		logger.info("starting {} @ {}", JmxServer.class.getSimpleName(),
+		logger.debug("starting {} @ {}", JmxServer.class.getSimpleName(),
 			serverAddress);
 
 		try {
@@ -90,7 +100,26 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 			connectionsManager.setMessageReceivedListener(this);
 
 			// Bind & start the server.
-			bootstrap.bind(serverAddress);
+			Channel listeningChannel = bootstrap.bind(serverAddress);
+			if (listeningChannel.getLocalAddress() instanceof InetSocketAddress) {
+				localPort = ((InetSocketAddress) listeningChannel
+					.getLocalAddress()).getPort();
+			}
+
+			serverEffectiveAddress = serverAddress;
+			if (serverAddress instanceof InetSocketAddress
+				&& ((InetSocketAddress) serverAddress).getPort() == 0) {
+				assert localPort > 0;
+				serverEffectiveAddress = new InetSocketAddress(
+					((InetSocketAddress) serverAddress).getHostName(),
+					localPort);
+			}
+			logger.info("started {} @ {}", JmxServer.class.getSimpleName(),
+				serverEffectiveAddress);
+
+			synchronized (this) {
+				this.notifyAll();
+			}
 
 			loopPrintingStatistics();
 
@@ -115,7 +144,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		final MessageCountingHandler messageCounter = channelPipelineFactory
 			.getMessageCountingHandler();
 
-		for (;;) {
+		while (running) {
 			try {
 				Thread.sleep(transferUpdateIntervalMillis);
 			} catch (InterruptedException e) {
@@ -155,6 +184,12 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 			formatter.format("%7.2f B/s  ", bytes);
 		}
 		return formatter.toString();
+	}
+
+	public void shutdown() {
+		running = false;
+		logger.info("stopping {} @ {}", JmxServer.class.getSimpleName(),
+			serverEffectiveAddress);
 	}
 
 	protected MultiplexerMessageDescription registerMessageDescription(
@@ -302,7 +337,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 			break;
 
 		case MessageTypes.BACKEND_FOR_PACKET_SEARCH:
-			// TODO
+			// TODO THIS IS VERY IMPORTANT !!!
 			break;
 		}
 	}

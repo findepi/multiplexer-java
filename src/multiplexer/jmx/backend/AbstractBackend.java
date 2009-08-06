@@ -123,6 +123,11 @@ public abstract class AbstractBackend implements Runnable {
 		}
 		
 		try {
+			connection.flush();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		try {
 			connection.shutdown();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -190,7 +195,7 @@ public abstract class AbstractBackend implements Runnable {
 			responseMissing = !currentContext.hasSentResponse()
 				&& currentContext.isResponseRequired();
 		} catch (Exception e) {
-			logger.warn("handleMessage threw", e);
+			logger.warn("handleMessage threw: {}", e.getMessage());
 			reportError(e);
 			throw e;
 		}

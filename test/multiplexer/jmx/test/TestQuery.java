@@ -9,21 +9,18 @@ import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.exceptions.OperationFailedException;
 import multiplexer.jmx.internal.IncomingMessageData;
+import multiplexer.jmx.test.util.JmxServerProvidingTestCase;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 import com.google.protobuf.ByteString;
 
-import junit.framework.TestCase;
-
 /**
  * @author Kasia Findeisen
  * 
  */
-public class TestQuery extends TestCase {
-	
-	// TODO cleanup client after every test case
-	
+public class TestQuery extends JmxServerProvidingTestCase {
+
 	public void testQueryBasic() throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException {
 
@@ -39,15 +36,16 @@ public class TestQuery extends TestCase {
 		};
 
 		// connect backend and run in new thread
-		backend
-			.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
+		backend.connect(new InetSocketAddress(InetAddress.getLocalHost(),
+			getLocalServerPort()));
 		Thread backendThread = new Thread(backend);
 		backendThread.setName("backend main thread");
 		backendThread.start();
 
 		// connect
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
-		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
+		client.connect(new InetSocketAddress(InetAddress.getLocalHost(),
+			getLocalServerPort()));
 
 		// query
 		IncomingMessageData msgData = client.query(ByteString
@@ -64,6 +62,8 @@ public class TestQuery extends TestCase {
 		if (backendThread.isAlive()) {
 			backendThread.interrupt();
 		}
+
+		client.shutdown();
 	}
 
 	public void testQueryBackendErrorAA() throws UnknownHostException,
@@ -107,8 +107,8 @@ public class TestQuery extends TestCase {
 		};
 
 		// connect backend 1 and run in new thread
-		backend1
-			.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
+		backend1.connect(new InetSocketAddress(InetAddress.getLocalHost(),
+			getLocalServerPort()));
 		Thread backend1Thread = new Thread(backend1);
 		backend1Thread.setName("backend1 main thread");
 		backend1Thread.start();
@@ -129,15 +129,16 @@ public class TestQuery extends TestCase {
 		};
 
 		// connect backend 2 and run in new thread
-		backend2
-			.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
+		backend2.connect(new InetSocketAddress(InetAddress.getLocalHost(),
+			getLocalServerPort()));
 		Thread backend2Thread = new Thread(backend2);
 		backend2Thread.setName("backend2 main thread");
 		backend2Thread.start();
 
 		// connect
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
-		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
+		client.connect(new InetSocketAddress(InetAddress.getLocalHost(),
+			getLocalServerPort()));
 
 		// query
 		IncomingMessageData msgData = client.query(ByteString
@@ -159,5 +160,7 @@ public class TestQuery extends TestCase {
 		if (backend2Thread.isAlive()) {
 			backend2Thread.interrupt();
 		}
+
+		client.shutdown();
 	}
 }

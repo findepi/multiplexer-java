@@ -5,12 +5,12 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
 import multiplexer.jmx.backend.AbstractBackend;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.internal.IncomingMessageData;
+import multiplexer.jmx.test.util.JmxServerProvidingTestCase;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 import org.jboss.netty.channel.ChannelFuture;
@@ -21,11 +21,11 @@ import com.google.protobuf.ByteString;
  * @author Kasia Findeisen
  * 
  */
-public class TestConnectivity extends TestCase {
-
+public class TestConnectivity extends JmxServerProvidingTestCase {
+	
 	public void testConnect() throws UnknownHostException {
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
-		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
+		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), getLocalServerPort()));
 		// TODO cleanup client after every test case
 	}
 
@@ -34,7 +34,7 @@ public class TestConnectivity extends TestCase {
 
 		// connect
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
-		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
+		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), getLocalServerPort()));
 
 		// create message
 		MultiplexerMessage.Builder builder = MultiplexerMessage.newBuilder();
@@ -74,14 +74,14 @@ public class TestConnectivity extends TestCase {
 
 		// connect backend and run in new thread
 		backend
-			.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
+			.connect(new InetSocketAddress(InetAddress.getLocalHost(), getLocalServerPort()));
 		Thread backendThread = new Thread(backend);
 		backendThread.setName("backend main thread");
 		backendThread.start();
 
 		// connect
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
-		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), 1980));
+		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), getLocalServerPort()));
 
 		// create message
 		MultiplexerMessage.Builder builder = MultiplexerMessage.newBuilder();

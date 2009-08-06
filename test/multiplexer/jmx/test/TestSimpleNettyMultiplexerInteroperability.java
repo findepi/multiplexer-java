@@ -9,10 +9,10 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import junit.framework.TestCase;
 import multiplexer.jmx.internal.RawMessageCodecs;
-import multiplexer.protocol.Protocol;
+import multiplexer.jmx.test.util.JmxServerProvidingTestCase;
 import multiplexer.protocol.Constants;
+import multiplexer.protocol.Protocol;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Protocol.WelcomeMessage;
 
@@ -34,11 +34,26 @@ import org.jboss.netty.handler.codec.protobuf.ProtobufEncoder;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ByteString.Output;
 
-public class TestSimpleNettyMultiplexerInteroperability extends TestCase {
+/**
+ * 
+ * @author Kasia Findeisen
+ * @author Piotr Findeisen
+ */
+public class TestSimpleNettyMultiplexerInteroperability extends
+	JmxServerProvidingTestCase {
 
-	// TODO use MultiplexerProtocolHandler from multiplexer.jmx.internal, not the custom on
-	// TODO write test covering MultiplexerProtocolHandler and other pipeline elements
-	
+	// TODO make tests start their own JmxServer on a random free port.
+	// If `c' is a value returned from server's bootstrap.bind() then
+	// ((InetSocketAddress)c.getLocalAddress()).getPort()
+	// is server's port number.
+
+	// FIXME this test doesn't pass with JmxServer
+
+	// TODO use MultiplexerProtocolHandler from multiplexer.jmx.internal, not
+	// the custom on
+	// TODO write test covering MultiplexerProtocolHandler and other pipeline
+	// elements SEPARATELY
+
 	public void testSimpleNettyConnection() throws Exception {
 		final int PYTHON_TEST_SERVER = TestConstants.PeerTypes.TEST_SERVER;
 		final int CONNECTION_WELCOME = Constants.MessageTypes.CONNECTION_WELCOME;
@@ -48,7 +63,7 @@ public class TestSimpleNettyMultiplexerInteroperability extends TestCase {
 		ChannelFactory factory = new NioClientSocketChannelFactory(Executors
 			.newCachedThreadPool(), Executors.newCachedThreadPool());
 		SimpleNettyConnection c = new SimpleNettyConnection(factory,
-			new InetSocketAddress("localhost", 1980));
+			new InetSocketAddress("localhost", getLocalServerPort()));
 
 		// send out invitation
 		System.out.println("sending welcome message");
@@ -76,7 +91,7 @@ public class TestSimpleNettyMultiplexerInteroperability extends TestCase {
 		Output sqo = ByteString.newOutput();
 		for (byte d : sq)
 			sqo.write(d);
-		
+
 		System.out.println("sending sample search query");
 		long id = c.sendMessage(sqo.toByteString(), PYTHON_TEST_REQUEST).messageId;
 		System.out.println("waiting for sample search query");
@@ -90,7 +105,7 @@ public class TestSimpleNettyMultiplexerInteroperability extends TestCase {
 		Random rand = new Random();
 		final int size = 1024 * 1024;
 		Output lqo = ByteString.newOutput(1024);
-		for (int i = 0 ; i < size; i++)
+		for (int i = 0; i < size; i++)
 			lqo.write(rand.nextInt());
 		ByteString query = lqo.toByteString();
 		assertEquals(query.size(), size);

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.zip.CRC32;
 
-import junit.framework.TestCase;
+import multiplexer.jmx.test.util.JmxServerProvidingTestCase;
 import multiplexer.protocol.Constants;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Protocol.WelcomeMessage;
@@ -20,17 +20,18 @@ import multiplexer.protocol.Protocol.WelcomeMessage;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ByteString.Output;
 
-public class TestSimpleMultiplexerInteroperability extends TestCase {
+public class TestSimpleMultiplexerInteroperability extends
+	JmxServerProvidingTestCase {
 
 	public void testSimpleConnection() throws Exception {
-		
+
 		final int PYTHON_TEST_SERVER = TestConstants.PeerTypes.TEST_SERVER;
 		final int CONNECTION_WELCOME = Constants.MessageTypes.CONNECTION_WELCOME;
 		final int MULTIPLEXER = Constants.PeerTypes.MULTIPLEXER;
 		final int PYTHON_TEST_REQUEST = TestConstants.MessageTypes.TEST_REQUEST;
 
 		SimpleConnection c = new SimpleConnection(new InetSocketAddress(
-			"localhost", 1980));
+			"localhost", getLocalServerPort()));
 
 		// send out invitation
 		System.out.println("sending welcome message");

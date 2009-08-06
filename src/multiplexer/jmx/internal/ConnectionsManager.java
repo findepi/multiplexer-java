@@ -11,7 +11,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import multiplexer.jmx.client.ChannelFutureGroup;
 import multiplexer.jmx.client.ChannelFutureSet;
@@ -73,7 +72,7 @@ public class ConnectionsManager {
 	private static final Logger logger = LoggerFactory
 		.getLogger(ConnectionsManager.class);
 
-	private final AtomicBoolean shuttingDown = new AtomicBoolean(false);
+	private volatile boolean shuttingDown = false;
 
 	private final long instanceId = new Random().nextLong();
 	private final int instanceType;
@@ -216,9 +215,8 @@ public class ConnectionsManager {
 
 	public synchronized ChannelFuture asyncConnect(final SocketAddress address,
 		final long reconnectTime, final TimeUnit reconnectTimeUnit) {
-		// TODO support for reconnecting; each lost connection (or a connection
-		// that could not be estabilished at all) should be retired after
-		// specific amout of time
+		
+		logger.debug("{} connecting to {}", getInstanceId(), address);
 		// TODO send THROUGH_ALL/THROUGH_ALL in case of no connections should
 		// also try to reconnect immediately
 		// TODO send via(Connection) should try to reconnect to the same
@@ -233,7 +231,7 @@ public class ConnectionsManager {
 
 		final ChannelFuture registrationFuture = Channels.future(channel, true);
 		synchronized (pendingRegistrations) {
-			if (shuttingDown.get()) {
+			if (shuttingDown) {
 				logger.debug("connect to {} cancelled by shutdown", address);
 				channel.close();
 				registrationFuture.setFailure(new RuntimeException(
@@ -279,6 +277,10 @@ public class ConnectionsManager {
 
 	public void channelDisconnected(Channel channel) {
 		assert !channel.isConnected();
+		if (shuttingDown) {
+			logger.debug("channel {} is disconnected now (shutdown)", channel);
+			return;
+		}
 		SocketAddress address = endpointByChannel.get(channel);
 		if (address != null) {
 			logger.warn("channel {} is disconnected now, reconnecting to {}",
@@ -293,8 +295,7 @@ public class ConnectionsManager {
 		if (cachedMultiplexerMessage != null)
 			return cachedMultiplexerMessage;
 		WelcomeMessage welcomeMessage = WelcomeMessage.newBuilder().setType(
-			instanceType).setId(instanceId).setMultiplexerPassword(
-			ByteString.copyFromUtf8("3hgf#fv!2fi32rf3@%*&gubh87^%")).build();
+			instanceType).setId(instanceId).build();
 		logger.debug("created welcome message\n{}", welcomeMessage);
 		ByteString message = welcomeMessage.toByteString();
 		cachedMultiplexerMessage = createMessage(message,
@@ -459,7 +460,7 @@ public class ConnectionsManager {
 	}
 
 	public void shutdown() throws InterruptedException {
-		shuttingDown.set(true);
+		shuttingDown = true;
 		ChannelGroup allChannels = new DefaultChannelGroup();
 		synchronized (pendingRegistrations) {
 			allChannels.addAll(pendingRegistrations.keySet());
