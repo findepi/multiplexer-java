@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import multiplexer.jmx.internal.MessageReceivedListener;
 import multiplexer.jmx.util.LongDeltaCounter;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Constants.PeerTypes;
+import multiplexer.protocol.Protocol.BackendForPacketSearch;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Protocol.MultiplexerMessageDescription;
 import multiplexer.protocol.Protocol.MultiplexerPeerDescription;
@@ -39,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
 
@@ -338,6 +341,26 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 		case MessageTypes.BACKEND_FOR_PACKET_SEARCH:
 			// TODO THIS IS VERY IMPORTANT !!!
+			try {
+				BackendForPacketSearch backendSearchMessage = BackendForPacketSearch
+					.parseFrom(message.getMessage());
+				MultiplexerMessageDescription msgDesc = messageTypeIdsToDescription
+					.get(backendSearchMessage.getPacketType());
+				if (msgDesc == null || msgDesc.getToCount() == 0) {
+					// TODO error
+				} else {
+					RoutingRule routingRule = msgDesc.getTo(0);
+					routingRule = RoutingRule.newBuilder(routingRule).setWhom(
+						RoutingRule.Whom.ALL).setReportDeliveryError(true)
+						.setIncludeOriginalPacketInReport(false).build();
+					List<RoutingRule> ruleSingleton = new ArrayList<RoutingRule>(1);
+					ruleSingleton.add(routingRule);
+					schedule(message, ruleSingleton);
+				}
+			} catch (InvalidProtocolBufferException e) {
+				// TODO return error
+				e.printStackTrace();
+			}
 			break;
 		}
 	}
