@@ -18,7 +18,7 @@ public class Runner {
 
 	private static SubCommand[] subCommands = {
 
-		new SubCommand("server", "runs Multiplexer server") {
+		new SubCommand("server", "runs Multiplexer server (use `jmx-*-withdeps.jar' if using java's `-jar' option)") {
 			@Override
 			void run(String[] args) throws Exception {
 				JmxServer.main(args);
@@ -37,7 +37,7 @@ public class Runner {
 
 	protected static void printHelpAndExit() {
 		System.err.println("Usage: java ... ( -jar <this-jar> | "
-			+ Runner.class.getName() + ") subcommand args...");
+			+ Runner.class.getName() + " ) subcommand args...");
 		System.err.println();
 		System.err.println("Available subcommands:");
 		int maxlen = 0;
@@ -67,7 +67,7 @@ public class Runner {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-
+		
 		// TODO(findepi) set up logging?
 
 		if (args.length == 0) {

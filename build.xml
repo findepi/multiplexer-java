@@ -39,15 +39,15 @@
     <file name="${libs}/protobuf.jar" />
     <file name="${libs}/netty-3.1.0.GA.jar" />
     <file name="${libs}/google-collect-1.0-rc2.jar" />
-    <file name="${libs}/slf4j-api-1.5.8.jar" />
     <file name="${libs}/trove-2.0.4.jar" />
     <file name="${libs}/args4j-2.0.10.jar" />
+    <file name="${libs}/slf4j-api-1.5.8.jar" />
+    <file name="${libs}/slf4j-jdk14-1.5.8.jar" />
   </filelist>
 
   <path id="project.class.path">
     <pathelement location="${build.dir}" />
     <filelist refid="project.jar.dependencies" />
-    <pathelement location="${libs}/slf4j-jdk14-1.5.8.jar" />
   </path>
 
   <path id="project.test.class.path">
