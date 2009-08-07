@@ -24,8 +24,9 @@ public final class JmxServerRunner {
 		serverThread.start();
 
 		synchronized (server) {
-			// FIXME race condition
-			server.wait();
+			if (!server.hasStarted())
+				server.wait(2000);
+			assert server.hasStarted();
 		}
 	}
 

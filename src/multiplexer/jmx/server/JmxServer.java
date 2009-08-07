@@ -68,6 +68,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 	protected long transferUpdateIntervalMillis = 1000;
 
+	private volatile boolean started = false;
 	private volatile boolean running = true;
 
 	private ServerChannelPipelineFactory channelPipelineFactory;
@@ -119,7 +120,8 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 			}
 			logger.info("started {} @ {}", JmxServer.class.getSimpleName(),
 				serverEffectiveAddress);
-
+			
+			started = true;
 			synchronized (this) {
 				this.notifyAll();
 			}
@@ -133,6 +135,10 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public boolean hasStarted() {
+		return started;
 	}
 
 	private void loopPrintingStatistics() {
