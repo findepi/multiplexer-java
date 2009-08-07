@@ -80,7 +80,7 @@ public class ConnectionsManager {
 	private final ConnectionsMap connectionsMap = new ConnectionsMap();
 	private MessageReceivedListener messageReceivedListener;
 	private final ChannelFutureSet allPendingChannelFutures = new ChannelFutureSet();
-	private final Timer idleTimer = new HashedWheelTimer();
+	private final Timer timer = new HashedWheelTimer();
 	private final Config config = new Config();
 	private final RecentLongPool recentMsgIds = new RecentLongPool();
 
@@ -172,7 +172,7 @@ public class ConnectionsManager {
 					multiplexerMessageDecoder);
 
 				// Heartbits
-				pipeline.addLast("idleHandler", new IdleStateHandler(idleTimer,
+				pipeline.addLast("idleHandler", new IdleStateHandler(timer,
 					Config.INITIAL_READ_IDLE_TIME,
 					Config.INITIAL_WRITE_IDLE_TIME, Long.MAX_VALUE,
 					TimeUnit.SECONDS));
@@ -215,7 +215,7 @@ public class ConnectionsManager {
 
 	public synchronized ChannelFuture asyncConnect(final SocketAddress address,
 		final long reconnectTime, final TimeUnit reconnectTimeUnit) {
-		
+
 		logger.debug("{} connecting to {}", getInstanceId(), address);
 		// TODO send THROUGH_ALL/THROUGH_ALL in case of no connections should
 		// also try to reconnect immediately
@@ -268,7 +268,7 @@ public class ConnectionsManager {
 	private void scheduleReconnect(final SocketAddress address,
 		final long delay, final TimeUnit unit) {
 
-		idleTimer.newTimeout(new TimerTask() {
+		timer.newTimeout(new TimerTask() {
 			public void run(Timeout timeout) throws Exception {
 				asyncConnect(address, delay, unit);
 			}
@@ -340,7 +340,7 @@ public class ConnectionsManager {
 			channel.getPipeline().replace(
 				"idleHandler",
 				"idleHandler",
-				new IdleStateHandler(idleTimer, config
+				new IdleStateHandler(timer, config
 					.getReadIdleTime(peerType), config
 					.getWriteIdleTime(peerType), Long.MAX_VALUE,
 					TimeUnit.SECONDS));
@@ -452,7 +452,7 @@ public class ConnectionsManager {
 	}
 
 	public Timer getTimer() {
-		return idleTimer;
+		return timer;
 	}
 
 	public long getInstanceId() {
@@ -461,6 +461,9 @@ public class ConnectionsManager {
 
 	public void shutdown() throws InterruptedException {
 		shuttingDown = true;
+		// Timer stop is also invoked from
+		// IdleStateHandler.releaseExternalResources() if any created.
+		timer.stop();
 		ChannelGroup allChannels = new DefaultChannelGroup();
 		synchronized (pendingRegistrations) {
 			allChannels.addAll(pendingRegistrations.keySet());
