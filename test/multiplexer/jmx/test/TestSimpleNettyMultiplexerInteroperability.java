@@ -9,10 +9,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import multiplexer.jmx.internal.ChannelBufferFactorySettingHandler;
 import multiplexer.jmx.internal.MultiplexerProtocolHandler;
 import multiplexer.jmx.internal.MultiplexerProtocolListener;
-import multiplexer.jmx.internal.RawMessageCodecs;
-import multiplexer.jmx.internal.RawMessageCodecs.RawMessageFrameDecoder;
+import multiplexer.jmx.internal.RawMessageFrameDecoder;
+import multiplexer.jmx.internal.RawMessageFrameEncoder;
 import multiplexer.jmx.test.util.JmxServerProvidingTestCase;
 import multiplexer.protocol.Constants;
 import multiplexer.protocol.Protocol;
@@ -160,20 +161,19 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 
 			// Configuration
 			if (useLittleEndianBuffers) {
-				pipeline.addFirst("littleEndianEndiannessSetter",
-					RawMessageFrameDecoder.LittleEndianEndiannessSettingHandler
-						.getInstance());
+				pipeline
+					.addFirst(
+						"littleEndianEndiannessSetter",
+						ChannelBufferFactorySettingHandler.LITTLE_ENDIAN_BUFFER_FACTORY_SETTER);
 			}
 
 			// Encoders
-			pipeline.addLast("rawMessageEncoder",
-				new RawMessageCodecs.RawMessageEncoder());
+			pipeline.addLast("rawMessageEncoder", new RawMessageFrameEncoder());
 			pipeline
 				.addLast("multiplexerMessageEncoder", new ProtobufEncoder());
 
 			// Decoders
-			pipeline.addLast("rawMessageDecoder",
-				new RawMessageCodecs.RawMessageFrameDecoder());
+			pipeline.addLast("rawMessageDecoder", new RawMessageFrameDecoder());
 			pipeline.addLast("multiplexerMessageDecoder", new ProtobufDecoder(
 				Protocol.MultiplexerMessage.getDefaultInstance()));
 
