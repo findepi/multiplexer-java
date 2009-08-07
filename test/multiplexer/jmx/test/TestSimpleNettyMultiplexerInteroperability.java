@@ -52,6 +52,13 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 	// elements SEPARATELY
 
 	public void testSimpleNettyConnection() throws Exception {
+		testSimpleNettyConnection(true);
+		testSimpleNettyConnection(false);
+	}
+
+	private void testSimpleNettyConnection(boolean useLittleEndianBuffers)
+		throws Exception {
+
 		final int PYTHON_TEST_SERVER = TestConstants.PeerTypes.TEST_SERVER;
 		final int CONNECTION_WELCOME = Constants.MessageTypes.CONNECTION_WELCOME;
 		final int MULTIPLEXER = Constants.PeerTypes.MULTIPLEXER;
@@ -60,7 +67,8 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 		ChannelFactory factory = new NioClientSocketChannelFactory(Executors
 			.newCachedThreadPool(), Executors.newCachedThreadPool());
 		SimpleNettyConnection c = new SimpleNettyConnection(factory,
-			new InetSocketAddress("localhost", getLocalServerPort()));
+			new InetSocketAddress("localhost", getLocalServerPort()),
+			useLittleEndianBuffers);
 
 		// send out invitation
 		System.out.println("sending welcome message");
@@ -129,19 +137,16 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 
 		private SocketChannel channel;
 
-		public SimpleNettyConnection() {
-			instanceId = new Random().nextLong();
-		}
-
 		public SimpleNettyConnection(ChannelFactory factory,
-			SocketAddress address) throws InterruptedException {
+			SocketAddress address, boolean useLittleEndianBuffers)
+			throws InterruptedException {
 
-			this();
-			asyncConnect(factory, address).await();
+			instanceId = new Random().nextLong();
+			asyncConnect(factory, address, useLittleEndianBuffers).await();
 		}
 
-		public ChannelFuture asyncConnect(ChannelFactory factory,
-			SocketAddress address) {
+		private ChannelFuture asyncConnect(ChannelFactory factory,
+			SocketAddress address, boolean useLittleEndianBuffers) {
 			assert !connected;
 			assert !connecting;
 			connecting = true;
@@ -154,9 +159,11 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 			ChannelPipeline pipeline = bootstrap.getPipeline();
 
 			// Configuration
-			pipeline.addFirst("littleEndianEndiannessSetter",
-				RawMessageFrameDecoder.LittleEndianEndiannessSettingHandler
-					.getInstance());
+			if (useLittleEndianBuffers) {
+				pipeline.addFirst("littleEndianEndiannessSetter",
+					RawMessageFrameDecoder.LittleEndianEndiannessSettingHandler
+						.getInstance());
+			}
 
 			// Encoders
 			pipeline.addLast("rawMessageEncoder",

@@ -12,6 +12,7 @@ import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelPipelineCoverage;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
+import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
 import org.jboss.netty.handler.codec.replay.ReplayingDecoder;
 import org.slf4j.Logger;
@@ -68,19 +69,24 @@ public final class RawMessageCodecs {
 
 			switch (state) {
 			case READ_LENGTH:
-				assert buffer.order() == ByteOrder.LITTLE_ENDIAN;
 				length = buffer.readInt();
+				if (buffer.order() == ByteOrder.BIG_ENDIAN) {
+					length = Integer.reverseBytes(length);
+				}
 				checkpoint(RawMessageDecoderState.READ_CRC32);
 			case READ_CRC32:
 				crc = buffer.readInt();
-				logger.trace("next message length = {}", length);
+				if (buffer.order() == ByteOrder.BIG_ENDIAN) {
+					crc = Integer.reverseBytes(crc);
+				}
+				logger.trace("next message length = {}, crc = {}", length, crc);
 				if (length < 0) {
-					channel.close();
+					Channels.close(channel);
 					throw new Exception("length must be positive, not "
 						+ length);
 				}
 				if (length > MAX_MESSAGE_SIZE) {
-					channel.close();
+					Channels.close(channel);
 					throw new Exception("length must be less than "
 						+ MAX_MESSAGE_SIZE + ", not " + length);
 				}
@@ -89,7 +95,13 @@ public final class RawMessageCodecs {
 				ChannelBuffer message = buffer.readBytes(length);
 				assert message.readableBytes() == length;
 				checkpoint(RawMessageDecoderState.READ_LENGTH);
-				checkCrc(message);
+				if (!checkCrc(message)) {
+					logger
+						.warn(
+							"message of length {} with invalid checksum received over {}",
+							length, channel);
+					Channels.close(channel);
+				}
 				return message;
 			default:
 				throw new Error("Shouldn't reach here.");
@@ -104,12 +116,10 @@ public final class RawMessageCodecs {
 		 * @throws Exception
 		 *             throw if the checksum does not mach
 		 */
-		private void checkCrc(ChannelBuffer message) throws Exception {
+		private boolean checkCrc(ChannelBuffer message) throws Exception {
 			if (this.crc != (int) getCrc32(message))
-				// TODO can we throw?
-				throw new Exception("Crc checksum does not match.");
-			logger.trace("validated a checksum of message, length {}", message
-				.readableBytes());
+				return false;
+			return true;
 		}
 
 		@ChannelPipelineCoverage("all")
