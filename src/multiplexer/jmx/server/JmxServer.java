@@ -46,9 +46,10 @@ import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
 
 /**
+ * A pure-Java implementation of a Multiplexer server.
+ * 
  * @author Piotr Findeisen
  */
-// TODO javadoc
 public class JmxServer implements MessageReceivedListener, Runnable {
 
 	public static final String UNKOWN_TYPE_NAME = "unknown";
@@ -75,14 +76,34 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 	private int localPort = -1;
 
+	/**
+	 * Constructs the server that will listen for incoming connections on the
+	 * given {@link SocketAddress}.
+	 * 
+	 * @param serverAddress
+	 */
 	public JmxServer(SocketAddress serverAddress) {
 		this.serverAddress = serverAddress;
 	}
 
+	/**
+	 * Get the port number on which the server listens for incoming connections.
+	 * Especially useful when the server was created using {@link SocketAddress}
+	 * with port {@code 0}. Use this function to retrieve the actual port number
+	 * assigned to this server.
+	 * 
+	 * If the server has not been yet started, the returned value is {@code -1}.
+	 * 
+	 * @return local port number
+	 */
 	public int getLocalPort() {
 		return localPort;
 	}
 
+	/**
+	 * Run the server. Before calling this function the server does not try to
+	 * open any sockets and does not provide {@code localPort} information.
+	 */
 	public void run() {
 
 		logger.debug("starting {} @ {}", JmxServer.class.getSimpleName(),
@@ -144,6 +165,26 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		}
 	}
 
+	/**
+	 * Returns {@code true} if and only if the server was started using call to
+	 * {@link #run()}. The server must have been started before
+	 * {@link #getLocalPort()} can be used. If you delegated call to this method
+	 * to a separate thread, use {@link Object#wait} to wait for the server to
+	 * start.
+	 * 
+	 * Example
+	 * 
+	 * <pre>
+	 * JmxServer server = new JmxServer(new InetSocketAddress(&quot;0.0.0.0&quot;, 0));
+	 * // further initialize the server
+	 * new Thread(server).start();
+	 * synchronized (server) {
+	 * 	if (!server.hasStarted())
+	 * 		server.wait();
+	 * }
+	 * System.out.println(&quot;server local port is &quot; + server.getLocalPort());
+	 * </pre>
+	 */
 	public boolean hasStarted() {
 		return started;
 	}
@@ -202,6 +243,9 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		return formatter.toString();
 	}
 
+	/**
+	 * Stop the server.
+	 */
 	public void shutdown() {
 		running = false;
 		logger.info("stopping {} @ {}", JmxServer.class.getSimpleName(),
@@ -215,6 +259,9 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 			description);
 	}
 
+	/**
+	 * Load routing rules from an instance of {@link MultiplexerRules}.
+	 */
 	public void loadMessageDefinitions(MultiplexerRules additionalRules) {
 		for (MultiplexerPeerDescription peerDesc : additionalRules
 			.getPeerList()) {
@@ -278,6 +325,9 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		}
 	}
 
+	/**
+	 * Load routing rules from a {@link File}.
+	 */
 	public void loadMessageDefinitions(File file) throws ParseException,
 		FileNotFoundException, IOException {
 		MultiplexerRules.Builder rulesBuilder = MultiplexerRules.newBuilder();
@@ -286,6 +336,9 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		loadMessageDefinitions(additionalRules);
 	}
 
+	/**
+	 * Load routing rules from a file named {@code fileName}.
+	 */
 	public void loadMessageDefinitionsFromFile(String fileName)
 		throws ParseException, FileNotFoundException, IOException {
 		loadMessageDefinitions(new File(fileName));
@@ -427,28 +480,42 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		return UNKOWN_TYPE_NAME;
 	}
 
+	/**
+	 * Returns a value of the {@code transferUpdateIntervalMillis}.
+	 */
 	public long getTransferUpdateIntervalMillis() {
 		return transferUpdateIntervalMillis;
 	}
 
+	/**
+	 * Sets the {@code transferUpdateIntervalMillis}.
+	 */
 	public void setTransferUpdateIntervalMillis(
 		long transferUpdateIntervalMillis) {
 		this.transferUpdateIntervalMillis = transferUpdateIntervalMillis;
 	}
 
+	/**
+	 * Returns the {@code SocketAddress} used to construct this server instance.
+	 * The returned value does not reflect automatic port number allocation that
+	 * occurs if a {@link SocketAddress} has port value of 0.
+	 */
 	public SocketAddress getServerAddress() {
 		return serverAddress;
 	}
 
+	/**
+	 * Sets the {@link SocketAddress} to be used for listening for incoming
+	 * connections. Calling this method after calling run has no effect.
+	 * 
+	 * @param serverAddress
+	 */
 	public void setServerAddress(SocketAddress serverAddress) {
 		this.serverAddress = serverAddress;
 	}
 
 	/**
-	 * @param args
-	 * @throws IOException
-	 * @throws FileNotFoundException
-	 * @throws ParseException
+	 * Starts a {@link JmxServer}. To be used from command line and in scripts.
 	 */
 	public static void main(String[] args) throws ParseException,
 		FileNotFoundException, IOException {
