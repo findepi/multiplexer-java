@@ -12,6 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import multiplexer.jmx.internal.MultiplexerProtocolHandler;
 import multiplexer.jmx.internal.MultiplexerProtocolListener;
 import multiplexer.jmx.internal.RawMessageCodecs;
+import multiplexer.jmx.internal.RawMessageCodecs.RawMessageFrameDecoder;
 import multiplexer.jmx.test.util.JmxServerProvidingTestCase;
 import multiplexer.protocol.Constants;
 import multiplexer.protocol.Protocol;
@@ -151,6 +152,11 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 			bootstrap.setOption("keepAlive", true);
 
 			ChannelPipeline pipeline = bootstrap.getPipeline();
+
+			// Configuration
+			pipeline.addFirst("littleEndianEndiannessSetter",
+				RawMessageFrameDecoder.LittleEndianEndiannessSettingHandler
+					.getInstance());
 
 			// Encoders
 			pipeline.addLast("rawMessageEncoder",

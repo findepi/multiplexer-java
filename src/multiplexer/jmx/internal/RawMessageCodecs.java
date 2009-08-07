@@ -6,9 +6,12 @@ import java.util.zip.CRC32;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
+import org.jboss.netty.buffer.HeapChannelBufferFactory;
 import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelPipelineCoverage;
+import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
 import org.jboss.netty.handler.codec.replay.ReplayingDecoder;
 import org.slf4j.Logger;
@@ -29,31 +32,32 @@ public final class RawMessageCodecs {
 	 * RawMessageDecoderState is internally used by RawMessageFrameDecoder
 	 */
 	private enum RawMessageDecoderState {
-		READ_HEADER, READ_MESSAGE,
+		READ_LENGTH, READ_CRC32, READ_MESSAGE,
 	}
 
 	/**
 	 * RawMessageFrameDecoder is responsible for reading messages in chunks in
 	 * the format: [ length ][ crc ][ message... ] and validating that length
 	 * has acceptable value and that the crc32 checksum matches.
+	 * 
+	 * You may want to prepend it with
+	 * {@link LittleEndianEndiannessSettingHandler} to avoid header copying.
 	 */
 	public static class RawMessageFrameDecoder extends
 		ReplayingDecoder<RawMessageDecoderState> {
 
-		private static final int HEADER_LENGTH = 8;
 		private static final int MAX_MESSAGE_SIZE = 128 * 1024 * 1024;
 
-		private byte[] header = new byte[HEADER_LENGTH];
 		private int length;
 		private int crc;
 
 		public RawMessageFrameDecoder() {
-			super(RawMessageDecoderState.READ_HEADER);
+			super(RawMessageDecoderState.READ_LENGTH);
 		}
 
 		/**
-		 * decode uses ReplayingDecoder magic to incrementally read the whole
-		 * chunk (frame)
+		 * Decode uses ReplayingDecoder magic to incrementally read the whole
+		 * chunk (frame).
 		 */
 		@Override
 		protected Object decode(ChannelHandlerContext ctx, Channel channel,
@@ -63,13 +67,12 @@ public final class RawMessageCodecs {
 			logger.trace("RawMessageFrameDecoder.decode with state {}", state);
 
 			switch (state) {
-			case READ_HEADER:
-				// TODO this should be possible without copying the header from buffer
-				buffer.readBytes(this.header);
-				ByteBuffer header = ByteBuffer.wrap(this.header);
-				header.order(ByteOrder.LITTLE_ENDIAN);
-				length = header.getInt();
-				crc = header.getInt();
+			case READ_LENGTH:
+				assert buffer.order() == ByteOrder.LITTLE_ENDIAN;
+				length = buffer.readInt();
+				checkpoint(RawMessageDecoderState.READ_CRC32);
+			case READ_CRC32:
+				crc = buffer.readInt();
 				logger.trace("next message length = {}", length);
 				if (length < 0) {
 					channel.close();
@@ -85,7 +88,7 @@ public final class RawMessageCodecs {
 			case READ_MESSAGE:
 				ChannelBuffer message = buffer.readBytes(length);
 				assert message.readableBytes() == length;
-				checkpoint(RawMessageDecoderState.READ_HEADER);
+				checkpoint(RawMessageDecoderState.READ_LENGTH);
 				checkCrc(message);
 				return message;
 			default:
@@ -107,6 +110,26 @@ public final class RawMessageCodecs {
 				throw new Exception("Crc checksum does not match.");
 			logger.trace("validated a checksum of message, length {}", message
 				.readableBytes());
+		}
+
+		@ChannelPipelineCoverage("all")
+		public static class LittleEndianEndiannessSettingHandler implements
+			ChannelUpstreamHandler {
+
+			private static LittleEndianEndiannessSettingHandler instance = new LittleEndianEndiannessSettingHandler();
+
+			public static LittleEndianEndiannessSettingHandler getInstance() {
+				return instance;
+			}
+
+			public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e)
+				throws Exception {
+				e.getChannel().getConfig().setBufferFactory(
+					HeapChannelBufferFactory
+						.getInstance(ByteOrder.LITTLE_ENDIAN));
+				ctx.getPipeline().remove(this);
+				ctx.sendUpstream(e);
+			}
 		}
 	}
 
@@ -137,7 +160,7 @@ public final class RawMessageCodecs {
 			rawMessage.writeInt(length);
 			rawMessage.writeInt((int) crc);
 			rawMessage.writeBytes(serialized);
-			
+
 			return rawMessage;
 		}
 	}

@@ -17,6 +17,7 @@ import multiplexer.jmx.client.ChannelFutureSet;
 import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForPeerIdException;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
+import multiplexer.jmx.internal.RawMessageCodecs.RawMessageFrameDecoder;
 import multiplexer.jmx.util.RecentLongPool;
 import multiplexer.protocol.Protocol;
 import multiplexer.protocol.Constants.MessageTypes;
@@ -146,6 +147,7 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 		bootstrap.setOption("keepAlive", true);
 
 		ChannelPipelineFactory pipelineFactory = new ChannelPipelineFactory() {
+
 			// Encoders
 			private RawMessageCodecs.RawMessageEncoder rawMessageEncoder = new RawMessageCodecs.RawMessageEncoder();
 			private ProtobufEncoder multiplexerMessageEncoder = new ProtobufEncoder();
@@ -160,6 +162,12 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 
 			public ChannelPipeline getPipeline() throws Exception {
 				ChannelPipeline pipeline = Channels.pipeline();
+
+				// Configuration
+				pipeline.addFirst("littleEndianEndiannessSetter",
+					RawMessageFrameDecoder.LittleEndianEndiannessSettingHandler
+						.getInstance());
+
 				// Encoders
 				pipeline.addLast("rawMessageEncoder", rawMessageEncoder);
 				pipeline.addLast("multiplexerMessageEncoder",
