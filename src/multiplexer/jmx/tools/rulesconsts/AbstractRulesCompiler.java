@@ -97,7 +97,6 @@ public abstract class AbstractRulesCompiler implements
 		throws InvalidRulesFileException;
 
 	protected void output(ConstantsGroup group) throws IOException {
-		// TODO
 		prepareOutputConfiguration(options);
 
 		if (!new File(options.outputRoot).isDirectory()) {
