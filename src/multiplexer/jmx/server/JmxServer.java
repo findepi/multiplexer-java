@@ -13,11 +13,11 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import multiplexer.jmx.client.Connection;
 import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForPeerIdException;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.internal.ByteCountingHandler;
-import multiplexer.jmx.internal.Connection;
 import multiplexer.jmx.internal.ConnectionsManager;
 import multiplexer.jmx.internal.MessageCountingHandler;
 import multiplexer.jmx.internal.MessageReceivedListener;

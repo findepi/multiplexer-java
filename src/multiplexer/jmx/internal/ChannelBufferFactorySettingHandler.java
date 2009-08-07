@@ -17,7 +17,7 @@ public class ChannelBufferFactorySettingHandler implements
 	ChannelUpstreamHandler {
 
 	/**
-	 * Consider internal.
+	 * Internal.
 	 */
 	public static final ChannelBufferFactorySettingHandler LITTLE_ENDIAN_BUFFER_FACTORY_SETTER = new ChannelBufferFactorySettingHandler(
 		HeapChannelBufferFactory.getInstance(ByteOrder.LITTLE_ENDIAN));

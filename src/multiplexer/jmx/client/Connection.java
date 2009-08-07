@@ -1,4 +1,4 @@
-package multiplexer.jmx.internal;
+package multiplexer.jmx.client;
 
 import org.jboss.netty.channel.Channel;
 
@@ -10,11 +10,14 @@ public class Connection {
 
 	private final Channel channel;
 	
-	Connection(Channel channel) {
+	public Connection(Channel channel) {
 		this.channel = channel; 
 	}
 	
-	Channel getChannel() {
+	/**
+	 * Internal.
+	 */
+	public Channel getChannel() {
 		return channel;
 	}
 }

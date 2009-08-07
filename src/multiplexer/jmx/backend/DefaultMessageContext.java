@@ -1,8 +1,8 @@
 package multiplexer.jmx.backend;
 
+import multiplexer.jmx.client.Connection;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.client.SendingMethod;
-import multiplexer.jmx.internal.Connection;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Protocol.MultiplexerMessage.Builder;
 

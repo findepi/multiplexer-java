@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import multiplexer.jmx.client.ChannelFutureGroup;
 import multiplexer.jmx.client.ChannelFutureSet;
+import multiplexer.jmx.client.Connection;
 import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForPeerIdException;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
