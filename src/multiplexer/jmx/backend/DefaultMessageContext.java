@@ -4,7 +4,6 @@ import multiplexer.jmx.client.Connection;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.client.SendingMethod;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
-import multiplexer.protocol.Protocol.MultiplexerMessage.Builder;
 
 /**
  * Default full implementation of {@link MessageContext}.
@@ -31,10 +30,14 @@ public class DefaultMessageContext extends AbstractMessageContext {
 		return client;
 	}
 
-	public void reply(Builder message) {
+	public void reply(MultiplexerMessage message) {
 		assert message.hasType() || message.hasTo();
 		assert message.hasId();
-		getJmxClient().send(message.build(), SendingMethod.via(conn));
+		getJmxClient().send(message, SendingMethod.via(conn));
 		setResponseSent(true);
+	}
+
+	public void reply(MultiplexerMessage.Builder message) {
+		reply(message.build());
 	}
 }
