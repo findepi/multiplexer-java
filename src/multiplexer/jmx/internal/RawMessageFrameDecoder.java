@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
  * format: [ length ][ crc ][ message... ] and validating that length has
  * acceptable value and that the crc32 checksum matches.
  * 
- * You may want to prepend it with {@link LittleEndianEndiannessSettingHandler}
- * to avoid header copying.
+ * You may want to prepend it with {@link ChannelBufferFactorySettingHandler}.
+ * {@code LITTLE_ENDIAN_BUFFER_FACTORY_SETTER} to simplify header decoding.
  */
 public class RawMessageFrameDecoder extends
 	ReplayingDecoder<RawMessageDecoderState> {
