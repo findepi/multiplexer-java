@@ -67,7 +67,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
  * @author Kasia Findeisen
  * @author Piotr Findeisen
  */
-public class ConnectionsManager {
+public class ConnectionsManager implements MultiplexerProtocolListener {
 
 	private static final Logger logger = LoggerFactory
 		.getLogger(ConnectionsManager.class);

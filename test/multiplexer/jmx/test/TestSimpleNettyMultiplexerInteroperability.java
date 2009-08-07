@@ -9,6 +9,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import multiplexer.jmx.internal.MultiplexerProtocolHandler;
+import multiplexer.jmx.internal.MultiplexerProtocolListener;
 import multiplexer.jmx.internal.RawMessageCodecs;
 import multiplexer.jmx.test.util.JmxServerProvidingTestCase;
 import multiplexer.protocol.Constants;
@@ -17,15 +19,11 @@ import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Protocol.WelcomeMessage;
 
 import org.jboss.netty.bootstrap.ClientBootstrap;
+import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
-import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelPipelineCoverage;
-import org.jboss.netty.channel.ExceptionEvent;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.SimpleChannelHandler;
 import org.jboss.netty.channel.socket.SocketChannel;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.handler.codec.protobuf.ProtobufDecoder;
@@ -49,8 +47,6 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 
 	// FIXME this test doesn't pass with JmxServer
 
-	// TODO use MultiplexerProtocolHandler from multiplexer.jmx.internal, not
-	// the custom on
 	// TODO write test covering MultiplexerProtocolHandler and other pipeline
 	// elements SEPARATELY
 
@@ -122,7 +118,8 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 		factory.releaseExternalResources();
 	}
 
-	public class SimpleNettyConnection {
+	public static class SimpleNettyConnection implements
+		MultiplexerProtocolListener {
 
 		private final long instanceId;
 		private boolean connected = false;
@@ -193,7 +190,7 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 			return instanceId;
 		}
 
-		class SendingResult {
+		static class SendingResult {
 			ChannelFuture future;
 			long messageId;
 
@@ -219,42 +216,14 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 		private void close() {
 			channel.close().awaitUninterruptibly();
 		}
-	}
 
-	@ChannelPipelineCoverage("all")
-	class MultiplexerProtocolHandler extends SimpleChannelHandler {
-
-		private SimpleNettyConnection connection;
-
-		public MultiplexerProtocolHandler(SimpleNettyConnection connection) {
-			this.connection = connection;
+		public void channelDisconnected(Channel channel) {
+			// TODO Auto-generated method stub
 		}
 
-		@Override
-		public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
-			System.err.println("messageReceived");
-			assert e.getMessage() instanceof MultiplexerMessage : e
-				.getMessage()
-				+ " is not a MultiplexerMessage";
-			System.err.println(e.getMessage());
-			boolean offered = connection.queue.offer((MultiplexerMessage) e
-				.getMessage());
+		public void messageReceived(MultiplexerMessage message, Channel channel) {
+			boolean offered = queue.offer(message);
 			assert offered : "sorry not offered, offiaro";
-		}
-
-		@Override
-		public void writeRequested(ChannelHandlerContext ctx, MessageEvent e)
-			throws Exception {
-
-			assert e.getMessage() instanceof MultiplexerMessage : "You should feed the channel with MultiplexerMessages, not "
-				+ e.getMessage();
-			super.writeRequested(ctx, e);
-		}
-
-		@Override
-		public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-			e.getCause().printStackTrace();
-			e.getChannel().close();
 		}
 	}
 }

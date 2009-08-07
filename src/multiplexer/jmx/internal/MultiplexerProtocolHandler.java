@@ -16,14 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ChannelPipelineCoverage("all")
-class MultiplexerProtocolHandler extends SimpleChannelHandler {
+public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
 	private static final Logger logger = LoggerFactory
 		.getLogger(MultiplexerProtocolHandler.class);
 
-	private ConnectionsManager connectionsManager;
+	private MultiplexerProtocolListener connectionsManager;
 
-	public MultiplexerProtocolHandler(ConnectionsManager connectionsManager) {
+	public MultiplexerProtocolHandler(MultiplexerProtocolListener connectionsManager) {
 		this.connectionsManager = connectionsManager;
 	}
 
