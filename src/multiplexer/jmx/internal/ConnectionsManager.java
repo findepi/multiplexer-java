@@ -188,7 +188,6 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 		};
 
 		bootstrap.setPipelineFactory(pipelineFactory);
-
 	}
 
 	public MultiplexerMessage.Builder createMessageBuilder() {
@@ -340,9 +339,8 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 			channel.getPipeline().replace(
 				"idleHandler",
 				"idleHandler",
-				new IdleStateHandler(timer, config
-					.getReadIdleTime(peerType), config
-					.getWriteIdleTime(peerType), Long.MAX_VALUE,
+				new IdleStateHandler(timer, config.getReadIdleTime(peerType),
+					config.getWriteIdleTime(peerType), Long.MAX_VALUE,
 					TimeUnit.SECONDS));
 
 			if (oldChannel != null && oldChannel != channel) {
