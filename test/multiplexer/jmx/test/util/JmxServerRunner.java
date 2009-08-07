@@ -24,9 +24,11 @@ public final class JmxServerRunner {
 		serverThread.start();
 
 		synchronized (server) {
-			if (!server.hasStarted())
+			if (!server.hasStarted()) {
 				server.wait(2000);
-			assert server.hasStarted();
+			}
+			assert server.hasStarted() : JmxServer.class.getSimpleName()
+				+ " failed to start.";
 		}
 	}
 

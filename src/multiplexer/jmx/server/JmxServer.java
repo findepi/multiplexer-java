@@ -110,21 +110,28 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 					.getLocalAddress()).getPort();
 			}
 
+			started = true;
+			synchronized (this) {
+				// Someone may be waiting for localPort information to become
+				// available (for example JmxServerRunner).
+				this.notifyAll();
+			}
+
 			serverEffectiveAddress = serverAddress;
 			if (serverAddress instanceof InetSocketAddress
 				&& ((InetSocketAddress) serverAddress).getPort() == 0) {
 				assert localPort > 0;
+				// InetSocketAddress.getHostName() may cause IP resolving and
+				// this may last e.g. 4 seconds in very common case of 0.0.0.0.
+				// We delay this operation after notifying listeners about
+				// server start and making localPort information accessible to
+				// them.
 				serverEffectiveAddress = new InetSocketAddress(
 					((InetSocketAddress) serverAddress).getHostName(),
 					localPort);
 			}
 			logger.info("started {} @ {}", JmxServer.class.getSimpleName(),
 				serverEffectiveAddress);
-			
-			started = true;
-			synchronized (this) {
-				this.notifyAll();
-			}
 
 			loopPrintingStatistics();
 
@@ -136,7 +143,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 			}
 		}
 	}
-	
+
 	public boolean hasStarted() {
 		return started;
 	}
@@ -359,7 +366,8 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 					routingRule = RoutingRule.newBuilder(routingRule).setWhom(
 						RoutingRule.Whom.ALL).setReportDeliveryError(true)
 						.setIncludeOriginalPacketInReport(false).build();
-					List<RoutingRule> ruleSingleton = new ArrayList<RoutingRule>(1);
+					List<RoutingRule> ruleSingleton = new ArrayList<RoutingRule>(
+						1);
 					ruleSingleton.add(routingRule);
 					schedule(message, ruleSingleton);
 				}
