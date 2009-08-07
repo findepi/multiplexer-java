@@ -14,8 +14,6 @@ public class Runner {
 
 	final static private int SUBCOMMAND_NAME_PADDING = 3;
 
-	// TODO(findepi) make this a default class in our jars
-
 	private static SubCommand[] subCommands = {
 
 		new SubCommand("server", "runs Multiplexer server (use `jmx-*-withdeps.jar' if using java's `-jar' option)") {
@@ -68,8 +66,6 @@ public class Runner {
 	 */
 	public static void main(String[] args) throws Exception {
 		
-		// TODO(findepi) set up logging?
-
 		if (args.length == 0) {
 			printHelpAndExit();
 			return;

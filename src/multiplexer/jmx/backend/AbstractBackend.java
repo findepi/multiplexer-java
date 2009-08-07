@@ -37,9 +37,6 @@ import com.google.protobuf.ByteString;
  * 
  * @author Piotr Findeisen
  */
-
-// TODO mam wrażenie, że AbstractBackend nie zmienia timestampu, gdy odpowiada
-// backend_errorem...
 public abstract class AbstractBackend implements Runnable {
 
 	private static final Logger logger = LoggerFactory

@@ -365,8 +365,9 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 
 		} else {
 			if (!fireOnMessageReceived(message, channel)) {
-				System.err.println("Unhandled message\n" + message);
-				// TODO logger?
+				logger.debug(
+					"A message received while no listener is registered:\n{}",
+					message);
 			}
 		}
 	}

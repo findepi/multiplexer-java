@@ -23,10 +23,10 @@ import com.google.protobuf.ByteString;
  */
 public class TestConnectivity extends JmxServerProvidingTestCase {
 	
-	public void testConnect() throws UnknownHostException {
+	public void testConnect() throws UnknownHostException, InterruptedException {
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
 		client.connect(new InetSocketAddress(InetAddress.getLocalHost(), getLocalServerPort()));
-		// TODO cleanup client after every test case
+		client.shutdown();
 	}
 
 	public void testConnectSendReceive() throws UnknownHostException,
@@ -54,6 +54,8 @@ public class TestConnectivity extends JmxServerProvidingTestCase {
 		MultiplexerMessage msgReceived = msgData.getMessage();
 		assertEquals(msgSent, msgReceived);
 		assertNotSame(msgSent, msgReceived);
+		
+		client.shutdown();
 	}
 
 	public void testBackend() throws UnknownHostException,
@@ -111,5 +113,7 @@ public class TestConnectivity extends JmxServerProvidingTestCase {
 		if (backendThread.isAlive()) {
 			backendThread.interrupt();
 		}
+		
+		client.shutdown();
 	}
 }

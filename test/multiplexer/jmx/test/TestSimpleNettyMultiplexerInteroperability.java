@@ -42,13 +42,6 @@ import com.google.protobuf.ByteString.Output;
 public class TestSimpleNettyMultiplexerInteroperability extends
 	JmxServerProvidingTestCase {
 
-	// TODO make tests start their own JmxServer on a random free port.
-	// If `c' is a value returned from server's bootstrap.bind() then
-	// ((InetSocketAddress)c.getLocalAddress()).getPort()
-	// is server's port number.
-
-	// FIXME this test doesn't pass with JmxServer
-
 	// TODO write test covering MultiplexerProtocolHandler and other pipeline
 	// elements SEPARATELY
 
