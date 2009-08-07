@@ -123,7 +123,7 @@ message MultiplexerMessage {
     optional Compression.Values compression = 24 [default = NO_COMPRESSION];
 
     // when the packet was sent
-    optional uint32 timestamp = 6;
+    optional uint64 timestamp = 6;
 
     // packet ID to which we reply
     // this may be change to repeated field in the future

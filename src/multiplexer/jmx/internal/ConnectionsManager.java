@@ -205,7 +205,7 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 	private MultiplexerMessage.Builder initializeMessageBuilder(
 		MultiplexerMessage.Builder message) {
 		return message.setId(new Random().nextLong()).setFrom(instanceId)
-			.setTimestamp((int) (System.currentTimeMillis() / 1000));
+			.setTimestamp(System.currentTimeMillis() / 1000);
 	}
 
 	public MultiplexerMessage createMessage(ByteString message, int type) {

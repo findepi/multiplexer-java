@@ -1929,11 +1929,11 @@ public final class Protocol {
     public boolean hasCompression() { return hasCompression; }
     public multiplexer.protocol.Protocol.Compression.Values getCompression() { return compression_; }
     
-    // optional uint32 timestamp = 6;
+    // optional uint64 timestamp = 6;
     private boolean hasTimestamp;
-    private int timestamp_ = 0;
+    private long timestamp_ = 0L;
     public boolean hasTimestamp() { return hasTimestamp; }
-    public int getTimestamp() { return timestamp_; }
+    public long getTimestamp() { return timestamp_; }
     
     // optional uint64 references = 7;
     private boolean hasReferences;
@@ -1989,7 +1989,7 @@ public final class Protocol {
         output.writeBytes(5, getMessage());
       }
       if (hasTimestamp()) {
-        output.writeUInt32(6, getTimestamp());
+        output.writeUInt64(6, getTimestamp());
       }
       if (hasReferences()) {
         output.writeUInt64(7, getReferences());
@@ -2044,7 +2044,7 @@ public final class Protocol {
       }
       if (hasTimestamp()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeUInt32Size(6, getTimestamp());
+          .computeUInt64Size(6, getTimestamp());
       }
       if (hasReferences()) {
         size += com.google.protobuf.CodedOutputStream
@@ -2301,7 +2301,7 @@ public final class Protocol {
               break;
             }
             case 48: {
-              setTimestamp(input.readUInt32());
+              setTimestamp(input.readUInt64());
               break;
             }
             case 56: {
@@ -2495,21 +2495,21 @@ public final class Protocol {
         return this;
       }
       
-      // optional uint32 timestamp = 6;
+      // optional uint64 timestamp = 6;
       public boolean hasTimestamp() {
         return result.hasTimestamp();
       }
-      public int getTimestamp() {
+      public long getTimestamp() {
         return result.getTimestamp();
       }
-      public Builder setTimestamp(int value) {
+      public Builder setTimestamp(long value) {
         result.hasTimestamp = true;
         result.timestamp_ = value;
         return this;
       }
       public Builder clearTimestamp() {
         result.hasTimestamp = false;
-        result.timestamp_ = 0;
+        result.timestamp_ = 0L;
         return this;
       }
       
@@ -4851,7 +4851,7 @@ public final class Protocol {
       "\026 \001(\010:\005false\022\014\n\004type\030\004 \002(\r\022\017\n\007message\030\005 " +
       "\001(\014\022D\n\013compression\030\030 \001(\0162\037.multiplexer.C" +
       "ompression.Values:\016NO_COMPRESSION\022\021\n\ttim" +
-      "estamp\030\006 \001(\r\022\022\n\nreferences\030\007 \001(\004\022\020\n\010work" +
+      "estamp\030\006 \001(\004\022\022\n\nreferences\030\007 \001(\004\022\020\n\010work" +
       "flow\030\010 \001(\014\022O\n\017override_rrules\030\024 \003(\01326.mu" +
       "ltiplexer.MultiplexerMessageDescription." +
       "RoutingRule\022?\n\016logging_method\030\027 \001(\0162!.mu" +
