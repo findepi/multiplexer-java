@@ -19,9 +19,12 @@ import com.google.protobuf.ByteString;
 
 /**
  * @author Kasia Findeisen
- * 
  */
 public class TestConnectivity extends JmxServerProvidingTestCase {
+	
+	public void testJmxServerStartup() {
+		assertTrue(getLocalServerPort() > 0);
+	}
 	
 	public void testConnect() throws UnknownHostException, InterruptedException {
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);

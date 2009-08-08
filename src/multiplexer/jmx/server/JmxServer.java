@@ -71,6 +71,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 	private volatile boolean started = false;
 	private volatile boolean running = true;
+	private volatile Thread serverThread;
 
 	private ServerChannelPipelineFactory channelPipelineFactory;
 
@@ -105,6 +106,8 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 	 * open any sockets and does not provide {@code localPort} information.
 	 */
 	public void run() {
+
+		serverThread = Thread.currentThread();
 
 		logger.debug("starting {} @ {}", JmxServer.class.getSimpleName(),
 			serverAddress);
@@ -148,8 +151,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 				// server start and making localPort information accessible to
 				// them.
 				serverEffectiveAddress = new InetSocketAddress(
-					((InetSocketAddress) serverAddress).getHostName(),
-					localPort);
+					getHostString((InetSocketAddress) serverAddress), localPort);
 			}
 			logger.info("started {} @ {}", JmxServer.class.getSimpleName(),
 				serverEffectiveAddress);
@@ -161,8 +163,17 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 				connectionsManager.shutdown();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+			} finally {
+				synchronized (this) {
+					serverThread = null;
+				}
 			}
 		}
+	}
+
+	private static String getHostString(InetSocketAddress address) {
+		String hostAndPort = address.toString();
+		return hostAndPort.substring(0, hostAndPort.lastIndexOf(':'));
 	}
 
 	/**
@@ -250,6 +261,12 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		running = false;
 		logger.info("stopping {} @ {}", JmxServer.class.getSimpleName(),
 			serverEffectiveAddress);
+		synchronized (this) {
+			Thread serverThread = this.serverThread;
+			if (serverThread != null) {
+				serverThread.interrupt();
+			}
+		}
 	}
 
 	protected MultiplexerMessageDescription registerMessageDescription(
