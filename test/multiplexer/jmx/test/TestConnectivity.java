@@ -101,11 +101,11 @@ public class TestConnectivity extends JmxServerProvidingTestCase {
 		// send message
 		ChannelFuture sendingOperation = client.send(msgSent,
 			SendingMethod.THROUGH_ONE);
-		sendingOperation.await(3000);
+		sendingOperation.await(1, TimeUnit.SECONDS);
 		assertTrue(sendingOperation.isSuccess());
 
 		// receive message
-		IncomingMessageData msgData = client.receive(2, TimeUnit.SECONDS);
+		IncomingMessageData msgData = client.receive(1, TimeUnit.SECONDS);
 		assertNotNull(msgData);
 		MultiplexerMessage msgReceived = msgData.getMessage();
 		assertNotSame(msgSent, msgReceived);

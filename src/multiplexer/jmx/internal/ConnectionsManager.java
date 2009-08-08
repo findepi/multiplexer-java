@@ -241,7 +241,7 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 		synchronized (pendingRegistrations) {
 			if (shuttingDown) {
 				logger.debug("connect to {} cancelled by shutdown", address);
-				channel.close();
+				Channels.close(channel);
 				registrationFuture.setFailure(new RuntimeException(
 					"connect cancelled by shutdown"));
 				return registrationFuture;
