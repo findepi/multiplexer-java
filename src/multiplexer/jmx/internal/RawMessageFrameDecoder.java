@@ -43,7 +43,9 @@ public class RawMessageFrameDecoder extends
 	protected Object decode(ChannelHandlerContext ctx, Channel channel,
 		ChannelBuffer buffer, RawMessageDecoderState state) throws Exception {
 
-		logger.trace("RawMessageFrameDecoder.decode with state {}", state);
+		logger.trace(
+			"RawMessageFrameDecoder.decode with state {} buffer.length = {}",
+			state, buffer.readableBytes());
 
 		switch (state) {
 		case READ_LENGTH:
@@ -83,6 +85,22 @@ public class RawMessageFrameDecoder extends
 		default:
 			throw new Error("Shouldn't reach here.");
 		}
+	}
+
+	@Override
+	protected Object decodeLast(ChannelHandlerContext ctx, Channel channel,
+		ChannelBuffer buffer, RawMessageDecoderState state) throws Exception {
+
+		if (state == RawMessageDecoderState.READ_LENGTH
+			&& buffer.readableBytes() == 0) {
+			// OK, Channel closed at the frame boundary.
+			return null;
+		}
+
+		logger.warn(
+			"Channel closed when decoder state is {}, readableBytes = {}",
+			state, buffer.readableBytes());
+		return null;
 	}
 
 	/**
