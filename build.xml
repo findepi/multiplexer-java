@@ -4,7 +4,9 @@
   <property name="version" value="0.9" />
 
   <property name="src" location="src" />
+  <property name="examples.src" location="examples" />
   <property name="test.src" location="test" />
+  
   <property name="build.dir" location="bin" />
   <property name="doc.dir" location="doc" />
   <property name="dist.dir" location="dist" />
@@ -295,7 +297,7 @@
              author="true"
              classpathref="project.dependencies.path"
              destdir="${doc.dir}"
-             sourcepath="${src}"
+             sourcepath="${src}:${examples.src}"
              encoding="utf8"
              nodeprecated="false"
              nodeprecatedlist="false"
