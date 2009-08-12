@@ -3,9 +3,9 @@ package multiplexer.jmx.backend;
 import java.net.SocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import multiplexer.jmx.client.IncomingMessageData;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
-import multiplexer.jmx.internal.IncomingMessageData;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Constants.MessageTypes;
 

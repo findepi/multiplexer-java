@@ -6,10 +6,10 @@ import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
 import multiplexer.jmx.backend.AbstractBackend;
+import multiplexer.jmx.client.IncomingMessageData;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
-import multiplexer.jmx.internal.IncomingMessageData;
 import multiplexer.jmx.test.util.JmxServerProvidingTestCase;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 

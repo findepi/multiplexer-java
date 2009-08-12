@@ -17,7 +17,6 @@ import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.exceptions.OperationFailedException;
 import multiplexer.jmx.exceptions.OperationTimeoutException;
 import multiplexer.jmx.internal.ConnectionsManager;
-import multiplexer.jmx.internal.IncomingMessageData;
 import multiplexer.jmx.internal.MessageReceivedListener;
 import multiplexer.jmx.util.TimeoutCounter;
 import multiplexer.protocol.Constants.MessageTypes;

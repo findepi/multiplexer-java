@@ -1,6 +1,5 @@
-package multiplexer.jmx.internal;
+package multiplexer.jmx.client;
 
-import multiplexer.jmx.client.Connection;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 /**

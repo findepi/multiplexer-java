@@ -5,10 +5,10 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 import multiplexer.jmx.backend.AbstractBackend;
+import multiplexer.jmx.client.IncomingMessageData;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.exceptions.OperationFailedException;
-import multiplexer.jmx.internal.IncomingMessageData;
 import multiplexer.jmx.test.util.JmxServerProvidingTestCase;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
