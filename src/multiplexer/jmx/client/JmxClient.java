@@ -44,6 +44,8 @@ import com.google.protobuf.ByteString;
  * @author Piotr Findeisen
  * 
  */
+// TODO JmxClient shout shutdown when not accessible from other threads than
+// Netty's IO threads.
 public class JmxClient {
 
 	private static final Logger logger = LoggerFactory

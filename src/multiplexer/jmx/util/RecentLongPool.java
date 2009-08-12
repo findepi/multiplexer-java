@@ -17,6 +17,7 @@ public class RecentLongPool {
 	public static final int CAPACITY = 20000;
 
 	private TLongHashSet ids = new TLongHashSet();
+	// FIXME Deque & ArrayDeque are since java 1.6
 	private Deque<Long> recent = new ArrayDeque<Long>();
 
 	public synchronized boolean add(long id) {
