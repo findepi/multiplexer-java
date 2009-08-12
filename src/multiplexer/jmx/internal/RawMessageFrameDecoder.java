@@ -36,16 +36,14 @@ public class RawMessageFrameDecoder extends
 	}
 
 	/**
-	 * Decode uses ReplayingDecoder magic to incrementally read the whole chunk
-	 * (frame).
+	 * Decode uses {@link ReplayingDecoder} magic to incrementally read the
+	 * whole chunk (frame).
 	 */
 	@Override
 	protected Object decode(ChannelHandlerContext ctx, Channel channel,
 		ChannelBuffer buffer, RawMessageDecoderState state) throws Exception {
 
-		logger.trace(
-			"RawMessageFrameDecoder.decode with state {} buffer.length = {}",
-			state, buffer.readableBytes());
+		logger.trace("RawMessageFrameDecoder.decode with state {}", state);
 
 		switch (state) {
 		case READ_LENGTH:
@@ -90,6 +88,11 @@ public class RawMessageFrameDecoder extends
 	@Override
 	protected Object decodeLast(ChannelHandlerContext ctx, Channel channel,
 		ChannelBuffer buffer, RawMessageDecoderState state) throws Exception {
+
+		logger
+			.trace(
+				"RawMessageFrameDecoder.decodeLast with state {} buffer.readableBytes = {}",
+				state, buffer.readableBytes());
 
 		if (state == RawMessageDecoderState.READ_LENGTH
 			&& buffer.readableBytes() == 0) {

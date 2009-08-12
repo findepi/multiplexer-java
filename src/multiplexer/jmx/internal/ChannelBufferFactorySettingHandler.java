@@ -8,6 +8,8 @@ import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelPipelineCoverage;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Piotr Findeisen
@@ -15,6 +17,9 @@ import org.jboss.netty.channel.ChannelUpstreamHandler;
 @ChannelPipelineCoverage("all")
 public class ChannelBufferFactorySettingHandler implements
 	ChannelUpstreamHandler {
+
+	private static final Logger logger = LoggerFactory
+		.getLogger(ChannelBufferFactorySettingHandler.class);
 
 	/**
 	 * Internal.
@@ -30,6 +35,7 @@ public class ChannelBufferFactorySettingHandler implements
 
 	public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e)
 		throws Exception {
+		logger.debug("CBFSH welcomes {}", ctx.getChannel());
 		e.getChannel().getConfig().setBufferFactory(factory);
 		ctx.getPipeline().remove(this);
 		ctx.sendUpstream(e);

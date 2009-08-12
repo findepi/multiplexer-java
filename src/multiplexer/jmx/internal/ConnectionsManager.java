@@ -28,6 +28,7 @@ import org.jboss.netty.bootstrap.Bootstrap;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelPipeline;
@@ -141,6 +142,8 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 
 	public ConnectionsManager(final int instanceType, Bootstrap bootstrap) {
 
+		logger.info("creating {}", this);
+
 		this.instanceType = instanceType;
 		this.bootstrap = bootstrap;
 		bootstrap.setOption("tcpNoDelay", true);
@@ -224,7 +227,7 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 	public synchronized ChannelFuture asyncConnect(final SocketAddress address,
 		final long reconnectTime, final TimeUnit reconnectTimeUnit) {
 
-		logger.debug("{} connecting to {}", getInstanceId(), address);
+		logger.debug("{} connecting to {}", this, address);
 		// TODO send THROUGH_ALL/THROUGH_ALL in case of no connections should
 		// also try to reconnect immediately
 		// TODO send via(Connection) should try to reconnect to the same
@@ -240,7 +243,8 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 		final ChannelFuture registrationFuture = Channels.future(channel, true);
 		synchronized (pendingRegistrations) {
 			if (shuttingDown) {
-				logger.debug("connect to {} cancelled by shutdown", address);
+				logger.debug("{}: connect to {} cancelled by shutdown", this,
+					address);
 				Channels.close(channel);
 				registrationFuture.setFailure(new RuntimeException(
 					"connect cancelled by shutdown"));
@@ -286,16 +290,18 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 	public void channelDisconnected(Channel channel) {
 		assert !channel.isConnected();
 		if (shuttingDown) {
-			logger.debug("channel {} is disconnected now (shutdown)", channel);
+			logger.debug("channel {} is disconnected now ({} shutdown)",
+				channel, this);
 			return;
 		}
 		SocketAddress address = endpointByChannel.get(channel);
 		if (address != null) {
-			logger.warn("channel {} is disconnected now, reconnecting to {}",
-				channel, address);
+			logger.warn(
+				"channel {} is disconnected now in {}, reconnecting to {}",
+				new Object[] { channel, this, address });
 			asyncConnect(address);
 		} else {
-			logger.warn("channel {} is disconnected now", channel);
+			logger.warn("channel {} is disconnected now in {}", channel, this);
 		}
 	}
 
@@ -467,10 +473,18 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 		return instanceId;
 	}
 
+	/**
+	 * Shut downs this {@link ConnectionsManager} and also frees the resources
+	 * held by {@link ChannelFactory} that was used (explicitly or via
+	 * {@link Bootstrap}) to construct this ConnectionsManager.
+	 * 
+	 * @throws InterruptedException
+	 */
 	public void shutdown() throws InterruptedException {
 		shuttingDown = true;
 		// Timer stop is also invoked from
-		// IdleStateHandler.releaseExternalResources() if any created.
+		// IdleStateHandler.releaseExternalResources() if any Channels are
+		// created.
 		timer.stop();
 		ChannelGroup allChannels = new DefaultChannelGroup();
 		synchronized (pendingRegistrations) {
@@ -479,5 +493,11 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 		allChannels.addAll(connectionsMap.getAllChannels());
 		awaitSemiInterruptibly(allChannels.close(), 3);
 		bootstrap.releaseExternalResources();
+	}
+
+	@Override
+	public String toString() {
+		return ConnectionsManager.class.getSimpleName() + "(type="
+			+ instanceType + ", id=" + instanceId + ")";
 	}
 }

@@ -23,7 +23,8 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
 	private MultiplexerProtocolListener connectionsManager;
 
-	public MultiplexerProtocolHandler(MultiplexerProtocolListener connectionsManager) {
+	public MultiplexerProtocolHandler(
+		MultiplexerProtocolListener connectionsManager) {
 		this.connectionsManager = connectionsManager;
 	}
 
@@ -71,7 +72,15 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-		logger.warn("Unhandled exception", e.getCause());
+		if (logger.isWarnEnabled()) {
+			logger
+				.warn("Unhandled exception on "
+					+ ctx.getChannel()
+					+ ", open="
+					+ (ctx.getChannel() != null ? ctx.getChannel().isOpen()
+						: "null") + ", manager=" + connectionsManager, e
+					.getCause());
+		}
 		Channels.close(e.getChannel());
 	}
 }
