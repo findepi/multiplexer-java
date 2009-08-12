@@ -1,7 +1,7 @@
 <project name="JMX" default="all" basedir=".">
 
   <!-- version -->
-  <property name="version" value="0.1" />
+  <property name="version" value="0.9" />
 
   <property name="src" location="src" />
   <property name="test.src" location="test" />
