@@ -2,6 +2,7 @@ package multiplexer.jmx.internal;
 
 import static multiplexer.jmx.util.Channels.awaitSemiInterruptibly;
 
+import java.math.BigInteger;
 import java.net.SocketAddress;
 import java.util.Iterator;
 import java.util.Map;
@@ -49,6 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.TextFormat;
 
 /**
  * A class for connections management, instantiated by any Multiplexer server's
@@ -509,11 +511,29 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 	public String toString() {
 		StringBuilder str = new StringBuilder(128);
 		str.append(ConnectionsManager.class.getSimpleName()).append("(type=")
-			.append(instanceType).append(", id=").append(instanceId);
+			.append(instanceType).append(", id=").append(
+				unsignedToString(instanceId));
 		if (shuttingDown)
 			str.append(", shut");
 		str.append(")");
 		return str.toString();
+	}
+
+	/**
+	 * Convert an unsigned 64-bit integer to a string. Copied shamelessly from
+	 * {@link TextFormat}.
+	 */
+	private static String unsignedToString(long value) {
+		if (value >= 0) {
+			return Long.toString(value);
+		} else {
+			/*
+			 * Pull off the most-significant bit so that BigInteger doesn't
+			 * think the number is negative, then set it again using setBit().
+			 */
+			return BigInteger.valueOf(value & 0x7FFFFFFFFFFFFFFFL).setBit(63)
+				.toString();
+		}
 	}
 
 	@Override
