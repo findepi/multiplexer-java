@@ -163,7 +163,8 @@ public class JmxClient {
 	 * @throws NoPeerForTypeException
 	 */
 	public ChannelFutureGroup send(MultiplexerMessage message,
-		SendingMethod.ViaConnectionsOfType sendingMethod) throws NoPeerForTypeException {
+		SendingMethod.ViaConnectionsOfType sendingMethod)
+		throws NoPeerForTypeException {
 		return connectionsManager.sendMessage(message, sendingMethod);
 	}
 
@@ -268,14 +269,14 @@ public class JmxClient {
 	 * backend.
 	 * 
 	 * This is a 3-phase algorithm, however it may end at any stage on proper
-	 * conditions. In phase 1, the message is sent through one Multiplexer. If the
-	 * answer doesn't appear within specified amount of time ({@code timeout}),
-	 * the algorithm enters phase 2. A special message, aimed to find a proper
-	 * backend is sent through all connected Mulitplexer servers (method {@code
-	 * event}). If an answer from the backend comes within a specified amount of
-	 * time ({@code timeout}), the algorithm enters phase 3. The message is sent
-	 * directly to the backend, and another {@code timeout} is given to receive
-	 * the answer.
+	 * conditions. In phase 1, the message is sent through one Multiplexer. If
+	 * the answer doesn't appear within specified amount of time ({@code
+	 * timeout}), the algorithm enters phase 2. A special message, aimed to find
+	 * a proper backend is sent through all connected Mulitplexer servers
+	 * (method {@code event}). If an answer from the backend comes within a
+	 * specified amount of time ({@code timeout}), the algorithm enters phase 3.
+	 * The message is sent directly to the backend, and another {@code timeout}
+	 * is given to receive the answer.
 	 * 
 	 * The algorithm only reads it's own messages. Other messages,
 	 * simultaneously received by the {@code Client}, are not affected.
@@ -285,7 +286,7 @@ public class JmxClient {
 	 * @param messageType
 	 *            type of the request, from which a Multiplexer can deduce the
 	 *            right backend type
-	 * @param timeout
+	 * @param timeoutMillis
 	 *            each of the 3 phases of the algorithm has this time limit,
 	 *            measured in milliseconds
 	 * @return an answer message
@@ -295,17 +296,32 @@ public class JmxClient {
 	 * @throws NoPeerForTypeException
 	 */
 	public IncomingMessageData query(final ByteString message,
-		final int messageType, long timeout) throws OperationFailedException,
-		NoPeerForTypeException {
+		final int messageType, long timeoutMillis)
+		throws OperationFailedException, NoPeerForTypeException {
 
 		final List<Long> queryMessageIds = new ArrayList<Long>(3);
 		try {
-			return query(message, messageType, timeout, queryMessageIds);
+			return query(message, messageType, timeoutMillis, queryMessageIds);
 		} finally {
 			// remove IDs of messages sent during this query from
 			// `queryResponses'
 			removeFromQueryResponses(queryMessageIds, 5, TimeUnit.SECONDS);
 		}
+	}
+
+	/**
+	 * Same as {@link #query(com.google.protobuf.ByteString, int, long)} but
+	 * allows more flexible timeout definition. Note that specifying
+	 * {@link TimeUnit} smaller than {@code TimeUnit.MILLISECONDS} have little
+	 * sense &mdash; the algorithm uses milliseconds internally as a time unit.
+	 * 
+	 * @see #query(com.google.protobuf.ByteString, int, long)
+	 */
+	public IncomingMessageData query(final ByteString message,
+		final int messageType, long timeout, TimeUnit unit)
+		throws OperationFailedException, NoPeerForTypeException {
+
+		return query(message, messageType, unit.toMillis(timeout));
 	}
 
 	/**
@@ -553,7 +569,7 @@ public class JmxClient {
 	public long getInstanceId() {
 		return connectionsManager.getInstanceId();
 	}
-	
+
 	public void shutdown() throws InterruptedException {
 		connectionsManager.shutdown();
 	}
