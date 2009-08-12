@@ -223,8 +223,12 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 			channel.close().awaitUninterruptibly();
 		}
 
+		public void channelOpen(Channel channel) {
+			assertSame(channel, this.channel);
+		}
+
 		public void channelDisconnected(Channel channel) {
-			// TODO Auto-generated method stub
+			assertSame(channel, this.channel);
 		}
 
 		public void messageReceived(MultiplexerMessage message, Channel channel) {

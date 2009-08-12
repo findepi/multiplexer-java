@@ -11,7 +11,7 @@ import org.jboss.netty.channel.Channel;
  * @author Piotr Findeisen
  */
 public interface MultiplexerProtocolListener {
-	
+
 	/**
 	 * Invoked when the {@link MultiplexerProtocolHandler} associated with this
 	 * listener receives a message from the network.
@@ -25,9 +25,19 @@ public interface MultiplexerProtocolListener {
 
 	/**
 	 * Invoked when the {@link MultiplexerProtocolHandler} receives the
-	 * information about a {@link Channel} being closed.
+	 * information about a {@link Channel} being disconnected.
 	 * 
-	 * @param channel the closed channel
+	 * @param channel
+	 *            the closed channel
 	 */
 	public void channelDisconnected(Channel channel);
+
+	/**
+	 * Invoked when the {@link MultiplexerProtocolHandler} receives the
+	 * information about a {@link Channel} being open.
+	 * 
+	 * @param channel
+	 *            the opened channel
+	 */
+	public void channelOpen(Channel channel);
 }

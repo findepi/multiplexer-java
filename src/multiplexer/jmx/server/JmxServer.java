@@ -129,6 +129,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 			// Bind & start the server.
 			Channel listeningChannel = bootstrap.bind(serverAddress);
+			connectionsManager.channelOpen(listeningChannel);
 			if (listeningChannel.getLocalAddress() instanceof InetSocketAddress) {
 				localPort = ((InetSocketAddress) listeningChannel
 					.getLocalAddress()).getPort();

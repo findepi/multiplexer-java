@@ -237,7 +237,6 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 			.connect(address);
 		final Channel channel = connectOperation.getChannel();
 		assert channel != null;
-		connectionsMap.addNew(channel);
 		endpointByChannel.put(channel, address);
 
 		final ChannelFuture registrationFuture = Channels.future(channel, true);
@@ -285,6 +284,11 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 				asyncConnect(address, delay, unit);
 			}
 		}, delay, unit);
+	}
+	
+	public void channelOpen(Channel channel) {
+		logger.info("{} now has open {}", this, channel);
+		connectionsMap.addNew(channel);
 	}
 
 	public void channelDisconnected(Channel channel) {

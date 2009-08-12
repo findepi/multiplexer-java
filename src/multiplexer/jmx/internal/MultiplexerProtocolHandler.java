@@ -3,10 +3,8 @@ package multiplexer.jmx.internal;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 
-import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelPipelineCoverage;
-import org.jboss.netty.channel.ChannelState;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.ExceptionEvent;
@@ -29,18 +27,19 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 	}
 
 	@Override
-	public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e)
+	public void channelDisconnected(ChannelHandlerContext ctx,
+		ChannelStateEvent e) throws Exception {
+
+		connectionsManager.channelDisconnected(e.getChannel());
+		ctx.sendUpstream(e);
+	}
+
+	@Override
+	public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e)
 		throws Exception {
 
-		if (e instanceof ChannelStateEvent) {
-			ChannelStateEvent stateEvent = (ChannelStateEvent) e;
-			if (stateEvent.getState() == ChannelState.CONNECTED
-				&& stateEvent.getValue() == null) {
-				connectionsManager.channelDisconnected(e.getChannel());
-			}
-		}
-
-		super.handleUpstream(ctx, e);
+		connectionsManager.channelOpen(e.getChannel());
+		ctx.sendUpstream(e);
 	}
 
 	@Override
@@ -67,7 +66,7 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 			logger.debug("Writing\n{}", e.getMessage());
 		}
 
-		super.writeRequested(ctx, e);
+		ctx.sendDownstream(e);
 	}
 
 	@Override
