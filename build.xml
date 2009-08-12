@@ -44,10 +44,14 @@
     <file name="${libs}/slf4j-api-1.5.8.jar" />
     <file name="${libs}/slf4j-jdk14-1.5.8.jar" />
   </filelist>
+  
+  <path id="project.dependencies.path">
+    <filelist refid="project.jar.dependencies" />
+  </path>
 
   <path id="project.class.path">
     <pathelement location="${build.dir}" />
-    <filelist refid="project.jar.dependencies" />
+    <path refid="project.dependencies.path"/>
   </path>
 
   <path id="project.test.class.path">
@@ -289,7 +293,7 @@
   <target name="doc" depends="init,constants" description="generates Javadoc">
     <javadoc access="protected"
              author="true"
-             classpathref="project.class.path"
+             classpathref="project.dependencies.path"
              destdir="${doc.dir}"
              sourcepath="${src}"
              encoding="utf8"

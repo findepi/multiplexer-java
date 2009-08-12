@@ -118,7 +118,7 @@ public abstract class AbstractBackend implements Runnable {
 		} finally {
 			thread = null;
 		}
-		
+
 		try {
 			connection.flush();
 		} catch (InterruptedException e) {
