@@ -317,20 +317,31 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 			for (MultiplexerMessageDescription.RoutingRule rRule : msgd
 				.getToList()) {
 
-				if (!rRule.hasPeer()) {
-					logger.error("RoutingRule without peer name:\n{}", rRule);
-					continue;
-				}
-				if (!peerTypeNamesToPeerTypeIds.containsKey(rRule.getPeer())) {
-					logger.error("Unknown peer name: '{}'", rRule.getPeer());
-					continue;
-				}
-				int peerId = peerTypeNamesToPeerTypeIds.get(rRule.getPeer());
-				if (rRule.hasPeerType() && rRule.getPeerType() != peerId) {
-					logger
-						.error(
-							"RoutingRule has both peer name and ID but ID is wrong:\n{}",
-							rRule);
+				int peerId;
+				if (rRule.hasPeer()) {
+					// We have peer name specified.
+					if (!peerTypeNamesToPeerTypeIds
+						.containsKey(rRule.getPeer())) {
+						logger
+							.error("Unknown peer name: '{}'", rRule.getPeer());
+						continue;
+					}
+					peerId = peerTypeNamesToPeerTypeIds.get(rRule.getPeer());
+					if (rRule.hasPeerType() && rRule.getPeerType() != peerId) {
+						logger
+							.error(
+								"RoutingRule has both peer name and ID but ID is wrong:\n{}",
+								rRule);
+						continue;
+					}
+				} else if (rRule.hasPeerType()) {
+					// We don't have peer name but we have peer_type.
+					peerId = rRule.getPeerType();
+				} else {
+					// Oops, we have neither peer name nor type.
+					logger.error(
+						"RoutingRule without peer name or peer_type:\n{}",
+						rRule);
 					continue;
 				}
 
