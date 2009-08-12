@@ -21,11 +21,12 @@ public final class JmxServerRunner {
 		server.loadMessageDefinitionsFromFile("test.rules");
 
 		serverThread = new Thread(server);
+		serverThread.setDaemon(true);
 		serverThread.start();
 
 		synchronized (server) {
 			if (!server.hasStarted()) {
-				server.wait(2000);
+				server.wait(5000);
 			}
 			assert server.hasStarted() : JmxServer.class.getSimpleName()
 				+ " failed to start.";

@@ -277,8 +277,8 @@
 
       <test name="multiplexer.jmx.test.TestConnectivity" />
       <test name="multiplexer.jmx.test.TestQuery" />
-      <test name="multiplexer.jmx.test.TestSimpleMultiplexerInteroperability" />
-      <test name="multiplexer.jmx.test.TestSimpleNettyMultiplexerInteroperability" />
+      <test name="multiplexer.jmx.test.TestMultiplexerMessageWithServer" />
+      <test name="multiplexer.jmx.test.TestMultiplexerProtocolHandlerWithServer" />
       <test name="multiplexer.jmx.test.TestByteBufferSerialization" />
     </junit>
   </target>

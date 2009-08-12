@@ -1,6 +1,5 @@
 package multiplexer.jmx.test;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
@@ -8,6 +7,7 @@ import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import multiplexer.jmx.internal.ChannelBufferFactorySettingHandler;
 import multiplexer.jmx.internal.MultiplexerProtocolHandler;
@@ -39,14 +39,17 @@ import com.google.protobuf.ByteString.Output;
  * @author Kasia Findeisen
  * @author Piotr Findeisen
  */
-public class TestSimpleNettyMultiplexerInteroperability extends
+public class TestMultiplexerProtocolHandlerWithServer extends
 	JmxServerProvidingTestCase {
 
 	// TODO write test covering MultiplexerProtocolHandler and other pipeline
 	// elements SEPARATELY
 
-	public void testSimpleNettyConnection() throws Exception {
+	public void testSimpleNettyConnectionWithLEBuffers() throws Exception {
 		testSimpleNettyConnection(true);
+	}
+
+	public void testSimpleNettyConnectionWithoutLEBuffers() throws Exception {
 		testSimpleNettyConnection(false);
 	}
 
@@ -72,7 +75,7 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 
 		// receive the invitation
 		System.out.println("waiting for welcome message");
-		MultiplexerMessage mxmsg = c.receive_message();
+		MultiplexerMessage mxmsg = c.receiveMessage();
 		System.out.println("validating welcome message");
 		assertEquals(mxmsg.getType(), CONNECTION_WELCOME);
 		WelcomeMessage peer = WelcomeMessage.parseFrom(mxmsg.getMessage());
@@ -94,7 +97,7 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 		System.out.println("sending sample search query");
 		long id = c.sendMessage(sqo.toByteString(), PYTHON_TEST_REQUEST).messageId;
 		System.out.println("waiting for sample search query");
-		mxmsg = c.receive_message();
+		mxmsg = c.receiveMessage();
 		System.out.println("validating sample search query");
 		assertEquals(mxmsg.getId(), id);
 		assertEquals(mxmsg.getType(), PYTHON_TEST_REQUEST);
@@ -111,7 +114,7 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 		System.out.println("sending large search query");
 		id = c.sendMessage(query, PYTHON_TEST_REQUEST).messageId;
 		System.out.println("waiting for large search query");
-		mxmsg = c.receive_message();
+		mxmsg = c.receiveMessage();
 		System.out.println("validating large search query");
 		assertEquals(mxmsg.getId(), id);
 		assertEquals(mxmsg.getType(), PYTHON_TEST_REQUEST);
@@ -129,14 +132,24 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 		private boolean connecting = false;
 		BlockingQueue<MultiplexerMessage> queue = new LinkedBlockingQueue<MultiplexerMessage>();
 
-		private SocketChannel channel;
+		private volatile SocketChannel channel;
 
 		public SimpleNettyConnection(ChannelFactory factory,
 			SocketAddress address, boolean useLittleEndianBuffers)
 			throws InterruptedException {
 
 			instanceId = new Random().nextLong();
-			asyncConnect(factory, address, useLittleEndianBuffers).await();
+
+			ChannelFuture connectFuture = asyncConnect(factory, address,
+				useLittleEndianBuffers);
+			connectFuture.addListener(new ChannelFutureListener() {
+
+				public void operationComplete(ChannelFuture future)
+					throws Exception {
+					assertTrue(future.isSuccess());
+				}
+			});
+			connectFuture.await();
 		}
 
 		private ChannelFuture asyncConnect(ChannelFactory factory,
@@ -175,6 +188,7 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 				new MultiplexerProtocolHandler(this));
 
 			ChannelFuture connectOperation = bootstrap.connect(address);
+			channel = (SocketChannel) connectOperation.getChannel();
 			connectOperation.addListener(new ChannelFutureListener() {
 
 				public void operationComplete(ChannelFuture future)
@@ -186,7 +200,6 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 					assert connecting;
 					connected = true;
 					connecting = false;
-					channel = (SocketChannel) future.getChannel();
 				}
 			});
 			return connectOperation;
@@ -206,8 +219,7 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 			}
 		}
 
-		public SendingResult sendMessage(ByteString message, int type)
-			throws IOException {
+		public SendingResult sendMessage(ByteString message, int type) {
 			MultiplexerMessage mxmsg = MultiplexerMessage.newBuilder().setId(
 				new Random().nextLong()).setFrom(getInstanceId()).setType(type)
 				.setMessage(message).build();
@@ -215,8 +227,12 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 			return new SendingResult(channel.write(mxmsg), mxmsg.getId());
 		}
 
-		public MultiplexerMessage receive_message() throws InterruptedException {
-			return queue.take();
+		public MultiplexerMessage receiveMessage() throws InterruptedException {
+			// Give much time as the test runs very poorly under Eclipse's
+			// console when the large query is printed.
+			MultiplexerMessage message = queue.poll(30, TimeUnit.SECONDS);
+			assertNotNull("receiveMessage timed out", message);
+			return message;
 		}
 
 		private void close() {
@@ -224,7 +240,8 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 		}
 
 		public void channelOpen(Channel channel) {
-			assertSame(channel, this.channel);
+			if (this.channel != null)
+				assertSame(channel, this.channel);
 		}
 
 		public void channelDisconnected(Channel channel) {
@@ -234,6 +251,12 @@ public class TestSimpleNettyMultiplexerInteroperability extends
 		public void messageReceived(MultiplexerMessage message, Channel channel) {
 			boolean offered = queue.offer(message);
 			assert offered : "sorry not offered, offiaro";
+		}
+
+		@Override
+		public String toString() {
+			return SimpleNettyConnection.class.getSimpleName() + "(id="
+				+ instanceId + ")";
 		}
 	}
 }

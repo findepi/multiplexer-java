@@ -74,6 +74,8 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 	private static final Logger logger = LoggerFactory
 		.getLogger(ConnectionsManager.class);
 
+	private final Object lock = new Object();
+
 	private volatile boolean shuttingDown = false;
 
 	private final long instanceId = new Random().nextLong();
@@ -285,9 +287,9 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 			}
 		}, delay, unit);
 	}
-	
+
 	public void channelOpen(Channel channel) {
-		logger.info("{} now has open {}", this, channel);
+		logger.info("{} now has open channel {}", this, channel);
 		connectionsMap.addNew(channel);
 	}
 
@@ -485,7 +487,11 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 	 * @throws InterruptedException
 	 */
 	public void shutdown() throws InterruptedException {
-		shuttingDown = true;
+		synchronized (lock) {
+			if (shuttingDown)
+				return;
+			shuttingDown = true;
+		}
 		// Timer stop is also invoked from
 		// IdleStateHandler.releaseExternalResources() if any Channels are
 		// created.
@@ -501,7 +507,18 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 
 	@Override
 	public String toString() {
-		return ConnectionsManager.class.getSimpleName() + "(type="
-			+ instanceType + ", id=" + instanceId + ")";
+		StringBuilder str = new StringBuilder(128);
+		str.append(ConnectionsManager.class.getSimpleName()).append("(type=")
+			.append(instanceType).append(", id=").append(instanceId);
+		if (shuttingDown)
+			str.append(", shut");
+		str.append(")");
+		return str.toString();
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		shutdown();
+		super.finalize();
 	}
 }

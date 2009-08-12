@@ -108,6 +108,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 	public void run() {
 
 		serverThread = Thread.currentThread();
+		serverThread.setName(JmxServer.class.getSimpleName());
 
 		logger.debug("starting {} @ {}", JmxServer.class.getSimpleName(),
 			serverAddress);

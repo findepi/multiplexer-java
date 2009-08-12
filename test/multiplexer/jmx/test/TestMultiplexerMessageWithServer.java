@@ -20,7 +20,7 @@ import multiplexer.protocol.Protocol.WelcomeMessage;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ByteString.Output;
 
-public class TestSimpleMultiplexerInteroperability extends
+public class TestMultiplexerMessageWithServer extends
 	JmxServerProvidingTestCase {
 
 	public void testSimpleConnection() throws Exception {

@@ -13,6 +13,8 @@ import org.jboss.netty.channel.SimpleChannelHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.protobuf.ByteString;
+
 @ChannelPipelineCoverage("all")
 public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
@@ -45,25 +47,35 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
 
-		assert e.getMessage() instanceof MultiplexerMessage : e.getMessage()
-			+ " is not a MultiplexerMessage";
+		if (!(e.getMessage() instanceof MultiplexerMessage)) {
+			ctx.sendUpstream(e);
+			return;
+		}
 
-		if (((MultiplexerMessage) e.getMessage()).getType() != MessageTypes.HEARTBIT) {
-			logger.debug("MessageReceived\n{}", e.getMessage());
-			connectionsManager.messageReceived((MultiplexerMessage) e
-				.getMessage(), ctx.getChannel());
+		MultiplexerMessage message = (MultiplexerMessage) e.getMessage();
+		if (message.getType() != MessageTypes.HEARTBIT) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Received\n{}", makeShortDebugMessage(message));
+			}
+			connectionsManager.messageReceived(message, ctx.getChannel());
 		}
 	}
 
 	@Override
 	public void writeRequested(ChannelHandlerContext ctx, MessageEvent e)
 		throws Exception {
+		
+		if (!(e.getMessage() instanceof MultiplexerMessage)) {
+			ctx.sendDownstream(e);
+			return;
+		}
 
-		assert e.getMessage() instanceof MultiplexerMessage : "You should feed the channel with MultiplexerMessages, not "
-			+ e.getMessage();
+		if (logger.isDebugEnabled()) {
+			MultiplexerMessage message = (MultiplexerMessage) e.getMessage();
 
-		if (((MultiplexerMessage) e.getMessage()).getType() != MessageTypes.HEARTBIT) {
-			logger.debug("Writing\n{}", e.getMessage());
+			if (message.getType() != MessageTypes.HEARTBIT) {
+				logger.debug("Writing\n{}", makeShortDebugMessage(message));
+			}
 		}
 
 		ctx.sendDownstream(e);
@@ -81,5 +93,16 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 					.getCause());
 		}
 		Channels.close(e.getChannel());
+	}
+
+	private static MultiplexerMessage makeShortDebugMessage(
+		MultiplexerMessage message) {
+		if (message.getMessage().size() < 256) {
+			return message;
+		} else {
+			return message.toBuilder().setMessage(
+				ByteString.copyFromUtf8("<message length="
+					+ message.getMessage().size() + ">")).build();
+		}
 	}
 }
