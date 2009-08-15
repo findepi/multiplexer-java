@@ -2,8 +2,7 @@ package multiplexer.jmx.util;
 
 import gnu.trove.TLongHashSet;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.util.LinkedList;
 
 /**
  * A set-like structure of longs that stores only {@code CAPACITY} recent
@@ -17,8 +16,7 @@ public class RecentLongPool {
 	public static final int CAPACITY = 20000;
 
 	private TLongHashSet ids = new TLongHashSet();
-	// FIXME Deque & ArrayDeque are since java 1.6
-	private Deque<Long> recent = new ArrayDeque<Long>();
+	private LinkedList<Long> recent = new LinkedList<Long>();
 
 	public synchronized boolean add(long id) {
 		if (ids.add(id)) {

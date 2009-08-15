@@ -1,7 +1,5 @@
 package multiplexer.jmx.tools;
 
-import java.util.Arrays;
-
 import multiplexer.jmx.server.JmxServer;
 
 /**
@@ -74,16 +72,22 @@ public class Runner {
 		// take the first argument
 		String subCommandName = args[0];
 		assert subCommandName != null;
-		args = Arrays.copyOfRange(args, 1, args.length);
 
+		// Strip subCommandName from args.
+		final int stripCount = 1;
+		assert args.length >= stripCount;
+		String[] subCommandArgs = new String[args.length - stripCount];
+		System.arraycopy(args, stripCount, subCommandArgs, 0, args.length
+			- stripCount);
+		
 		if (subCommandName.equals("help")) {
-			if (args.length == 0) {
+			if (subCommandArgs.length == 0) {
 				printHelpAndExit();
 				return;
 			} else {
 				System.err
 					.println("Help about subcommands is not available. Try ... "
-						+ args[0] + " --help instead.");
+						+ subCommandArgs[0] + " --help instead.");
 				System.exit(1);
 			}
 
@@ -91,7 +95,7 @@ public class Runner {
 
 		for (SubCommand subCommand : subCommands) {
 			if (subCommandName.equals(subCommand.getName())) {
-				subCommand.run(args);
+				subCommand.run(subCommandArgs);
 				return;
 			}
 		}

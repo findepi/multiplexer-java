@@ -107,7 +107,7 @@ public abstract class AbstractRulesCompiler implements
 		new File(options.outputFile).getParentFile().mkdirs();
 
 		Writer writer = new FileWriter(options.outputFile);
-		if (options.packageName != null && !options.packageName.isEmpty()) {
+		if (options.packageName != null && options.packageName.length() != 0) {
 			writer.write("package " + options.packageName + ";\n");
 		}
 		writer.write("\n");
