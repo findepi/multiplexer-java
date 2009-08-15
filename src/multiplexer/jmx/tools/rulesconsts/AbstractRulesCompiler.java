@@ -151,14 +151,13 @@ public abstract class AbstractRulesCompiler implements
 		writer.write(lp + "\t\t"
 			+ "Map<String, Integer> tmp = new HashMap<String, Integer>();\n");
 		for (Constant<Integer> c : constants) {
-			writer.write(lp + "\t\t" + "tmp.put(\"" + c.name + "\", "
-				+ c.name + ");\n");
+			writer.write(lp + "\t\t" + "tmp.put(\"" + c.name + "\", " + c.name
+				+ ");\n");
 		}
-		writer.write(lp + "\t\t"
-			+ "map = Collections.unmodifiableMap(tmp);\n");
+		writer.write(lp + "\t\t" + "map = Collections.unmodifiableMap(tmp);\n");
 		writer.write(lp + "\t" + "}\n"); // ConstantsByNameMapHolder.static
 		writer.write(lp + "}\n"); // ConstantsByNameMapHolder
-		
+
 		// ConstantsNamesMapHolder
 		writer.write("\n");
 		writer.write(lp + "private static class ConstantsNamesMapHolder {\n");
@@ -168,32 +167,34 @@ public abstract class AbstractRulesCompiler implements
 		writer.write(lp + "\t\t"
 			+ "Map<Integer, String> tmp = new HashMap<Integer, String>();\n");
 		for (Constant<Integer> c : constants) {
-			writer.write(lp + "\t\t" + "tmp.put(" + c.name + ", \""
-				+ c.name + "\");\n");
+			writer.write(lp + "\t\t" + "tmp.put(" + c.name + ", \"" + c.name
+				+ "\");\n");
 		}
-		writer.write(lp + "\t\t"
-			+ "map = Collections.unmodifiableMap(tmp);\n");
+		writer.write(lp + "\t\t" + "map = Collections.unmodifiableMap(tmp);\n");
 		writer.write(lp + "\t" + "}\n"); // ConstantsNamesMapHolder.static
 		writer.write(lp + "}\n"); // ConstantsNamesMapHolder
 		writer.write("\n");
-		
+
 		// getMap
 		writer.write(lp + "/**\n");
-		writer.write(lp + " * @deprecated Use {@link #getConstantsByName} instead.\n");
+		writer.write(lp
+			+ " * @deprecated Use {@link #getConstantsByName} instead.\n");
 		writer.write(lp + " */\n");
 		writer.write(lp + "public static Map<String, Integer> getMap() {\n");
 		writer.write(lp + "\t" + "return getConstantsByName();\n");
 		writer.write(lp + "};\n");
 		writer.write("\n");
-		
+
 		// getConstantsByName
-		writer.write(lp + "public static Map<String, Integer> getConstantsByName() {\n");
+		writer.write(lp
+			+ "public static Map<String, Integer> getConstantsByName() {\n");
 		writer.write(lp + "\t" + "return ConstantsByNameMapHolder.map;\n");
 		writer.write(lp + "};\n");
 		writer.write("\n");
-		
+
 		// getConstants
-		writer.write(lp + "public static Map<Integer, String> getConstantsNames() {\n");
+		writer.write(lp
+			+ "public static Map<Integer, String> getConstantsNames() {\n");
 		writer.write(lp + "\t" + "return ConstantsNamesMapHolder.map;\n");
 		writer.write(lp + "};\n");
 		writer.write(linePrefix + "}\n"); // innerClassName

@@ -14,7 +14,9 @@ public class Runner {
 
 	private static SubCommand[] subCommands = {
 
-		new SubCommand("server", "runs Multiplexer server (use `jmx-*-withdeps.jar' if using java's `-jar' option)") {
+		new SubCommand(
+			"server",
+			"runs Multiplexer server (use `jmx-*-withdeps.jar' if using java's `-jar' option)") {
 			@Override
 			void run(String[] args) throws Exception {
 				JmxServer.main(args);
@@ -63,7 +65,7 @@ public class Runner {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		
+
 		if (args.length == 0) {
 			printHelpAndExit();
 			return;
@@ -90,7 +92,6 @@ public class Runner {
 						+ subCommandArgs[0] + " --help instead.");
 				System.exit(1);
 			}
-
 		}
 
 		for (SubCommand subCommand : subCommands) {
@@ -103,5 +104,4 @@ public class Runner {
 		printHelpAndExit();
 		return;
 	}
-
 }

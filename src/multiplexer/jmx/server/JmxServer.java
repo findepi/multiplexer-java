@@ -50,6 +50,7 @@ import com.google.protobuf.TextFormat.ParseException;
  * 
  * @author Piotr Findeisen
  */
+// TODO support multiplexer password
 public class JmxServer implements MessageReceivedListener, Runnable {
 
 	public static final String UNKOWN_TYPE_NAME = "unknown";
