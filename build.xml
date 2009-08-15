@@ -322,9 +322,13 @@
           target: dist              
          ================================= -->
   <target name="dist"
-          depends="sources, test-sources, test, jar, doc, dist.check.possible, dist-not-possible"
+          depends="dist.check.possible, dist-not-possible, sources, test-sources, test, jar, doc, build-dist"
           if="dist.possible"
-          description="builds a distributable package">
+          description="builds a distributable package" />
+  <!-- - - - - - - - - - - - - - - - - - 
+          target: build-dist                      
+         - - - - - - - - - - - - - - - - - -->
+  <target name="build-dist">
     <property name=".tardirname" value="jmx-${version}" />
     <script language="beanshell">
       <![CDATA[
@@ -333,16 +337,21 @@
       import java.io.*;
       // Create a list of files to tar.
       files = new ArrayList();
-      for  (String i : new String[] { "src", "examples.src", "test.src", "dist.dir", "doc.dir", "test.rules", "system.rules" }) {
+      for  (String i : new String[] { "src", "examples.src", "test.src",
+              "dist.dir", "doc.dir", "test.rules", "system.rules",
+              "protocol.proto.src", "libs" }) {
           path = project.getProperty(i);
           if (!path.startsWith(basedir + File.separatorChar)) {
-              project.log(self, "Warning: path " + path + " does not start with basedir " + basedir + ".", project.MSG_WARN);
+              project.log(self, "Warning: path " + path +
+                  " does not start with basedir " + basedir + ".",
+                  project.MSG_WARN);
           } else {
               path = path.substring((basedir + File.separatorChar).length());
           }
           files.add(path);
       }
-      files.addAll(Arrays.asList(new String[] { ".classpath", ".settings", "build.xml", "ant" }));
+      files.addAll(Arrays.asList(new String[] { ".classpath", ".settings",
+          "build.xml", "ant" }));
       
       prefix = project.getProperty(".tardirname");
       
@@ -360,7 +369,8 @@
       for (path : files) {
           File file = new File(basedir + File.separatorChar + path);
           if (!file.exists()) {
-              project.log(self, "Warning: file not found " + file, project.MSG_WARN);
+              project.log(self, "Warning: file not found " + file,
+                  project.MSG_WARN);
           } else {
               tfs = tar.createTarFileSet();
               if (file.isDirectory()) {
