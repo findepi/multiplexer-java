@@ -21,18 +21,18 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 	private static final Logger logger = LoggerFactory
 		.getLogger(MultiplexerProtocolHandler.class);
 
-	private MultiplexerProtocolListener connectionsManager;
+	private MultiplexerProtocolListener protocolListener;
 
 	public MultiplexerProtocolHandler(
-		MultiplexerProtocolListener connectionsManager) {
-		this.connectionsManager = connectionsManager;
+		MultiplexerProtocolListener protocolListener) {
+		this.protocolListener = protocolListener;
 	}
 
 	@Override
 	public void channelDisconnected(ChannelHandlerContext ctx,
 		ChannelStateEvent e) throws Exception {
 
-		connectionsManager.channelDisconnected(e.getChannel());
+		protocolListener.channelDisconnected(e.getChannel());
 		ctx.sendUpstream(e);
 	}
 
@@ -40,7 +40,7 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 	public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e)
 		throws Exception {
 
-		connectionsManager.channelOpen(e.getChannel());
+		protocolListener.channelOpen(e.getChannel());
 		ctx.sendUpstream(e);
 	}
 
@@ -57,7 +57,7 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Received\n{}", makeShortDebugMessage(message));
 			}
-			connectionsManager.messageReceived(message, ctx.getChannel());
+			protocolListener.messageReceived(message, ctx.getChannel());
 		}
 	}
 
@@ -89,7 +89,7 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 					+ ctx.getChannel()
 					+ ", open="
 					+ (ctx.getChannel() != null ? ctx.getChannel().isOpen()
-						: "null") + ", manager=" + connectionsManager, e
+						: "null") + ", manager=" + protocolListener, e
 					.getCause());
 		}
 		Channels.close(e.getChannel());

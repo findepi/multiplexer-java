@@ -20,7 +20,6 @@ import multiplexer.jmx.client.SendingMethod;
 import multiplexer.jmx.exceptions.NoPeerForPeerIdException;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.util.RecentLongPool;
-import multiplexer.protocol.Protocol;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Protocol.WelcomeMessage;
@@ -32,14 +31,10 @@ import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
-import org.jboss.netty.handler.codec.protobuf.ProtobufDecoder;
-import org.jboss.netty.handler.codec.protobuf.ProtobufEncoder;
 import org.jboss.netty.handler.timeout.IdleStateHandler;
 import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timeout;
@@ -152,58 +147,9 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 		this.bootstrap = bootstrap;
 		bootstrap.setOption("tcpNoDelay", true);
 		bootstrap.setOption("keepAlive", true);
-
-		ChannelPipelineFactory pipelineFactory = new ChannelPipelineFactory() {
-
-			// Encoders
-			private RawMessageFrameEncoder rawMessageEncoder = new RawMessageFrameEncoder();
-			private ProtobufEncoder multiplexerMessageEncoder = new ProtobufEncoder();
-			// Decoders
-			private ProtobufDecoder multiplexerMessageDecoder = new ProtobufDecoder(
-				Protocol.MultiplexerMessage.getDefaultInstance());
-			// Heartbits
-			private HeartbitHandler heartbitHandler = new HeartbitHandler();
-			// Protocol handler
-			private MultiplexerProtocolHandler multiplexerProtocolHandler = new MultiplexerProtocolHandler(
-				ConnectionsManager.this);
-
-			public ChannelPipeline getPipeline() throws Exception {
-				ChannelPipeline pipeline = Channels.pipeline();
-
-				// Configuration
-				pipeline
-					.addFirst(
-						"littleEndianEndiannessSetter",
-						ChannelBufferFactorySettingHandler.LITTLE_ENDIAN_BUFFER_FACTORY_SETTER);
-
-				// Encoders
-				pipeline.addLast("rawMessageEncoder", rawMessageEncoder);
-				pipeline.addLast("multiplexerMessageEncoder",
-					multiplexerMessageEncoder);
-
-				// Decoders
-				pipeline.addLast("rawMessageDecoder",
-					new RawMessageFrameDecoder());
-				pipeline.addLast("multiplexerMessageDecoder",
-					multiplexerMessageDecoder);
-
-				// Heartbits
-				pipeline.addLast("idleHandler", new IdleStateHandler(timer,
-					Config.INITIAL_READ_IDLE_TIME,
-					Config.INITIAL_WRITE_IDLE_TIME, Long.MAX_VALUE,
-					TimeUnit.SECONDS));
-
-				pipeline.addLast("heartbitHandler", heartbitHandler);
-
-				// Protocol handler
-				pipeline.addLast("multiplexerProtocolHandler",
-					multiplexerProtocolHandler);
-
-				return pipeline;
-			}
-		};
-
-		bootstrap.setPipelineFactory(pipelineFactory);
+		bootstrap
+			.setPipelineFactory(new ConnectionsManagerChannelPipelineFactory(
+				timer, this));
 	}
 
 	public MultiplexerMessage.Builder createMessageBuilder() {
