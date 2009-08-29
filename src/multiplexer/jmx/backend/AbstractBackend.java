@@ -83,6 +83,13 @@ public abstract class AbstractBackend implements Runnable {
 	}
 
 	/**
+	 * Returns underlying {@link JmxClient} connection. Use with caution.
+	 */
+	public JmxClient getJmxClient() {
+		return connection;
+	}
+
+	/**
 	 * Subclasses need to define this method to get complete and working
 	 * backend.
 	 * 

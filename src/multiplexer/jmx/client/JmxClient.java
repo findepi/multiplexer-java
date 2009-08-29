@@ -17,7 +17,6 @@ import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.exceptions.OperationFailedException;
 import multiplexer.jmx.exceptions.OperationTimeoutException;
 import multiplexer.jmx.internal.ConnectionsManager;
-import multiplexer.jmx.internal.MessageReceivedListener;
 import multiplexer.jmx.util.TimeoutCounter;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Constants.PeerTypes;
@@ -44,8 +43,6 @@ import com.google.protobuf.ByteString;
  * @author Piotr Findeisen
  * 
  */
-// TODO JmxClient shout shutdown when not accessible from other threads than
-// Netty's IO threads.
 public class JmxClient {
 
 	private static final Logger logger = LoggerFactory
@@ -53,8 +50,8 @@ public class JmxClient {
 
 	protected final ConnectionsManager connectionsManager;
 
-	private ConcurrentMap<Long, BlockingQueue<IncomingMessageData>> queryResponses = new ConcurrentHashMap<Long, BlockingQueue<IncomingMessageData>>();
-	private BlockingQueue<IncomingMessageData> messageQueue = new LinkedBlockingQueue<IncomingMessageData>();
+	final private ConcurrentMap<Long, BlockingQueue<IncomingMessageData>> queryResponses = new ConcurrentHashMap<Long, BlockingQueue<IncomingMessageData>>();
+	final private BlockingQueue<IncomingMessageData> messageQueue = new LinkedBlockingQueue<IncomingMessageData>();
 
 	/**
 	 * Creates a new instance of a specified type ({@code instanceType}). Sets
@@ -70,23 +67,8 @@ public class JmxClient {
 	public JmxClient(int instanceType) {
 		connectionsManager = new ConnectionsManager(instanceType);
 		connectionsManager
-			.setMessageReceivedListener(new MessageReceivedListener() {
-
-				public void onMessageReceived(MultiplexerMessage message,
-					Connection connection) {
-					long id = message.getReferences();
-					IncomingMessageData msg = new IncomingMessageData(message,
-						connection);
-					BlockingQueue<IncomingMessageData> queryQueue = queryResponses
-						.get(id);
-					if (queryQueue == null) {
-						messageQueue.add(msg);
-					} else {
-						queryQueue.add(msg);
-					}
-
-				}
-			});
+			.setMessageReceivedListener(new ClientMessageReceivedListener(
+				queryResponses, messageQueue));
 	}
 
 	/**
@@ -573,5 +555,11 @@ public class JmxClient {
 
 	public void shutdown() throws InterruptedException {
 		connectionsManager.shutdown();
+	}
+
+	@Override
+	public void finalize() throws Throwable {
+		super.finalize();
+		shutdown();
 	}
 }

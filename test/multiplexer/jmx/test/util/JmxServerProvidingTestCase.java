@@ -1,7 +1,8 @@
-/**
- * 
- */
 package multiplexer.jmx.test.util;
+
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 import junit.framework.TestCase;
 
@@ -29,5 +30,10 @@ public class JmxServerProvidingTestCase extends TestCase {
 
 	protected int getLocalServerPort() {
 		return jmxServerRunner.getLocalServerPort();
+	}
+	
+	protected InetSocketAddress getLocalServerAddress() throws UnknownHostException {
+		return new InetSocketAddress(InetAddress.getLocalHost(),
+			getLocalServerPort());
 	}
 }

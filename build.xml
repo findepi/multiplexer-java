@@ -288,6 +288,7 @@
       <test name="multiplexer.jmx.test.TestMultiplexerMessageWithServer" />
       <test name="multiplexer.jmx.test.TestMultiplexerProtocolHandlerWithServer" />
       <test name="multiplexer.jmx.test.TestByteBufferSerialization" />
+      <test name="multiplexer.jmx.test.TestGCing" />
     </junit>
   </target>
 
