@@ -89,7 +89,13 @@ public class JmxClient {
 	 * @param address
 	 */
 	public void connect(SocketAddress address) {
-		asyncConnect(address).awaitUninterruptibly();
+		ChannelFuture connectFuture = asyncConnect(address);
+		connectFuture.awaitUninterruptibly();
+		assert connectFuture.isDone();
+		if (!connectFuture.isSuccess()) {
+			throw new RuntimeException("connect failed", connectFuture
+				.getCause());
+		}
 	}
 
 	/**

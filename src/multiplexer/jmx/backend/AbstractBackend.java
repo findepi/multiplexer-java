@@ -16,14 +16,16 @@ import org.slf4j.LoggerFactory;
 import com.google.protobuf.ByteString;
 
 /**
+ * <p>
  * Abstract base class for backends providing services through Multiplexer
  * connections. A subclass needs to define only
  * {@link AbstractBackend#handleMessage} method in order to have fully working
  * Multiplexer backend that supports {@code PING} and {@code
  * BACKEND_FOR_PACKET_SEARCH} messages and sends {@code BACKEND_ERROR} on
  * errors.
- * 
- * A simple example of Echo service may look like this:
+ * <p>
+ * A simple example of Echo service may look like this (this example is little
+ * incomplete &mdash; the backend does not connect to any servers):
  * 
  * <pre>
  * new AbstractBackend(Peers.ECHO_SERVER) {
@@ -79,7 +81,7 @@ public abstract class AbstractBackend implements Runnable {
 	 * @param address
 	 */
 	public void connect(SocketAddress address) {
-		asyncConnect(address).awaitUninterruptibly();
+		connection.connect(address);
 	}
 
 	/**
