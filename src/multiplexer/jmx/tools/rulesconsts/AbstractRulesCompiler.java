@@ -113,28 +113,35 @@ public abstract class AbstractRulesCompiler implements
 		writer.write("\n");
 		writer.write("import java.util.*;\n");
 		writer.write("\n");
-		writer.write("public class " + options.outputClassName + " {\n");
+		writer.write("public class " + options.outputClassName + " implements "
+			+ ConstantsPack.class.getName() + " {\n");
 		writer.write("\n");
-		outputConstantsList(writer, "PeerTypes", group.getPeerTypes());
+		outputConstantsList(writer, "PeerTypes", group.getPeerTypes(),
+			PeerTypes.class);
 		writer.write("\n");
-		outputConstantsList(writer, "MessageTypes", group.getMessageTypes());
+		outputConstantsList(writer, "MessageTypes", group.getMessageTypes(),
+			MessageTypes.class);
 		writer.write("}\n");
 		writer.close();
 	}
 
 	protected void outputConstantsList(Writer writer, String innerClassName,
-		List<Constant<Integer>> messageTypes) throws IOException {
+		List<Constant<Integer>> messageTypes, Class<?> implementedInterface)
+		throws IOException {
 
-		outputConstantsList(writer, innerClassName, messageTypes, "\t");
+		outputConstantsList(writer, innerClassName, messageTypes, "\t",
+			implementedInterface);
 	}
 
 	protected void outputConstantsList(Writer writer, String innerClassName,
-		List<Constant<Integer>> constants, final String linePrefix)
-		throws IOException {
+		List<Constant<Integer>> constants, final String linePrefix,
+		Class<?> implementedInterface)
+
+	throws IOException {
 		final String lp = linePrefix + "\t";
 
 		writer.write(linePrefix + "public static class " + innerClassName
-			+ " {\n");
+			+ " implements " + implementedInterface.getName() + " {\n");
 		// constants for regular use
 		writer.write("\n");
 		for (Constant<Integer> c : constants) {
@@ -180,24 +187,31 @@ public abstract class AbstractRulesCompiler implements
 		writer.write(lp
 			+ " * @deprecated Use {@link #getConstantsByName} instead.\n");
 		writer.write(lp + " */\n");
-		writer.write(lp + "public static Map<String, Integer> getMap() {\n");
+		writer.write(lp + "public Map<String, Integer> getMap() {\n");
 		writer.write(lp + "\t" + "return getConstantsByName();\n");
 		writer.write(lp + "};\n");
 		writer.write("\n");
 
 		// getConstantsByName
 		writer.write(lp
-			+ "public static Map<String, Integer> getConstantsByName() {\n");
+			+ "public Map<String, Integer> getConstantsByName() {\n");
 		writer.write(lp + "\t" + "return ConstantsByNameMapHolder.map;\n");
 		writer.write(lp + "};\n");
 		writer.write("\n");
 
 		// getConstants
-		writer.write(lp
-			+ "public static Map<Integer, String> getConstantsNames() {\n");
+		writer
+			.write(lp + "public Map<Integer, String> getConstantsNames() {\n");
 		writer.write(lp + "\t" + "return ConstantsNamesMapHolder.map;\n");
 		writer.write(lp + "};\n");
 		writer.write(linePrefix + "}\n"); // innerClassName
+
+		writer.write("\n");
+		writer.write(linePrefix + "public " + implementedInterface.getName()
+			+ " get" + innerClassName + "() {\n");
+		writer.write(linePrefix + "\t" + "return new " + innerClassName
+			+ "();\n");
+		writer.write(linePrefix + "}\n");
 	}
 
 	public static void prepareOutputConfiguration(Options options) {
@@ -226,6 +240,10 @@ public abstract class AbstractRulesCompiler implements
 
 		if (options.outputClass == null) {
 			if (options.outputFile != null) {
+				if (options.outputFile.lastIndexOf('.') == -1) {
+					throw new RuntimeException(
+						"Output file must have an extension.");
+				}
 				options.outputClass = options.outputFile.substring(0,
 					options.outputFile.lastIndexOf('.')).substring(
 					options.outputRoot.length() + 1).replace("/", ".");
@@ -236,8 +254,12 @@ public abstract class AbstractRulesCompiler implements
 
 		if (options.packageName == null) {
 			if (options.outputClass != null) {
-				options.packageName = options.outputClass.substring(0,
-					options.outputClass.lastIndexOf('.'));
+				if (options.outputClass.lastIndexOf('.') == -1) {
+					options.packageName = "";
+				} else {
+					options.packageName = options.outputClass.substring(0,
+						options.outputClass.lastIndexOf('.'));
+				}
 
 			} else {
 				throw new RuntimeException("Output package name not specified.");

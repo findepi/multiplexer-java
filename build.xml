@@ -82,6 +82,7 @@
     <attribute name="input" />
     <attribute name="output" />
     <attribute name="outdir" />
+    <element name="compile-additional-args" optional="true" />
     <sequential>
       <javac srcdir="${src}"
              destdir="${build.dir}"
@@ -91,13 +92,13 @@
       <echo message="Creating @{output} from @{input}" />
       <java classname="multiplexer.jmx.tools.CompileConstants"
             failonerror="true">
-        <arg value="-system" />
         <arg value="-input" />
         <arg value="@{input}" />
         <arg value="-outdir" />
         <arg value="@{outdir}" />
         <arg value="-output" />
         <arg value="@{output}" />
+        <compile-additional-args />
         <classpath refid="project.tools.path" />
       </java>
     </sequential>
@@ -111,7 +112,11 @@
           unless="constants.notRequired">
     <compile-constants input="${system.rules}"
                        outdir="${src}"
-                       output="${constants.src}" />
+                       output="${constants.src}">
+      <compile-additional-args>
+        <arg value="-system" />
+      </compile-additional-args>
+    </compile-constants>
   </target>
   <target name="constants.check" depends="init">
     <uptodate property="constants.notRequired"
@@ -127,7 +132,8 @@
           unless="test-constants.notRequired">
     <compile-constants input="${test.rules}"
                        outdir="${test.src}"
-                       output="${test.constants.src}" />
+                       output="${test.constants.src}">
+    </compile-constants>
   </target>
   <target name="test-constants.check">
     <uptodate property="test-constants.notRequired"

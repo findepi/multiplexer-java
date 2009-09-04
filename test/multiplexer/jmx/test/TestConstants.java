@@ -2,9 +2,9 @@ package multiplexer.jmx.test;
 
 import java.util.*;
 
-public class TestConstants {
+public class TestConstants implements multiplexer.jmx.tools.rulesconsts.ConstantsPack {
 
-	public static class PeerTypes {
+	public static class PeerTypes implements multiplexer.jmx.tools.rulesconsts.PeerTypes {
 
 		public final static int WEBSITE = 102;
 		public final static int TEST_SERVER = 106;
@@ -50,20 +50,24 @@ public class TestConstants {
 		/**
 		 * @deprecated Use {@link #getConstantsByName} instead.
 		 */
-		public static Map<String, Integer> getMap() {
+		public Map<String, Integer> getMap() {
 			return getConstantsByName();
 		};
 
-		public static Map<String, Integer> getConstantsByName() {
+		public Map<String, Integer> getConstantsByName() {
 			return ConstantsByNameMapHolder.map;
 		};
 
-		public static Map<Integer, String> getConstantsNames() {
+		public Map<Integer, String> getConstantsNames() {
 			return ConstantsNamesMapHolder.map;
 		};
 	}
 
-	public static class MessageTypes {
+	public multiplexer.jmx.tools.rulesconsts.PeerTypes getPeerTypes() {
+		return new PeerTypes();
+	}
+
+	public static class MessageTypes implements multiplexer.jmx.tools.rulesconsts.MessageTypes {
 
 		public final static int TEST_REQUEST = 110;
 		public final static int TEST_RESPONSE = 111;
@@ -109,16 +113,20 @@ public class TestConstants {
 		/**
 		 * @deprecated Use {@link #getConstantsByName} instead.
 		 */
-		public static Map<String, Integer> getMap() {
+		public Map<String, Integer> getMap() {
 			return getConstantsByName();
 		};
 
-		public static Map<String, Integer> getConstantsByName() {
+		public Map<String, Integer> getConstantsByName() {
 			return ConstantsByNameMapHolder.map;
 		};
 
-		public static Map<Integer, String> getConstantsNames() {
+		public Map<Integer, String> getConstantsNames() {
 			return ConstantsNamesMapHolder.map;
 		};
+	}
+
+	public multiplexer.jmx.tools.rulesconsts.MessageTypes getMessageTypes() {
+		return new MessageTypes();
 	}
 }

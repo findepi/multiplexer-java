@@ -1,5 +1,7 @@
 package multiplexer.jmx.tools.rulesconsts;
 
+import java.util.List;
+
 import org.kohsuke.args4j.Option;
 
 public class Options {
@@ -23,4 +25,7 @@ public class Options {
 
 	@Option(name = "-package", usage = "name of the package for generated class; use '' for default")
 	public String packageName;
+	
+	@Option(name="-check", usage="validate constants uniqness with respect to other constants builds")
+	public List<String> checkConstants;
 }
