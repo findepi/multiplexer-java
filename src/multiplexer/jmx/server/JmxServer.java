@@ -76,7 +76,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 	private ServerChannelPipelineFactory channelPipelineFactory;
 
-	private int localPort = -1;
+	private volatile int localPort = -1;
 
 	/**
 	 * Constructs the server that will listen for incoming connections on the
@@ -165,7 +165,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 			try {
 				connectionsManager.shutdown();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.warn("Exception ignored", e);
 			} finally {
 				synchronized (this) {
 					serverThread = null;
@@ -219,7 +219,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 			try {
 				Thread.sleep(transferUpdateIntervalMillis);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.info("loop interrupted, server is going to shut down");
 				break;
 			}
 
@@ -378,20 +378,18 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 	public void onMessageReceived(MultiplexerMessage message,
 		Connection connection) {
 
-		// TODO Auto-generated method stub
-
 		logger.debug("message received\n{}\n", message);
 
 		// routing based on to
 		if (message.hasTo()) {
-			schedule(message);
+			scheduleByTo(message);
 			return;
 		}
 
 		// routing based on overridden rules
 		if (message.getOverrideRrulesCount() != 0) {
 			assert message.getOverrideRrulesCount() > 0;
-			schedule(message, message.getOverrideRrulesList());
+			scheduleByRoutingRules(message, message.getOverrideRrulesList());
 			return;
 		}
 
@@ -410,23 +408,10 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 					.createMessageBuilder().setMessage(message.getMessage())
 					.setType(MessageTypes.PING).setTo(message.getFrom())
 					.build();
-				schedule(response);
+				scheduleByTo(response);
 			}
 			break;
 
-		default:
-			if (message.getType() > MessageTypes.MAX_MULTIPLEXER_META_PACKET) {
-				MultiplexerMessageDescription msgDesc = messageTypeIdsToDescription
-					.get(message.getType());
-				if (msgDesc == null) {
-					// fall through
-				} else {
-					schedule(message, msgDesc.getToList());
-					break;
-				}
-			} else {
-				// fall through
-			}
 		case MessageTypes.BACKEND_ERROR:
 		case MessageTypes.DELIVERY_ERROR:
 		case MessageTypes.CONNECTION_WELCOME:
@@ -437,7 +422,6 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 			break;
 
 		case MessageTypes.BACKEND_FOR_PACKET_SEARCH:
-			// TODO THIS IS VERY IMPORTANT !!!
 			try {
 				BackendForPacketSearch backendSearchMessage = BackendForPacketSearch
 					.parseFrom(message.getMessage());
@@ -453,17 +437,30 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 					List<RoutingRule> ruleSingleton = new ArrayList<RoutingRule>(
 						1);
 					ruleSingleton.add(routingRule);
-					schedule(message, ruleSingleton);
+					scheduleByRoutingRules(message, ruleSingleton);
 				}
 			} catch (InvalidProtocolBufferException e) {
 				// TODO return error
-				e.printStackTrace();
+				logger.warn("Malformed BACKEND_FOR_PACKET_SEARCH", e);
 			}
+			break;
+
+		default:
+			if (message.getType() > MessageTypes.MAX_MULTIPLEXER_META_PACKET) {
+				MultiplexerMessageDescription msgDesc = messageTypeIdsToDescription
+					.get(message.getType());
+				if (msgDesc != null) {
+					scheduleByRoutingRules(message, msgDesc.getToList());
+					break;
+				}
+			}
+			logger.warn("don't know what to do with message type {} ({})",
+				message.getType(), getMessageTypeName(message.getType()));
 			break;
 		}
 	}
 
-	private void schedule(MultiplexerMessage message,
+	private void scheduleByRoutingRules(MultiplexerMessage message,
 		List<RoutingRule> routingRules) {
 
 		for (RoutingRule rule : routingRules) {
@@ -484,7 +481,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 	 * @param message
 	 *            to be sent
 	 */
-	void schedule(MultiplexerMessage message) {
+	void scheduleByTo(MultiplexerMessage message) {
 		assert message.hasTo();
 		try {
 			connectionsManager.sendMessage(message, SendingMethod.via(message
