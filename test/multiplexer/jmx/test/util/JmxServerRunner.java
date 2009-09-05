@@ -1,6 +1,12 @@
 package multiplexer.jmx.test.util;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.Map;
+
+import com.google.protobuf.ByteString;
 
 import multiplexer.jmx.server.JmxServer;
 
@@ -13,7 +19,12 @@ public final class JmxServerRunner {
 	private JmxServer server;
 	private Thread serverThread;
 
+	@SuppressWarnings("unchecked")
 	public void start() throws Exception {
+		start((Map<String, Object>) Collections.EMPTY_MAP);
+	}
+
+	public void start(final Map<String, Object> options) throws Exception {
 		assert server == null;
 
 		server = new JmxServer(new InetSocketAddress("0.0.0.0", 0));
@@ -38,11 +49,17 @@ public final class JmxServerRunner {
 		return server.getLocalPort();
 	}
 
+	public InetSocketAddress getLocalServerAddress()
+		throws UnknownHostException {
+		return new InetSocketAddress(InetAddress.getLocalHost(),
+			getLocalServerPort());
+	}
+
 	public void stop() {
 		stop(true);
 	}
 
-	private void stop(boolean check) {
+	public void stop(boolean check) {
 		assert !check || server != null;
 		assert !check || serverThread.isAlive();
 
