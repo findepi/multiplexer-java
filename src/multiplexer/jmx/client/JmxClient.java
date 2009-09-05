@@ -24,6 +24,7 @@ import multiplexer.protocol.Protocol.BackendForPacketSearch;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Protocol.MultiplexerMessage.Builder;
 
+import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.util.Timeout;
 import org.jboss.netty.util.TimerTask;
@@ -146,10 +147,15 @@ public class JmxClient {
 	 * algorithm.
 	 * 
 	 * @param message
+	 *            a message to be sent
 	 * @param sendingMethod
+	 *            an object specifying over what connections the message should
+	 *            be sent
 	 * @return a future object which notifies when this message sending attempt
 	 *         succeeds or fails
 	 * @throws NoPeerForTypeException
+	 *             when no connection of type {@code
+	 *             sendingMethod.getPeerType()} can be found
 	 */
 	public ChannelFutureGroup send(MultiplexerMessage message,
 		SendingMethod.ViaConnectionsOfType sendingMethod)
@@ -157,7 +163,11 @@ public class JmxClient {
 		return connectionsManager.sendMessage(message, sendingMethod);
 	}
 
-	// TODO javadoc
+	/**
+	 * A variant of {@link #send send} with {@link SendingMethod.ViaConnection}
+	 * sending method, allowing to specify exact connection ({@link Channel})
+	 * that will be used.
+	 */
 	public ChannelFutureGroup send(MultiplexerMessage message,
 		SendingMethod.ViaConnection method) {
 		return connectionsManager.sendMessage(message, method);

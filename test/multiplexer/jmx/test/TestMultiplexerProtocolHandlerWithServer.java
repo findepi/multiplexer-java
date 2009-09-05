@@ -42,9 +42,6 @@ import com.google.protobuf.ByteString.Output;
 public class TestMultiplexerProtocolHandlerWithServer extends
 	JmxServerProvidingTestCase {
 
-	// TODO write test covering MultiplexerProtocolHandler and other pipeline
-	// elements SEPARATELY
-
 	public void testSimpleNettyConnectionWithLEBuffers() throws Exception {
 		testSimpleNettyConnection(true);
 	}

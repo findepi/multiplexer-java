@@ -28,12 +28,12 @@ import com.google.common.collect.LinkedListMultimap;
  * 
  * For each peer (denoted by Id) only one channel can be held in the structure.
  * 
- * This object is thread-safe. TODO: check that ConnectionsMap is thread-safe
+ * This object is thread-safe.
  * 
  * @author Kasia Findeisen
  * @author Piotr Findeisen
  */
-// TODO napisać w README jak generować pliki z PeerTypes/MessageTypes
+// TODO: check that ConnectionsMap is thread-safe
 public class ConnectionsMap {
 
 	/**
@@ -109,7 +109,7 @@ public class ConnectionsMap {
 
 	/**
 	 * Removes the {@link Channel} previously added with {@link #addNew} or
-	 * {#link #add}. Returns true if the {@code channel} has been removed from
+	 * {@link #add}. Returns true if the {@code channel} has been removed from
 	 * any of internal structures.
 	 * 
 	 * @param channel
@@ -181,9 +181,11 @@ public class ConnectionsMap {
 	}
 
 	/**
-	 * TODO(findepi) javadoc
+	 * Returns a {@link Channel} holding a connection with the peer having id
+	 * {@code peerId}.
 	 * 
 	 * @throws NoPeerForPeerIdException
+	 *             if there is no connection with a peer of id {@code peerId}
 	 */
 	public Channel getByPeerId(long peerId) throws NoPeerForPeerIdException {
 		Channel channel;
