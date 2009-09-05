@@ -1,5 +1,6 @@
 package multiplexer.jmx.internal;
 
+import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -59,11 +60,7 @@ public class ConnectionsMap {
 	 */
 	private Map<Channel, Integer> peerTypeByChannel = new WeakHashMap<Channel, Integer>();
 
-	private ChannelFutureListener remover = new ChannelFutureListener() {
-		public void operationComplete(ChannelFuture future) throws Exception {
-			remove(future.getChannel());
-		}
-	};
+	private final ChannelFutureListener remover = new ChannelRemover(this);
 
 	/**
 	 * Adds a new channel to {@code allChannels} which is a {@link ChannelGroup}
@@ -206,5 +203,39 @@ public class ConnectionsMap {
 	 */
 	public ChannelGroup getAllChannels() {
 		return allChannels;
+	}
+
+	/**
+	 * This class is equivalent to simplistic anonymous implementation such as:
+	 * 
+	 * <pre>
+	 * new ChannelFutureListener() {
+	 * 		public void operationComplete(ChannelFuture future) throws Exception {
+	 * 			remove(future.getChannel());
+	 * 		}
+	 * </pre>
+	 * 
+	 * except that is stores a {@link WeakReference} to the enclosing
+	 * {@link ConnectionsMap} instead of strong reference involved in non-static
+	 * classes. This may be required to avoid memory leaks, because
+	 * {@link Channel}s are referenced by worker threads, and their close
+	 * {@link ChannelFuture futures} are referenced by channels.
+	 * 
+	 * @author Piotr Findeisen
+	 */
+	private static class ChannelRemover implements ChannelFutureListener {
+
+		private final WeakReference<ConnectionsMap> connectionsMap;
+
+		public ChannelRemover(ConnectionsMap connectionsMap) {
+			this.connectionsMap = new WeakReference<ConnectionsMap>(
+				connectionsMap);
+		}
+
+		public void operationComplete(ChannelFuture future) throws Exception {
+			ConnectionsMap connectionsMap = this.connectionsMap.get();
+			if (connectionsMap != null)
+				connectionsMap.remove(future.getChannel());
+		}
 	}
 }
