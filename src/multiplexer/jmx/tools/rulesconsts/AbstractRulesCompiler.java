@@ -56,13 +56,13 @@ public abstract class AbstractRulesCompiler implements
 		return new ConstantsGroup(peerTypes, messageTypes);
 	}
 
-	protected void validateNames(ConstantsGroup group)
+	private void validateNames(ConstantsGroup group)
 		throws InvalidRulesFileException {
 		validateNames(group.getPeerTypes());
 		validateNames(group.getMessageTypes());
 	}
 
-	protected void validateNames(List<Constant<Integer>> constants)
+	private void validateNames(List<Constant<Integer>> constants)
 		throws InvalidRulesFileException {
 
 		for (Constant<?> c : constants) {
@@ -73,14 +73,14 @@ public abstract class AbstractRulesCompiler implements
 		}
 	}
 
-	protected void validateUniqness(ConstantsGroup group)
+	private void validateUniqness(ConstantsGroup group)
 		throws InvalidRulesFileException {
 
 		validateUniqness(group.getPeerTypes());
 		validateUniqness(group.getMessageTypes());
 	}
 
-	protected void validateUniqness(List<Constant<Integer>> constants)
+	private void validateUniqness(List<Constant<Integer>> constants)
 		throws InvalidRulesFileException {
 		Map<Integer, String> values = new HashMap<Integer, String>();
 		for (Constant<Integer> c : constants) {
@@ -96,7 +96,7 @@ public abstract class AbstractRulesCompiler implements
 	protected abstract void validateValues(ConstantsGroup group)
 		throws InvalidRulesFileException;
 
-	protected void output(ConstantsGroup group) throws IOException {
+	private void output(ConstantsGroup group) throws IOException {
 		prepareOutputConfiguration(options);
 
 		if (!new File(options.outputRoot).isDirectory()) {
@@ -214,7 +214,7 @@ public abstract class AbstractRulesCompiler implements
 		writer.write(linePrefix + "}\n");
 	}
 
-	public static void prepareOutputConfiguration(Options options) {
+	private static void prepareOutputConfiguration(Options options) {
 		if (options.outputRoot == null) {
 			throw new RuntimeException("No output dir specified.");
 		}
