@@ -261,7 +261,14 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 			logger.warn(
 				"channel {} is disconnected now in {}, reconnecting to {}",
 				new Object[] { channel, this, address });
-			asyncConnect(address);
+			
+			// TODO unconditionally calling asyncConnect here leads to busy
+			// waiting (connecting) when the server accepts TCP connections but
+			// drops them immediately (e.g. invalid handshake). On the other
+			// hand it enables quick reconnects in normal scenarios, when the
+			// connection is just dropped accidentally.
+			scheduleReconnect(address, 1, TimeUnit.SECONDS);
+			// asyncConnect(address);
 		} else {
 			logger.warn("channel {} is disconnected now in {}", channel, this);
 		}
