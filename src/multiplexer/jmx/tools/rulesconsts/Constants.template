@@ -1,0 +1,93 @@
+<#if packageName != "" >package ${packageName};
+
+</#if>
+import java.util.*;
+
+public class ${className} implements ${ConstantsPack} {
+
+	public static class PeerTypes implements ${PeerTypes} {
+
+		public static final PeerTypes instance = new PeerTypes();
+
+		<#list peerTypes as ct>
+		public final static int ${ct.name} = ${ct.value};
+		</#list>
+
+		private static class ConstantsByNameMapHolder {
+			public final static Map<String, Integer> map;
+			static {
+				Map<String, Integer> tmp = new HashMap<String, Integer>();
+				<#list peerTypes as ct>
+				tmp.put("${ct.name}", ${ct.name});
+				</#list>
+				map = Collections.unmodifiableMap(tmp);
+			}
+		}
+
+		private static class ConstantsNamesMapHolder {
+			public final static Map<Integer, String> map;
+			static {
+				Map<Integer, String> tmp = new HashMap<Integer, String>();
+				<#list peerTypes as ct>
+				tmp.put(${ct.name}, "${ct.name}");
+				</#list>
+				map = Collections.unmodifiableMap(tmp);
+			}
+		}
+
+		public Map<String, Integer> getConstantsByName() {
+			return ConstantsByNameMapHolder.map;
+		};
+
+		public Map<Integer, String> getConstantsNames() {
+			return ConstantsNamesMapHolder.map;
+		};
+	}
+
+	public multiplexer.jmx.tools.rulesconsts.PeerTypes getPeerTypes() {
+		return PeerTypes.instance;
+	}
+
+	public static class MessageTypes implements ${MessageTypes} {
+
+		public static final MessageTypes instance = new MessageTypes();
+
+		<#list messageTypes as ct>
+		public final static int ${ct.name} = ${ct.value};
+		</#list>
+
+		private static class ConstantsByNameMapHolder {
+			public final static Map<String, Integer> map;
+			static {
+				Map<String, Integer> tmp = new HashMap<String, Integer>();
+				<#list messageTypes as ct>
+				tmp.put("${ct.name}", ${ct.name});
+				</#list>
+				map = Collections.unmodifiableMap(tmp);
+			}
+		}
+
+		private static class ConstantsNamesMapHolder {
+			public final static Map<Integer, String> map;
+			static {
+				Map<Integer, String> tmp = new HashMap<Integer, String>();
+				<#list messageTypes as ct>
+				tmp.put(${ct.name}, "${ct.name}");
+				</#list>
+				map = Collections.unmodifiableMap(tmp);
+			}
+		}
+
+		public Map<String, Integer> getConstantsByName() {
+			return ConstantsByNameMapHolder.map;
+		};
+
+		public Map<Integer, String> getConstantsNames() {
+			return ConstantsNamesMapHolder.map;
+		};
+	}
+
+	public multiplexer.jmx.tools.rulesconsts.MessageTypes getMessageTypes() {
+		return MessageTypes.instance;
+	}
+}

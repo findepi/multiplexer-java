@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +17,11 @@ import multiplexer.protocol.Protocol.MultiplexerPeerDescription;
 import multiplexer.protocol.Protocol.MultiplexerRules;
 
 import com.google.protobuf.TextFormat;
+
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 public abstract class AbstractRulesCompiler implements
 	ConstantsFromRulesCompiler {
@@ -34,15 +40,14 @@ public abstract class AbstractRulesCompiler implements
 		output(group);
 	}
 
-	protected MultiplexerRules parse() throws FileNotFoundException,
-		IOException {
+	private MultiplexerRules parse() throws FileNotFoundException, IOException {
 
 		MultiplexerRules.Builder rulesBuilder = MultiplexerRules.newBuilder();
 		TextFormat.merge(new FileReader(options.rulesFile), rulesBuilder);
 		return rulesBuilder.build();
 	}
 
-	protected ConstantsGroup buildGroup(MultiplexerRules rules) {
+	private ConstantsGroup buildGroup(MultiplexerRules rules) {
 
 		List<Constant<Integer>> peerTypes = new ArrayList<Constant<Integer>>();
 		List<Constant<Integer>> messageTypes = new ArrayList<Constant<Integer>>();
@@ -107,111 +112,35 @@ public abstract class AbstractRulesCompiler implements
 		new File(options.outputFile).getParentFile().mkdirs();
 
 		Writer writer = new FileWriter(options.outputFile);
-		if (options.packageName != null && options.packageName.length() != 0) {
-			writer.write("package " + options.packageName + ";\n");
+		Template codeTemplate = loadConstantsSourceTemplate();
+
+		Map<String, Object> templateContext = new HashMap<String, Object>();
+		// standard definitions
+		templateContext.put("MessageTypes", MessageTypes.class.getName());
+		templateContext.put("PeerTypes", PeerTypes.class.getName());
+		templateContext.put("ConstantsPack", ConstantsPack.class.getName());
+		// definitions unique for this generated file
+		templateContext.put("packageName", options.packageName);
+		templateContext.put("className", options.outputClassName);
+		templateContext.put("peerTypes", group.getPeerTypes());
+		templateContext.put("messageTypes", group.getMessageTypes());
+
+		try {
+			codeTemplate.process(templateContext, writer);
+		} catch (TemplateException e) {
+			throw new RuntimeException("Malformed template.", e);
 		}
-		writer.write("\n");
-		writer.write("import java.util.*;\n");
-		writer.write("\n");
-		writer.write("public class " + options.outputClassName + " implements "
-			+ ConstantsPack.class.getName() + " {\n");
-		writer.write("\n");
-		outputConstantsList(writer, "PeerTypes", group.getPeerTypes(),
-			PeerTypes.class);
-		writer.write("\n");
-		outputConstantsList(writer, "MessageTypes", group.getMessageTypes(),
-			MessageTypes.class);
-		writer.write("}\n");
 		writer.close();
 	}
 
-	protected void outputConstantsList(Writer writer, String innerClassName,
-		List<Constant<Integer>> messageTypes, Class<?> implementedInterface)
-		throws IOException {
-
-		outputConstantsList(writer, innerClassName, messageTypes, "\t",
-			implementedInterface);
-	}
-
-	protected void outputConstantsList(Writer writer, String innerClassName,
-		List<Constant<Integer>> constants, final String linePrefix,
-		Class<?> implementedInterface)
-
-	throws IOException {
-		final String lp = linePrefix + "\t";
-
-		writer.write(linePrefix + "public static class " + innerClassName
-			+ " implements " + implementedInterface.getName() + " {\n");
-		// constants for regular use
-		writer.write("\n");
-		for (Constant<Integer> c : constants) {
-			writer.write(lp + "public final static int " + c.name + " = "
-				+ c.value + ";\n");
-		}
-		// constants map for programmatic access
-		// ConstantsByNameMapHolder
-		writer.write("\n");
-		writer.write(lp + "private static class ConstantsByNameMapHolder {\n");
-		writer.write(lp + "\t"
-			+ "public final static Map<String, Integer> map;\n");
-		writer.write(lp + "\t" + "static {\n");
-		writer.write(lp + "\t\t"
-			+ "Map<String, Integer> tmp = new HashMap<String, Integer>();\n");
-		for (Constant<Integer> c : constants) {
-			writer.write(lp + "\t\t" + "tmp.put(\"" + c.name + "\", " + c.name
-				+ ");\n");
-		}
-		writer.write(lp + "\t\t" + "map = Collections.unmodifiableMap(tmp);\n");
-		writer.write(lp + "\t" + "}\n"); // ConstantsByNameMapHolder.static
-		writer.write(lp + "}\n"); // ConstantsByNameMapHolder
-
-		// ConstantsNamesMapHolder
-		writer.write("\n");
-		writer.write(lp + "private static class ConstantsNamesMapHolder {\n");
-		writer.write(lp + "\t"
-			+ "public final static Map<Integer, String> map;\n");
-		writer.write(lp + "\t" + "static {\n");
-		writer.write(lp + "\t\t"
-			+ "Map<Integer, String> tmp = new HashMap<Integer, String>();\n");
-		for (Constant<Integer> c : constants) {
-			writer.write(lp + "\t\t" + "tmp.put(" + c.name + ", \"" + c.name
-				+ "\");\n");
-		}
-		writer.write(lp + "\t\t" + "map = Collections.unmodifiableMap(tmp);\n");
-		writer.write(lp + "\t" + "}\n"); // ConstantsNamesMapHolder.static
-		writer.write(lp + "}\n"); // ConstantsNamesMapHolder
-		writer.write("\n");
-
-		// getMap
-		writer.write(lp + "/**\n");
-		writer.write(lp
-			+ " * @deprecated Use {@link #getConstantsByName} instead.\n");
-		writer.write(lp + " */\n");
-		writer.write(lp + "public Map<String, Integer> getMap() {\n");
-		writer.write(lp + "\t" + "return getConstantsByName();\n");
-		writer.write(lp + "};\n");
-		writer.write("\n");
-
-		// getConstantsByName
-		writer.write(lp
-			+ "public Map<String, Integer> getConstantsByName() {\n");
-		writer.write(lp + "\t" + "return ConstantsByNameMapHolder.map;\n");
-		writer.write(lp + "};\n");
-		writer.write("\n");
-
-		// getConstants
-		writer
-			.write(lp + "public Map<Integer, String> getConstantsNames() {\n");
-		writer.write(lp + "\t" + "return ConstantsNamesMapHolder.map;\n");
-		writer.write(lp + "};\n");
-		writer.write(linePrefix + "}\n"); // innerClassName
-
-		writer.write("\n");
-		writer.write(linePrefix + "public " + implementedInterface.getName()
-			+ " get" + innerClassName + "() {\n");
-		writer.write(linePrefix + "\t" + "return new " + innerClassName
-			+ "();\n");
-		writer.write(linePrefix + "}\n");
+	private Template loadConstantsSourceTemplate() throws IOException {
+		Configuration templateConfiguration = new Configuration();
+		templateConfiguration.setObjectWrapper(new BeansWrapper());
+		Template codeTemplate = new Template("Constants",
+			new InputStreamReader(AbstractRulesCompiler.class
+				.getResourceAsStream("Constants.template")),
+			templateConfiguration);
+		return codeTemplate;
 	}
 
 	private static void prepareOutputConfiguration(Options options) {

@@ -497,7 +497,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 	String getMessageTypeName(int type) {
 		String name;
-		name = MessageTypes.getConstantsNames().get(type);
+		name = MessageTypes.instance.getConstantsNames().get(type);
 		if (name != null)
 			return name;
 		MultiplexerMessageDescription msgDesc = messageTypeIdsToDescription

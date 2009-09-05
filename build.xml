@@ -37,6 +37,7 @@
     <pathelement location="${build.dir}" />
     <pathelement location="${libs}/protobuf-java-2.1.0.jar" />
     <pathelement location="${libs}/args4j-2.0.10.jar" />
+    <pathelement location="${libs}/freemarker-2.3.15.jar" />
   </path>
 
   <filelist id="project.jar.dependencies" dir="${basedir}">
@@ -45,6 +46,7 @@
     <file name="${libs}/google-collect-1.0-rc2.jar" />
     <file name="${libs}/trove-2.0.4.jar" />
     <file name="${libs}/args4j-2.0.10.jar" />
+    <file name="${libs}/freemarker-2.3.15.jar" />
     <file name="${libs}/slf4j-api-1.5.8.jar" />
     <file name="${libs}/slf4j-jdk14-1.5.8.jar" />
   </filelist>
