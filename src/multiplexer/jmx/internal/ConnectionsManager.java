@@ -2,6 +2,7 @@ package multiplexer.jmx.internal;
 
 import static multiplexer.jmx.util.Channels.awaitSemiInterruptibly;
 
+import java.lang.ref.WeakReference;
 import java.math.BigInteger;
 import java.net.SocketAddress;
 import java.util.Iterator;
@@ -85,9 +86,7 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 	private final Config config = new Config();
 	private final RecentLongPool recentMsgIds = new RecentLongPool();
 
-	// TODO ChannelFuture points to Channel so the WeakHashMap is not weak at
-	// all.
-	private final Map<Channel, ChannelFuture> pendingRegistrations = new WeakHashMap<Channel, ChannelFuture>();
+	private final Map<Channel, WeakReference<ChannelFuture>> pendingRegistrations = new WeakHashMap<Channel, WeakReference<ChannelFuture>>();
 
 	private final Map<Channel, SocketAddress> endpointByChannel = new WeakHashMap<Channel, SocketAddress>();
 
@@ -199,7 +198,8 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 					"connect cancelled by shutdown"));
 				return registrationFuture;
 			}
-			pendingRegistrations.put(channel, registrationFuture);
+			pendingRegistrations.put(channel, new WeakReference<ChannelFuture>(
+				registrationFuture));
 		}
 
 		connectOperation.addListener(new ChannelFutureListener() {
@@ -291,17 +291,17 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 			int peerType = welcome.getType();
 			Channel oldChannel = connectionsMap.add(channel, message.getFrom(),
 				peerType);
-			ChannelFuture registartionFuture;
+			WeakReference<ChannelFuture> registartionFutureRef;
 			synchronized (pendingRegistrations) {
-				registartionFuture = pendingRegistrations.remove(channel);
+				registartionFutureRef = pendingRegistrations.remove(channel);
 			}
-			assert registartionFuture != null
-				|| bootstrap instanceof ServerBootstrap : channel;
-			if (registartionFuture != null) {
-				assert bootstrap instanceof ClientBootstrap;
-				registartionFuture.setSuccess();
+			if (registartionFutureRef != null) {
+				assert bootstrap instanceof ClientBootstrap : channel;
+				ChannelFuture registartionFuture = registartionFutureRef.get();
+				if (registartionFuture != null)
+					registartionFuture.setSuccess();
 			} else {
-				assert bootstrap instanceof ServerBootstrap;
+				assert bootstrap instanceof ServerBootstrap : channel;
 				sendMessage(createWelcomeMessage(), channel);
 			}
 
