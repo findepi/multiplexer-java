@@ -88,14 +88,16 @@ public class JmxClient {
 	 * Connects synchronously with the specified {@code address}.
 	 * 
 	 * @param address
+	 *            address to connect to
+	 * @throws ConnectException
+	 *             when the logical connection cannot be estabilished
 	 */
-	public void connect(SocketAddress address) {
+	public void connect(SocketAddress address) throws ConnectException {
 		ChannelFuture connectFuture = asyncConnect(address);
 		connectFuture.awaitUninterruptibly();
 		assert connectFuture.isDone();
 		if (!connectFuture.isSuccess()) {
-			throw new RuntimeException("connect failed", connectFuture
-				.getCause());
+			throw new ConnectException(connectFuture.getCause());
 		}
 	}
 

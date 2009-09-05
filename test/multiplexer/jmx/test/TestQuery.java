@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 import multiplexer.jmx.backend.AbstractBackend;
+import multiplexer.jmx.client.ConnectException;
 import multiplexer.jmx.client.IncomingMessageData;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
@@ -22,7 +23,7 @@ import com.google.protobuf.ByteString;
 public class TestQuery extends JmxServerProvidingTestCase {
 
 	public void testQueryBasic() throws UnknownHostException,
-		OperationFailedException, NoPeerForTypeException, InterruptedException {
+		OperationFailedException, NoPeerForTypeException, InterruptedException, ConnectException {
 
 		// create backend
 		AbstractBackend backend = new AbstractBackend(
@@ -67,28 +68,28 @@ public class TestQuery extends JmxServerProvidingTestCase {
 	}
 
 	public void testQueryBackendErrorAA() throws UnknownHostException,
-		OperationFailedException, NoPeerForTypeException, InterruptedException {
+		OperationFailedException, NoPeerForTypeException, InterruptedException, ConnectException {
 		testQueryBackendError(0, 0);
 	}
 
 	public void testQueryBackendErrorAB() throws UnknownHostException,
-		OperationFailedException, NoPeerForTypeException, InterruptedException {
+		OperationFailedException, NoPeerForTypeException, InterruptedException, ConnectException {
 		testQueryBackendError(0, 1);
 	}
 
 	public void testQueryBackendErrorBA() throws UnknownHostException,
-		OperationFailedException, NoPeerForTypeException, InterruptedException {
+		OperationFailedException, NoPeerForTypeException, InterruptedException, ConnectException {
 		testQueryBackendError(1, 0);
 	}
 
 	public void testQueryBackendErrorBB() throws UnknownHostException,
-		OperationFailedException, NoPeerForTypeException, InterruptedException {
+		OperationFailedException, NoPeerForTypeException, InterruptedException, ConnectException {
 		testQueryBackendError(1, 1);
 	}
 
 	private void testQueryBackendError(final int backend1ErrorType,
 		final int backend2ErrorType) throws UnknownHostException,
-		OperationFailedException, NoPeerForTypeException, InterruptedException {
+		OperationFailedException, NoPeerForTypeException, InterruptedException, ConnectException {
 
 		// create backend 1
 		AbstractBackend backend1 = new AbstractBackend(

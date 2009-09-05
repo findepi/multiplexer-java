@@ -6,6 +6,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
 import multiplexer.jmx.backend.AbstractBackend;
+import multiplexer.jmx.client.ConnectException;
 import multiplexer.jmx.client.IncomingMessageData;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.client.SendingMethod;
@@ -26,7 +27,7 @@ public class TestConnectivity extends JmxServerProvidingTestCase {
 		assertTrue(getLocalServerPort() > 0);
 	}
 	
-	public void testConnect() throws UnknownHostException, InterruptedException {
+	public void testConnect() throws UnknownHostException, InterruptedException, ConnectException {
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
 		client.connect(new InetSocketAddress(InetAddress.getLocalHost(),
 			getLocalServerPort()));
@@ -34,7 +35,7 @@ public class TestConnectivity extends JmxServerProvidingTestCase {
 	}
 
 	public void testConnectSendReceive() throws UnknownHostException,
-		InterruptedException, NoPeerForTypeException {
+		InterruptedException, NoPeerForTypeException, ConnectException {
 
 		// connect
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
@@ -64,7 +65,7 @@ public class TestConnectivity extends JmxServerProvidingTestCase {
 	}
 
 	public void testBackend() throws UnknownHostException,
-		InterruptedException, NoPeerForTypeException {
+		InterruptedException, NoPeerForTypeException, ConnectException {
 
 		ByteString msgBody = ByteString.copyFromUtf8("Więcej budynió!");
 

@@ -6,6 +6,7 @@ import static multiplexer.jmx.example.echo.JmxServerRunner.jmxServerAddress;
 
 import java.util.concurrent.TimeUnit;
 
+import multiplexer.jmx.client.ConnectException;
 import multiplexer.jmx.client.IncomingMessageData;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
@@ -26,9 +27,10 @@ public class EchoClient {
 	 * @throws NoPeerForTypeException
 	 * @throws OperationFailedException
 	 * @throws InterruptedException
+	 * @throws ConnectException 
 	 */
 	public static void main(String[] args) throws OperationFailedException,
-		NoPeerForTypeException, InterruptedException {
+		NoPeerForTypeException, InterruptedException, ConnectException {
 
 		/*
 		 * Create a JmxClient and connect it to the server.

@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
 import multiplexer.jmx.backend.AbstractBackend;
+import multiplexer.jmx.client.ConnectException;
 import multiplexer.jmx.client.IncomingMessageData;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.client.SendingMethod;
@@ -25,14 +26,14 @@ public class TestGCing extends JmxServerProvidingTestCase {
 		ensureGCed(createAndWarmUpClient());
 	}
 
-	private JmxClient createClient() throws UnknownHostException {
+	private JmxClient createClient() throws UnknownHostException, ConnectException {
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
 		client.connect(getLocalServerAddress());
 		return client;
 	}
 
 	private JmxClient createAndWarmUpClient() throws NoPeerForTypeException,
-		InterruptedException, UnknownHostException {
+		InterruptedException, UnknownHostException, ConnectException {
 
 		final int threadCount = Thread.activeCount();
 
@@ -51,7 +52,7 @@ public class TestGCing extends JmxServerProvidingTestCase {
 
 	private AbstractBackend createBackendAndConnect()
 		throws UnknownHostException, NoPeerForTypeException,
-		InterruptedException {
+		InterruptedException, ConnectException {
 
 		AbstractBackend backend = new AbstractBackend(
 			TestConstants.PeerTypes.ECHO_SERVER) {

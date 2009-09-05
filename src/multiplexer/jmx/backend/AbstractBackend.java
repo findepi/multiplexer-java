@@ -3,6 +3,7 @@ package multiplexer.jmx.backend;
 import java.net.SocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import multiplexer.jmx.client.ConnectException;
 import multiplexer.jmx.client.IncomingMessageData;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
@@ -79,8 +80,9 @@ public abstract class AbstractBackend implements Runnable {
 	 * Connects synchronously with the specified {@code address}.
 	 * 
 	 * @param address
+	 * @throws ConnectException 
 	 */
-	public void connect(SocketAddress address) {
+	public void connect(SocketAddress address) throws ConnectException {
 		connection.connect(address);
 	}
 

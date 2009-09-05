@@ -201,6 +201,8 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 			pendingRegistrations.put(channel, new WeakReference<ChannelFuture>(
 				registrationFuture));
 		}
+		channel.getCloseFuture().addListener(
+			new WeakFailureSettingListener(registrationFuture));
 
 		connectOperation.addListener(new ChannelFutureListener() {
 
