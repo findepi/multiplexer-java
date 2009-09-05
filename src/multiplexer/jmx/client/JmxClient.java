@@ -571,6 +571,14 @@ public class JmxClient {
 		return connectionsManager.getInstanceId();
 	}
 
+	public ByteString getMultiplexerPassword() {
+		return connectionsManager.getMultiplexerPassword();
+	}
+
+	public void setMultiplexerPassword(ByteString multiplexerPassword) {
+		connectionsManager.setMultiplexerPassword(multiplexerPassword);
+	}
+
 	public void shutdown() throws InterruptedException {
 		connectionsManager.shutdown();
 	}

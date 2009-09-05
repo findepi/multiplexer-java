@@ -92,6 +92,11 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 
 	private volatile MultiplexerMessage cachedMultiplexerMessage;
 
+	// TODO document property use
+	private volatile ByteString multiplexerPassword = ByteString
+		.copyFromUtf8(System.getProperty("multiplexer.jmx.multiplexerPassword",
+			""));
+
 	/**
 	 * Constructs new ConnectionsManager with given type.
 	 * 
@@ -189,6 +194,7 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 		endpointByChannel.put(channel, address);
 
 		final ChannelFuture registrationFuture = Channels.future(channel, true);
+
 		synchronized (pendingRegistrations) {
 			if (shuttingDown) {
 				logger.debug("{}: connect to {} cancelled by shutdown", this,
@@ -223,8 +229,8 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 				// Send out welcome message.
 				sendMessage(createWelcomeMessage(), future.getChannel());
 			}
-
 		});
+
 		return registrationFuture;
 	}
 
@@ -265,7 +271,8 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 		if (cachedMultiplexerMessage != null)
 			return cachedMultiplexerMessage;
 		WelcomeMessage welcomeMessage = WelcomeMessage.newBuilder().setType(
-			instanceType).setId(instanceId).build();
+			instanceType).setId(instanceId).setMultiplexerPassword(
+			multiplexerPassword).build();
 		logger.debug("created welcome message\n{}", welcomeMessage);
 		ByteString message = welcomeMessage.toByteString();
 		cachedMultiplexerMessage = createMessage(message,
@@ -290,6 +297,22 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 				Channels.close(channel);
 				return;
 			}
+
+			// Check multiplexerPassword
+			System.err.println((channel + " my: "
+				+ multiplexerPassword.toStringUtf8() + " their: " + welcome
+				.getMultiplexerPassword().toStringUtf8()));
+			if (multiplexerPassword.size() > 0
+				&& !multiplexerPassword
+					.equals(welcome.getMultiplexerPassword())) {
+				logger
+					.warn(
+						"WelcomeMessage with invalid multiplexerPassword received over {}",
+						channel);
+				Channels.close(channel);
+				return;
+			}
+
 			int peerType = welcome.getType();
 			Channel oldChannel = connectionsMap.add(channel, message.getFrom(),
 				peerType);
@@ -427,6 +450,16 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 
 	public long getInstanceId() {
 		return instanceId;
+	}
+
+	public ByteString getMultiplexerPassword() {
+		return multiplexerPassword;
+	}
+
+	public void setMultiplexerPassword(ByteString multiplexerPassword) {
+		if (multiplexerPassword == null)
+			throw new NullPointerException("multiplexerPassword");
+		this.multiplexerPassword = multiplexerPassword;
 	}
 
 	/**

@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.TextFormat;
 import com.google.protobuf.TextFormat.ParseException;
@@ -50,7 +51,6 @@ import com.google.protobuf.TextFormat.ParseException;
  * 
  * @author Piotr Findeisen
  */
-// TODO support multiplexer password
 public class JmxServer implements MessageReceivedListener, Runnable {
 
 	public static final String UNKOWN_TYPE_NAME = "unknown";
@@ -77,6 +77,8 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 	private ServerChannelPipelineFactory channelPipelineFactory;
 
 	private volatile int localPort = -1;
+
+	private ByteString multiplexerPassword;
 
 	/**
 	 * Constructs the server that will listen for incoming connections on the
@@ -128,6 +130,8 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 				.getPipelineFactory());
 			bootstrap.setPipelineFactory(channelPipelineFactory);
 			connectionsManager.setMessageReceivedListener(this);
+			if (multiplexerPassword != null)
+				connectionsManager.setMultiplexerPassword(multiplexerPassword);
 
 			// Bind & start the server.
 			Channel listeningChannel = bootstrap.bind(serverAddress);
@@ -540,6 +544,20 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 	 */
 	public void setServerAddress(SocketAddress serverAddress) {
 		this.serverAddress = serverAddress;
+	}
+
+	public ByteString getMultiplexerPassword() {
+		return multiplexerPassword;
+	}
+
+	/**
+	 * Sets the {@code multiplexerPassword} used by the server. This can be
+	 * called only before a call to {@link #run}.
+	 * 
+	 * @param multiplexerPassword
+	 */
+	public void setMultiplexerPassword(ByteString multiplexerPassword) {
+		this.multiplexerPassword = multiplexerPassword;
 	}
 
 	/**

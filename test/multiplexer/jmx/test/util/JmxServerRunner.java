@@ -30,6 +30,9 @@ public final class JmxServerRunner {
 		server = new JmxServer(new InetSocketAddress("0.0.0.0", 0));
 		server.setTransferUpdateIntervalMillis(1000);
 		server.loadMessageDefinitionsFromFile("test.rules");
+		if (options.containsKey("multiplexerPassword"))
+			server.setMultiplexerPassword((ByteString) options
+				.get("multiplexerPassword"));
 
 		serverThread = new Thread(server);
 		serverThread.setDaemon(true);
