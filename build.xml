@@ -298,6 +298,7 @@
       <test name="multiplexer.jmx.test.TestByteBufferSerialization" />
       <test name="multiplexer.jmx.test.TestGCing" />
       <test name="multiplexer.jmx.test.TestMultiplexerPassword" />
+      <test name="multiplexer.jmx.test.TestThreadsShutdown" />
     </junit>
   </target>
 

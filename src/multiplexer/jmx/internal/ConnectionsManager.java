@@ -145,9 +145,9 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 
 	public ConnectionsManager(final int instanceType, Bootstrap bootstrap) {
 
-		logger.info("creating {}", this);
-
 		this.instanceType = instanceType;
+		logger.info("creating {}", this);
+		
 		this.bootstrap = bootstrap;
 		bootstrap.setOption("tcpNoDelay", true);
 		bootstrap.setOption("keepAlive", true);

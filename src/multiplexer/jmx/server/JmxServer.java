@@ -59,6 +59,8 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 	private static final Logger logger = LoggerFactory
 		.getLogger(JmxServer.class);
 
+	private final Object lock = new Object();
+
 	protected ConnectionsManager connectionsManager;
 	protected SocketAddress serverAddress;
 	private SocketAddress serverEffectiveAddress;
@@ -110,7 +112,12 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 	 */
 	public void run() {
 
-		serverThread = Thread.currentThread();
+		synchronized (lock) {
+			if (serverThread != null)
+				throw new RuntimeException(JmxServer.class.getSimpleName()
+					+ " started twice.");
+			serverThread = Thread.currentThread();
+		}
 		serverThread.setName(JmxServer.class.getSimpleName());
 
 		logger.debug("starting {} @ {}", JmxServer.class.getSimpleName(),
@@ -143,8 +150,9 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 			started = true;
 			synchronized (this) {
-				// Someone may be waiting for localPort information to become
-				// available (for example JmxServerRunner).
+				// Someone may be waiting for hasStarted() to become true (e.g.
+				// until localPort information becomes available -- for example
+				// JmxServerRunner).
 				this.notifyAll();
 			}
 
@@ -157,8 +165,9 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 				// We delay this operation after notifying listeners about
 				// server start and making localPort information accessible to
 				// them.
-				serverEffectiveAddress = new InetSocketAddress(
-					getHostString((InetSocketAddress) serverAddress), localPort);
+				String hostName = getHostString((InetSocketAddress) serverAddress);
+				serverEffectiveAddress = InetSocketAddress.createUnresolved(
+					hostName, localPort);
 			}
 			logger.info("started {} @ {}", JmxServer.class.getSimpleName(),
 				serverEffectiveAddress);
@@ -171,7 +180,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 			} catch (InterruptedException e) {
 				logger.warn("Exception ignored", e);
 			} finally {
-				synchronized (this) {
+				synchronized (lock) {
 					serverThread = null;
 				}
 			}
@@ -268,11 +277,17 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		running = false;
 		logger.info("stopping {} @ {}", JmxServer.class.getSimpleName(),
 			serverEffectiveAddress);
-		synchronized (this) {
-			Thread serverThread = this.serverThread;
+
+		Thread serverThread;
+		synchronized (lock) {
+			serverThread = this.serverThread;
 			if (serverThread != null) {
 				serverThread.interrupt();
 			}
+		}
+		if (serverThread == null) {
+			// Perform the IO outside of synchronized block.
+			System.err.println("There is no serverThread to be shut down.");
 		}
 	}
 
