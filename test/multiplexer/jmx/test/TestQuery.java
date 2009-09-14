@@ -23,7 +23,20 @@ import com.google.protobuf.ByteString;
 public class TestQuery extends JmxServerProvidingTestCase {
 
 	public void testQueryBasic() throws UnknownHostException,
-		OperationFailedException, NoPeerForTypeException, InterruptedException, ConnectException {
+		OperationFailedException, NoPeerForTypeException, InterruptedException,
+		ConnectException {
+		testQueryBasic(1);
+	}
+
+	public void testQueryBasicManyTimes() throws UnknownHostException,
+		OperationFailedException, NoPeerForTypeException, InterruptedException,
+		ConnectException {
+		testQueryBasic(1000);
+	}
+
+	public void testQueryBasic(int times) throws UnknownHostException,
+		OperationFailedException, NoPeerForTypeException, InterruptedException,
+		ConnectException {
 
 		// create backend
 		AbstractBackend backend = new AbstractBackend(
@@ -49,12 +62,13 @@ public class TestQuery extends JmxServerProvidingTestCase {
 			getLocalServerPort()));
 
 		// query
-		IncomingMessageData msgData = client.query(ByteString
-			.copyFromUtf8("Lama ma kota."),
-			TestConstants.MessageTypes.TEST_REQUEST, 2000);
+		final ByteString queryString = ByteString.copyFromUtf8("Lama ma kota.");
+		for (int i = 0; i < times; i++) {
+			IncomingMessageData msgData = client.query(queryString,
+				TestConstants.MessageTypes.TEST_REQUEST, 2000);
 
-		assertEquals(msgData.getMessage().getMessage(), ByteString
-			.copyFromUtf8("Lama ma kota."));
+			assert msgData.getMessage().getMessage().equals(queryString);
+		}
 
 		// cleanup
 		backend.cancel();
@@ -68,28 +82,33 @@ public class TestQuery extends JmxServerProvidingTestCase {
 	}
 
 	public void testQueryBackendErrorAA() throws UnknownHostException,
-		OperationFailedException, NoPeerForTypeException, InterruptedException, ConnectException {
+		OperationFailedException, NoPeerForTypeException, InterruptedException,
+		ConnectException {
 		testQueryBackendError(0, 0);
 	}
 
 	public void testQueryBackendErrorAB() throws UnknownHostException,
-		OperationFailedException, NoPeerForTypeException, InterruptedException, ConnectException {
+		OperationFailedException, NoPeerForTypeException, InterruptedException,
+		ConnectException {
 		testQueryBackendError(0, 1);
 	}
 
 	public void testQueryBackendErrorBA() throws UnknownHostException,
-		OperationFailedException, NoPeerForTypeException, InterruptedException, ConnectException {
+		OperationFailedException, NoPeerForTypeException, InterruptedException,
+		ConnectException {
 		testQueryBackendError(1, 0);
 	}
 
 	public void testQueryBackendErrorBB() throws UnknownHostException,
-		OperationFailedException, NoPeerForTypeException, InterruptedException, ConnectException {
+		OperationFailedException, NoPeerForTypeException, InterruptedException,
+		ConnectException {
 		testQueryBackendError(1, 1);
 	}
 
 	private void testQueryBackendError(final int backend1ErrorType,
 		final int backend2ErrorType) throws UnknownHostException,
-		OperationFailedException, NoPeerForTypeException, InterruptedException, ConnectException {
+		OperationFailedException, NoPeerForTypeException, InterruptedException,
+		ConnectException {
 
 		// create backend 1
 		AbstractBackend backend1 = new AbstractBackend(
