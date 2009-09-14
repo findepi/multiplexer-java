@@ -21,7 +21,7 @@ public class JmxServerProvidingTestCase extends TestCase {
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	public void tearDown() throws Exception {
 		super.tearDown();
 		jmxServerRunner.stop();
 		jmxServerRunner = null;
@@ -30,8 +30,9 @@ public class JmxServerProvidingTestCase extends TestCase {
 	protected int getLocalServerPort() {
 		return jmxServerRunner.getLocalServerPort();
 	}
-	
-	protected InetSocketAddress getLocalServerAddress() throws UnknownHostException {
-		return jmxServerRunner.getLocalServerAddress(); 
+
+	protected InetSocketAddress getLocalServerAddress()
+		throws UnknownHostException {
+		return jmxServerRunner.getLocalServerAddress();
 	}
 }

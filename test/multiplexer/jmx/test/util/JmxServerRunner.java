@@ -1,12 +1,18 @@
 package multiplexer.jmx.test.util;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.protobuf.ByteString;
+import com.google.protobuf.TextFormat.ParseException;
 
 import multiplexer.jmx.server.JmxServer;
 
@@ -16,18 +22,25 @@ import multiplexer.jmx.server.JmxServer;
  */
 public final class JmxServerRunner {
 
+	private static final Logger logger = LoggerFactory
+		.getLogger(JmxServerRunner.class);
+
 	private JmxServer server;
 	private Thread serverThread;
 
 	@SuppressWarnings("unchecked")
-	public void start() throws Exception {
+	public void start() throws ParseException, FileNotFoundException,
+		IOException, InterruptedException {
+
 		start((Map<String, Object>) Collections.EMPTY_MAP);
 	}
 
-	public void start(final Map<String, Object> options) throws Exception {
+	public void start(final Map<String, Object> options) throws ParseException,
+		FileNotFoundException, IOException, InterruptedException {
+
 		assert server == null;
 
-		server = new JmxServer(new InetSocketAddress("0.0.0.0", 0));
+		server = new JmxServer(new InetSocketAddress(0));
 		server.setTransferUpdateIntervalMillis(1000);
 		server.loadMessageDefinitionsFromFile("test.rules");
 		if (options.containsKey("multiplexerPassword"))
@@ -73,8 +86,20 @@ public final class JmxServerRunner {
 			e.printStackTrace();
 		}
 
-		if (serverThread.isAlive())
+		if (serverThread.isAlive()) {
+			logger.warn("killing the " + JmxServer.class.getSimpleName()
+				+ " thread -- server did not stop correctly");
 			serverThread.interrupt();
+			try {
+				serverThread.join(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		if (serverThread.isAlive()) {
+			logger.error("leaving alive " + JmxServer.class.getSimpleName()
+				+ " thread");
+		}
 
 		server = null;
 		serverThread = null;
