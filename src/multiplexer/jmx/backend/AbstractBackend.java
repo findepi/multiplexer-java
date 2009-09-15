@@ -80,7 +80,7 @@ public abstract class AbstractBackend implements Runnable {
 	 * Connects synchronously with the specified {@code address}.
 	 * 
 	 * @param address
-	 * @throws ConnectException 
+	 * @throws ConnectException
 	 */
 	public void connect(SocketAddress address) throws ConnectException {
 		connection.connect(address);

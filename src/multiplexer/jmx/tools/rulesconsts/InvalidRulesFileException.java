@@ -1,6 +1,3 @@
-/**
- * 
- */
 package multiplexer.jmx.tools.rulesconsts;
 
 /**
