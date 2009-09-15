@@ -5,7 +5,6 @@ import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 /**
  * @author Kasia Findeisen
- * 
  */
 public interface MessageReceivedListener {
 

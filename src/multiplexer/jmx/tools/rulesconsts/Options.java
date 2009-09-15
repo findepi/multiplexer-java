@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.kohsuke.args4j.Option;
 
+/**
+ * @author Piotr Findeisen
+ */
 public class Options {
 	@Option(name = "-system", usage = "indicate to generate constants for internal use by library")
 	public boolean system = false;

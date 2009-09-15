@@ -1,5 +1,8 @@
 package multiplexer.jmx.tools;
 
+/**
+ * @author Piotr Findeisen
+ */
 abstract class SubCommand {
 
 	private final String name;

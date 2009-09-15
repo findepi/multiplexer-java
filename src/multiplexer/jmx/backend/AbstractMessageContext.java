@@ -12,7 +12,6 @@ import static multiplexer.jmx.util.Stacks.stackTraceToByteString;
  * Partial implementation of {@link MessageContext}.
  * 
  * @author Piotr Findeisen
- * 
  */
 public abstract class AbstractMessageContext implements MessageContext {
 

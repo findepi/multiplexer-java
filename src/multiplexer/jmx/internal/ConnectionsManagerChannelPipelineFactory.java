@@ -14,7 +14,6 @@ import org.jboss.netty.util.Timer;
 
 /**
  * @author Piotr Findeisen
- * 
  */
 public class ConnectionsManagerChannelPipelineFactory implements
 	ChannelPipelineFactory {

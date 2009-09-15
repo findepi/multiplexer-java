@@ -35,7 +35,6 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.ByteString.Output;
 
 /**
- * 
  * @author Kasia Findeisen
  * @author Piotr Findeisen
  */

@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
  * any point, whether the timeout has passed.
  * 
  * @author Kasia Findeisen
- * 
  */
 public class TimeoutCounter {
 	private final long startTime = System.currentTimeMillis();

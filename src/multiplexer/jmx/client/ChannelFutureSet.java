@@ -16,7 +16,6 @@ import com.google.common.collect.ForwardingSet;
  * removal) and iteration,
  * 
  * @author Kasia Findeisen
- * 
  */
 public class ChannelFutureSet extends ForwardingSet<ChannelFuture> {
 

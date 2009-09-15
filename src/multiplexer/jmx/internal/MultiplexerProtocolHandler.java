@@ -15,6 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 
+/**
+ * @author Kasia Findeisen
+ * @author Piotr Findeisen
+ */
 @ChannelPipelineCoverage("all")
 public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 

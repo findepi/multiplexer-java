@@ -14,6 +14,7 @@ import com.google.protobuf.ByteString;
  * 
  * @see DefaultMessageContext
  * @see AbstractMessageContext
+ *
  * @author Piotr Findeisen
  */
 public interface MessageContext {

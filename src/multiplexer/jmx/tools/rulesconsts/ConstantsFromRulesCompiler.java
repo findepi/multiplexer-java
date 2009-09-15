@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
- * 
  * @author Piotr Findeisen
  */
 public interface ConstantsFromRulesCompiler {

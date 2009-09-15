@@ -5,6 +5,9 @@ import java.util.zip.CRC32;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 
+/**
+ * @author Piotr Findeisen
+ */
 public final class RawMessageFrame {
 
 	private RawMessageFrame() {

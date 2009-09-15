@@ -14,9 +14,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Piotr Findeisen
- * 
  */
-
 @ChannelPipelineCoverage("all")
 public class ByteCountingHandler implements ChannelUpstreamHandler,
 	ChannelDownstreamHandler {

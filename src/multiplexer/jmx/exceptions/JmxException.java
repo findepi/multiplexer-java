@@ -1,5 +1,8 @@
 package multiplexer.jmx.exceptions;
 
+/**
+ * @author Piotr Findeisen
+ */
 public class JmxException extends Exception {
 
 	private static final long serialVersionUID = -7869186798714620555L;

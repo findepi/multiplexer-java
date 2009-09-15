@@ -1,5 +1,8 @@
 package multiplexer.jmx.tools.rulesconsts;
 
+/**
+ * @author Piotr Findeisen
+ */
 public class Constant<E> {
 
 	public final String name;

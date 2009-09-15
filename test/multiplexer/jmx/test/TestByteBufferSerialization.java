@@ -10,6 +10,9 @@ import junit.framework.TestCase;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 
+/**
+ * @author Piotr Findeisen
+ */
 public class TestByteBufferSerialization extends TestCase {
 
 	public void testByteBufferSerialization() {

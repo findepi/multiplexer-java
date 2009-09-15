@@ -7,7 +7,6 @@ import junit.framework.TestCase;
 
 /**
  * @author Piotr Findeisen
- * 
  */
 public class JmxServerProvidingTestCase extends TestCase {
 

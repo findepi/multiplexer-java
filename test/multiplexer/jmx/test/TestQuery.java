@@ -18,7 +18,6 @@ import com.google.protobuf.ByteString;
 
 /**
  * @author Kasia Findeisen
- * 
  */
 public class TestQuery extends JmxServerProvidingTestCase {
 

@@ -20,6 +20,9 @@ import multiplexer.protocol.Protocol.WelcomeMessage;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ByteString.Output;
 
+/**
+ * @author Piotr Findeisen
+ */
 public class TestMultiplexerMessageWithServer extends
 	JmxServerProvidingTestCase {
 

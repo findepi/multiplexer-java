@@ -2,7 +2,6 @@ package multiplexer.jmx.util;
 
 /**
  * @author Piotr Findeisen
- * 
  */
 public class LongDeltaCounter {
 	private long state = 0;

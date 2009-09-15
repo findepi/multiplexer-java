@@ -13,7 +13,6 @@ import org.kohsuke.args4j.CmdLineParser;
 
 /**
  * @author Piotr Findeisen
- * 
  */
 //TODO napisać w README jak generować pliki z PeerTypes/MessageTypes (z odpowiednim linkiem  np. w JmxClient)
 public class CompileConstants {

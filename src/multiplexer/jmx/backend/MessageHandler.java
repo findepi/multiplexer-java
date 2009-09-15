@@ -4,7 +4,6 @@ import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 /**
  * @author Piotr Findeisen
- *
  */
 public interface MessageHandler {
 

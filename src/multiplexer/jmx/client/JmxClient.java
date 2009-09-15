@@ -42,7 +42,6 @@ import com.google.protobuf.ByteString;
  * 
  * @author Kasia Findeisen
  * @author Piotr Findeisen
- * 
  */
 public class JmxClient {
 

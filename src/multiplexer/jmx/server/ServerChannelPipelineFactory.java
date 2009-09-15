@@ -6,6 +6,9 @@ import multiplexer.jmx.internal.MessageCountingHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 
+/**
+ * @author Piotr Findeisen
+ */
 class ServerChannelPipelineFactory implements ChannelPipelineFactory {
 
 	private final ChannelPipelineFactory connectionsManagerPipelineFactory;

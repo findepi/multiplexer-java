@@ -8,7 +8,6 @@ import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 /**
  * @author Piotr Findeisen
- *
  */
 public class ClientMessageReceivedListener implements MessageReceivedListener {
 	

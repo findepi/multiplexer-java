@@ -11,9 +11,7 @@ import org.jboss.netty.channel.MessageEvent;
 
 /**
  * @author Piotr Findeisen
- * 
  */
-
 @ChannelPipelineCoverage("all")
 public class MessageCountingHandler implements ChannelUpstreamHandler,
 	ChannelDownstreamHandler {

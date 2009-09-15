@@ -18,6 +18,8 @@ import static multiplexer.jmx.internal.RawMessageFrame.getCrc32;
  * </pre>
  * 
  * (thus, as expected by RawMessageFrameDecoder)
+ *
+ * @author Piotr Findeisen
  */
 @ChannelPipelineCoverage("all")
 public class RawMessageFrameEncoder extends OneToOneEncoder {

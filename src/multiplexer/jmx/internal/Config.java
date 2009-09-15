@@ -1,5 +1,8 @@
 package multiplexer.jmx.internal;
 
+/**
+ * @author Kasia Findeisen
+ */
 public class Config {
 
 	public static long INITIAL_READ_IDLE_TIME = 7;

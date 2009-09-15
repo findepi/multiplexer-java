@@ -4,6 +4,7 @@ import org.jboss.netty.channel.Channel;
 
 /**
  * Wrapper around {@link Channel}.
+ *
  * @author Piotr Findeisen
  */
 public class Connection {

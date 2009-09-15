@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.kohsuke.args4j.Option;
 
+/**
+ * @author Piotr Findeisen
+ */
 public class Options {
 	@Option(name = "-host", usage = "local bind address (default 0.0.0.0)")
 	public String localHost = "0.0.0.0";

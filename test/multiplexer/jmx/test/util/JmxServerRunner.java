@@ -18,7 +18,6 @@ import multiplexer.jmx.server.JmxServer;
 
 /**
  * @author Piotr Findeisen
- * 
  */
 public final class JmxServerRunner {
 

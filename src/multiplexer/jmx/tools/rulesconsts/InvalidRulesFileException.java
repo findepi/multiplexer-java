@@ -2,6 +2,7 @@ package multiplexer.jmx.tools.rulesconsts;
 
 /**
  * Indicates that rules file used to generate constants is invalid.
+ *
  * @author Piotr Findeisen
  */
 public class InvalidRulesFileException extends Exception {

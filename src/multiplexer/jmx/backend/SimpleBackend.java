@@ -1,9 +1,7 @@
 package multiplexer.jmx.backend;
 
-
 /**
  * @author Piotr Findeisen
- * 
  */
 public class SimpleBackend extends AbstractHandlingBackend {
 

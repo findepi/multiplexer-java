@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
  * 
  * You may want to prepend it with {@link ChannelBufferFactorySettingHandler}.
  * {@code LITTLE_ENDIAN_BUFFER_FACTORY_SETTER} to simplify header decoding.
+ *
+ * @author Piotr Findeisen
  */
 public class RawMessageFrameDecoder extends
 	ReplayingDecoder<RawMessageDecoderState> {

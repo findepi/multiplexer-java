@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
  * {@code ChannelFutureGroup}.
  * 
  * @author Kasia Findeisen
- * 
  */
 public final class ChannelFutureGroup implements ChannelFuture {
 
