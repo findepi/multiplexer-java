@@ -42,14 +42,13 @@ import com.google.common.collect.LinkedListMultimap;
  * additional generated files). Methods {@code getAny(peerType)} and {@code
  * getAll(peerType)} return one or all peers of the given type respectively.
  * 
- * For each peer (denoted by Id) only one channel can be held in the structure.
+ * <p>For each peer (denoted by Id) only one channel can be held in the structure.
  * 
- * This object is thread-safe.
+ * <p>This object is thread-safe (with some restrictions, see {@link #getAll}).
  * 
  * @author Kasia Findeisen
  * @author Piotr Findeisen
  */
-// TODO: check that ConnectionsMap is thread-safe
 public class ConnectionsMap {
 
 	/**
