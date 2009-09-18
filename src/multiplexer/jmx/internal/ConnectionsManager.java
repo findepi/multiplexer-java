@@ -162,7 +162,7 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 
 		this.instanceType = instanceType;
 		logger.info("creating {}", this);
-		
+
 		this.bootstrap = bootstrap;
 		bootstrap.setOption("tcpNoDelay", true);
 		bootstrap.setOption("keepAlive", true);
@@ -201,6 +201,8 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 		// also try to reconnect immediately
 		// TODO send via(Connection) should try to reconnect to the same
 		// address, if connection is lost
+		// In both those cases this is normally done after a delay; prevent
+		// flood of connection attempts in case of `send' performed in a loop.
 		assert bootstrap instanceof ClientBootstrap;
 		ChannelFuture connectOperation = ((ClientBootstrap) bootstrap)
 			.connect(address);
@@ -276,13 +278,14 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 			logger.warn(
 				"channel {} is disconnected now in {}, reconnecting to {}",
 				new Object[] { channel, this, address });
-			
-			// TODO unconditionally calling asyncConnect here leads to busy
+
+			// Warning: unconditionally calling asyncConnect here leads to busy
 			// waiting (connecting) when the server accepts TCP connections but
 			// drops them immediately (e.g. invalid handshake). On the other
 			// hand it enables quick reconnects in normal scenarios, when the
 			// connection is just dropped accidentally.
 			scheduleReconnect(address, 1, TimeUnit.SECONDS);
+			// TODO enable fast reconnect while preventing busy wait (see above)
 			// asyncConnect(address);
 		} else {
 			logger.warn("channel {} is disconnected now in {}", channel, this);
