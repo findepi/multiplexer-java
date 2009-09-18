@@ -40,6 +40,7 @@ import multiplexer.jmx.util.LongDeltaCounter;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Constants.PeerTypes;
 import multiplexer.protocol.Protocol.BackendForPacketSearch;
+import multiplexer.protocol.Protocol.DeliveryError;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Protocol.MultiplexerMessageDescription;
 import multiplexer.protocol.Protocol.MultiplexerPeerDescription;
@@ -416,14 +417,15 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 
 		// routing based on to
 		if (message.hasTo()) {
-			scheduleByTo(message);
+			scheduleByTo(connection, message);
 			return;
 		}
 
 		// routing based on overridden rules
 		if (message.getOverrideRrulesCount() != 0) {
 			assert message.getOverrideRrulesCount() > 0;
-			scheduleByRoutingRules(message, message.getOverrideRrulesList());
+			scheduleByRoutingRules(connection, message, message
+				.getOverrideRrulesList());
 			return;
 		}
 
@@ -442,7 +444,8 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 					.createMessageBuilder().setMessage(message.getMessage())
 					.setType(MessageTypes.PING).setTo(message.getFrom())
 					.build();
-				scheduleByTo(response);
+				connectionsManager.sendMessage(response, SendingMethod
+					.via(connection));
 			}
 			break;
 
@@ -462,7 +465,13 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 				MultiplexerMessageDescription msgDesc = messageTypeIdsToDescription
 					.get(backendSearchMessage.getPacketType());
 				if (msgDesc == null || msgDesc.getToCount() == 0) {
-					// TODO error
+					logger.warn("BACKEND_FOR_PACKET_SEARCH msg type "
+						+ backendSearchMessage.getPacketType()
+						+ " has no routing rules");
+					if (isReportDeliveryErrorRequested(message)) {
+						reportDeliveryError(connection, message,
+							createDeliveryError(message).setIsKnownType(false));
+					}
 				} else {
 					RoutingRule routingRule = msgDesc.getTo(0);
 					routingRule = RoutingRule.newBuilder(routingRule).setWhom(
@@ -471,11 +480,14 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 					List<RoutingRule> ruleSingleton = new ArrayList<RoutingRule>(
 						1);
 					ruleSingleton.add(routingRule);
-					scheduleByRoutingRules(message, ruleSingleton);
+					scheduleByRoutingRules(connection, message, ruleSingleton);
 				}
 			} catch (InvalidProtocolBufferException e) {
-				// TODO return error
 				logger.warn("Malformed BACKEND_FOR_PACKET_SEARCH", e);
+				if (isReportDeliveryErrorRequested(message)) {
+					reportDeliveryError(connection, message,
+						createDeliveryError(message).setIsKnownType(false));
+				}
 			}
 			break;
 
@@ -484,7 +496,8 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 				MultiplexerMessageDescription msgDesc = messageTypeIdsToDescription
 					.get(message.getType());
 				if (msgDesc != null) {
-					scheduleByRoutingRules(message, msgDesc.getToList());
+					scheduleByRoutingRules(connection, message, msgDesc
+						.getToList());
 					break;
 				}
 			}
@@ -494,18 +507,24 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		}
 	}
 
-	private void scheduleByRoutingRules(MultiplexerMessage message,
-		List<RoutingRule> routingRules) {
+	private void scheduleByRoutingRules(Connection from,
+		MultiplexerMessage message, List<RoutingRule> routingRules) {
+		DeliveryError.Builder deliveryError = null;
+		if (isReportDeliveryErrorRequested(message))
+			deliveryError = createDeliveryError(message);
 
 		for (RoutingRule rule : routingRules) {
 			try {
 				connectionsManager.sendMessage(message, SendingMethod.via(rule
 					.getPeerType(), rule.getWhom()));
 			} catch (NoPeerForTypeException e) {
-				// TODO should we send delivery error?
 				e.printStackTrace();
+				if (deliveryError != null)
+					deliveryError.addFailedType(rule.getPeerType());
 			}
 		}
+		if (deliveryError != null)
+			reportDeliveryError(from, message, deliveryError);
 	}
 
 	/**
@@ -515,7 +534,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 	 * @param message
 	 *            to be sent
 	 */
-	void scheduleByTo(MultiplexerMessage message) {
+	void scheduleByTo(Connection from, MultiplexerMessage message) {
 		assert message.hasTo();
 		try {
 			connectionsManager.sendMessage(message, SendingMethod.via(message
@@ -523,7 +542,49 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		} catch (NoPeerForPeerIdException e) {
 			logger.warn("message #{} to {} while it's not connected", message
 				.getId(), message.getTo());
+			reportDeliveryError(from, message, message.getTo());
 		}
+	}
+
+	boolean isReportDeliveryErrorRequested(MultiplexerMessage message) {
+		return message.getReportDeliveryError() && message.getFrom() != 0
+			&& message.getFrom() != connectionsManager.getInstanceId();
+	}
+
+	/**
+	 * Report that delivery of {@code message} to peer {@code peerId} failed.
+	 * Suppress the report if the sender of the {@code message} did not request
+	 * it ({@code message.getReportDeliveryError()} returns false).
+	 */
+	void reportDeliveryError(Connection from, MultiplexerMessage message,
+		long peerId) {
+		if (!isReportDeliveryErrorRequested(message))
+			return;
+		reportDeliveryError(from, message, createDeliveryError(message)
+			.setFailedTo(peerId));
+	}
+
+	DeliveryError.Builder createDeliveryError(MultiplexerMessage message) {
+		DeliveryError.Builder deliveryError = DeliveryError.newBuilder();
+		if (message.getIncludeOriginalPacketInReport())
+			deliveryError.setOriginalMessage(message);
+		return deliveryError;
+	}
+
+	void reportDeliveryError(Connection from, MultiplexerMessage message,
+		DeliveryError deliveryError) {
+		assert isReportDeliveryErrorRequested(message);
+		MultiplexerMessage errorMessage = connectionsManager
+			.createMessageBuilder().setTo(message.getFrom())
+			.setReportDeliveryError(false).setType(MessageTypes.DELIVERY_ERROR)
+			.setMessage(deliveryError.toByteString()).setReferences(
+				message.getId()).setWorkflow(message.getWorkflow()).build();
+		connectionsManager.sendMessage(errorMessage, SendingMethod.via(from));
+	}
+
+	void reportDeliveryError(Connection from, MultiplexerMessage message,
+		DeliveryError.Builder deliveryError) {
+		reportDeliveryError(from, message, deliveryError.build());
 	}
 
 	String getMessageTypeName(int type) {
