@@ -1,0 +1,10 @@
+
+class PeerTypes:
+	<#list peerTypes as ct>
+	${ct.name} = ${ct.value}
+	</#list>
+
+class MessageTypes:
+	<#list messageTypes as ct>
+	${ct.name} = ${ct.value}
+	</#list>

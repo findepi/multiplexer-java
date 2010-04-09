@@ -43,7 +43,10 @@ public class Options {
 
 	@Option(name = "-package", usage = "name of the package for generated class; use '' for default")
 	public String packageName;
-	
-	@Option(name="-check", usage="validate constants uniqness with respect to other constants builds")
+
+	@Option(name = "-check", usage = "validate constants uniqness with respect to other constants builds")
 	public List<String> checkConstants;
+
+	@Option(name = "-python", usage = "generate constants file for Python")
+	public boolean python = false;
 }

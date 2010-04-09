@@ -122,7 +122,8 @@ public abstract class AbstractRulesCompiler implements
 	private void output(ConstantsGroup group) throws IOException {
 		prepareOutputConfiguration(options);
 
-		if (!new File(options.outputRoot).isDirectory()) {
+		if (options.outputRoot != null
+			&& !new File(options.outputRoot).isDirectory()) {
 			throw new RuntimeException("File '" + options.outputRoot
 				+ "' does not exist or is not a directory.");
 		}
@@ -156,12 +157,16 @@ public abstract class AbstractRulesCompiler implements
 		templateConfiguration.setObjectWrapper(new BeansWrapper());
 		Template codeTemplate = new Template("Constants",
 			new InputStreamReader(AbstractRulesCompiler.class
-				.getResourceAsStream("Constants.template")),
+				.getResourceAsStream(getConstantsTemplateResourceName())),
 			templateConfiguration);
 		return codeTemplate;
 	}
 
-	private static void prepareOutputConfiguration(Options options) {
+	protected String getConstantsTemplateResourceName() {
+		return "Constants.template";
+	}
+
+	protected void prepareOutputConfiguration(Options options) {
 		if (options.outputRoot == null) {
 			throw new RuntimeException("No output dir specified.");
 		}

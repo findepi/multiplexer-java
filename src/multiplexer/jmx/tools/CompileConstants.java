@@ -29,7 +29,8 @@ import org.kohsuke.args4j.CmdLineParser;
 /**
  * @author Piotr Findeisen
  */
-//TODO napisać w README jak generować pliki z PeerTypes/MessageTypes (z odpowiednim linkiem  np. w JmxClient)
+// TODO napisać w README jak generować pliki z PeerTypes/MessageTypes (z
+// odpowiednim linkiem np. w JmxClient)
 public class CompileConstants {
 
 	public static void main(String[] args) throws ClassNotFoundException,
@@ -61,7 +62,7 @@ public class CompileConstants {
 	public static void usage(String error, CmdLineParser optionsParser) {
 		System.err.println(error);
 		System.err.println("java " + CompileConstants.class.getName()
-			+ " [options...] <multiplexer rules file>");
+			+ " [options...] -input <multiplexer rules file>");
 		System.err.println();
 		System.err
 			.println("Available options are listed below. You must use either -output or -class.");
@@ -70,6 +71,13 @@ public class CompileConstants {
 
 	private static Class<?> getCompilerClass(Options options)
 		throws ClassNotFoundException {
+		if (options.python) {
+			if (options.system)
+				return Class
+					.forName("multiplexer.jmx.tools.rulesconsts.NonValidatingPythonConstantsCompiler");
+			return Class
+				.forName("multiplexer.jmx.tools.rulesconsts.PythonConstantsCompiler");
+		}
 		if (options.system) {
 			// This class must be always available, e.g. its compilation must
 			// not require previous build of any constants.
