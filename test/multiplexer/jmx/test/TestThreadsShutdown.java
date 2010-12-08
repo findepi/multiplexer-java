@@ -51,6 +51,12 @@ public class TestThreadsShutdown extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		
+		System.gc();
+		Thread.sleep(50);
+		System.gc();
+		Thread.sleep(50);
+		
 		initialActiveCount = Thread.activeCount();
 		threads = new Thread[initialActiveCount + 1];
 		int numberCopied = Thread.enumerate(threads);
@@ -70,8 +76,8 @@ public class TestThreadsShutdown extends TestCase {
 		Thread[] threads = new Thread[activeCount + 1];
 		int numberCopied = Thread.enumerate(threads);
 		if (numberCopied != activeCount) {
-			System.err.println("# threds change from " + activeCount + " to "
-				+ numberCopied + " during enumeration.");
+			System.err.println("# of threds changed from " + activeCount
+				+ " to " + numberCopied + " during enumeration.");
 		}
 
 		Set<Thread> activeThreads = new HashSet<Thread>(Arrays.asList(threads));

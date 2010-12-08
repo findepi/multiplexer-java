@@ -98,29 +98,34 @@ public class TestQuery extends JmxServerProvidingTestCase {
 	public void testQueryBackendErrorAA() throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException,
 		ConnectException {
-		testQueryBackendError(0, 0);
+		testQueryBackendError(BackendError.EXCEPTION, BackendError.EXCEPTION);
 	}
 
 	public void testQueryBackendErrorAB() throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException,
 		ConnectException {
-		testQueryBackendError(0, 1);
+		testQueryBackendError(BackendError.EXCEPTION, BackendError.REPORT_ERROR);
 	}
 
 	public void testQueryBackendErrorBA() throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException,
 		ConnectException {
-		testQueryBackendError(1, 0);
+		testQueryBackendError(BackendError.REPORT_ERROR, BackendError.EXCEPTION);
 	}
 
 	public void testQueryBackendErrorBB() throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException,
 		ConnectException {
-		testQueryBackendError(1, 1);
+		testQueryBackendError(BackendError.REPORT_ERROR,
+			BackendError.REPORT_ERROR);
 	}
 
-	private void testQueryBackendError(final int backend1ErrorType,
-		final int backend2ErrorType) throws UnknownHostException,
+	private enum BackendError {
+		EXCEPTION, REPORT_ERROR
+	};
+
+	private void testQueryBackendError(final BackendError backend1ErrorType,
+		final BackendError backend2ErrorType) throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException,
 		ConnectException {
 
@@ -132,9 +137,9 @@ public class TestQuery extends JmxServerProvidingTestCase {
 				throws Exception {
 
 				switch (backend1ErrorType) {
-				case 0:
+				case EXCEPTION:
 					throw new Exception("I am the crazy backend.");
-				case 1:
+				case REPORT_ERROR:
 					reply(createResponse(MessageTypes.BACKEND_ERROR));
 				}
 			}
@@ -154,9 +159,9 @@ public class TestQuery extends JmxServerProvidingTestCase {
 			protected void handleMessage(MultiplexerMessage message)
 				throws Exception {
 				switch (backend1ErrorType) {
-				case 0:
+				case EXCEPTION:
 					throw new Exception("I am the crazy backend.");
-				case 1:
+				case REPORT_ERROR:
 					reply(createResponse(MessageTypes.BACKEND_ERROR));
 				}
 			}

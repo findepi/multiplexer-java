@@ -15,7 +15,9 @@
 
 package multiplexer.jmx.test;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TestConstants implements multiplexer.jmx.tools.rulesconsts.ConstantsPack {
 
