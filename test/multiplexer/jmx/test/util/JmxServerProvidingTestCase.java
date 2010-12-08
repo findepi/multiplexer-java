@@ -18,25 +18,24 @@ package multiplexer.jmx.test.util;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * @author Piotr Findeisen
  */
-public class JmxServerProvidingTestCase extends TestCase {
+public class JmxServerProvidingTestCase {
 
 	private JmxServerRunner jmxServerRunner;
-
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
+	
+	@Before
+	public void startJmxServer() throws Exception {
 		jmxServerRunner = new JmxServerRunner();
 		jmxServerRunner.start();
 	}
 
-	@Override
-	public void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void stopJmxServer() throws Exception {
 		jmxServerRunner.stop();
 		jmxServerRunner = null;
 	}

@@ -15,6 +15,12 @@
 
 package multiplexer.jmx.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -30,6 +36,7 @@ import multiplexer.jmx.test.util.JmxServerProvidingTestCase;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 import org.jboss.netty.channel.ChannelFuture;
+import org.junit.Test;
 
 import com.google.protobuf.ByteString;
 
@@ -38,17 +45,21 @@ import com.google.protobuf.ByteString;
  */
 public class TestConnectivity extends JmxServerProvidingTestCase {
 
+	@Test
 	public void testJmxServerStartup() {
 		assertTrue(getLocalServerPort() > 0);
 	}
-	
-	public void testConnect() throws UnknownHostException, InterruptedException, ConnectException {
+
+	@Test
+	public void testConnect() throws UnknownHostException,
+		InterruptedException, ConnectException {
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
 		client.connect(new InetSocketAddress(InetAddress.getLocalHost(),
 			getLocalServerPort()));
 		client.shutdown();
 	}
 
+	@Test
 	public void testConnectSendReceive() throws UnknownHostException,
 		InterruptedException, NoPeerForTypeException, ConnectException {
 
@@ -79,6 +90,7 @@ public class TestConnectivity extends JmxServerProvidingTestCase {
 		client.shutdown();
 	}
 
+	@Test
 	public void testBackend() throws UnknownHostException,
 		InterruptedException, NoPeerForTypeException, ConnectException {
 

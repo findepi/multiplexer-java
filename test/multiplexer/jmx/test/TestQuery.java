@@ -15,9 +15,14 @@
 
 package multiplexer.jmx.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+
+import org.junit.Test;
 
 import multiplexer.jmx.backend.AbstractBackend;
 import multiplexer.jmx.client.ConnectException;
@@ -36,12 +41,14 @@ import com.google.protobuf.ByteString;
  */
 public class TestQuery extends JmxServerProvidingTestCase {
 
+	@Test
 	public void testQueryBasic() throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException,
 		ConnectException {
 		testQueryBasic(1);
 	}
 
+	@Test
 	public void testQueryBasicManyTimes() throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException,
 		ConnectException {
@@ -93,24 +100,28 @@ public class TestQuery extends JmxServerProvidingTestCase {
 		client.shutdown();
 	}
 
+	@Test
 	public void testQueryBackendErrorAA() throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException,
 		ConnectException {
 		testQueryBackendError(BackendError.EXCEPTION, BackendError.EXCEPTION);
 	}
 
+	@Test
 	public void testQueryBackendErrorAB() throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException,
 		ConnectException {
 		testQueryBackendError(BackendError.EXCEPTION, BackendError.REPORT_ERROR);
 	}
 
+	@Test
 	public void testQueryBackendErrorBA() throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException,
 		ConnectException {
 		testQueryBackendError(BackendError.REPORT_ERROR, BackendError.EXCEPTION);
 	}
 
+	@Test
 	public void testQueryBackendErrorBB() throws UnknownHostException,
 		OperationFailedException, NoPeerForTypeException, InterruptedException,
 		ConnectException {

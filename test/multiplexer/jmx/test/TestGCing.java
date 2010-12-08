@@ -15,6 +15,13 @@
 
 package multiplexer.jmx.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
@@ -30,18 +37,21 @@ import multiplexer.jmx.exceptions.NoPeerForTypeException;
 import multiplexer.jmx.test.util.JmxServerProvidingTestCase;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 
+import org.junit.Test;
+
 import com.google.protobuf.ByteString;
 
 /**
  * @author Piotr Findeisen
  */
 public class TestGCing extends JmxServerProvidingTestCase {
-
+	@Test
 	public void testJmxClientGCing() throws Exception {
 		ensureGCed(createAndWarmUpClient());
 	}
 
-	private JmxClient createClient() throws UnknownHostException, ConnectException {
+	private JmxClient createClient() throws UnknownHostException,
+		ConnectException {
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
 		client.connect(getLocalServerAddress());
 		return client;
@@ -61,6 +71,7 @@ public class TestGCing extends JmxServerProvidingTestCase {
 		return client;
 	}
 
+	@Test
 	public void testBackendGCing() throws Exception {
 		ensureGCed(createBackendAndConnect());
 	}

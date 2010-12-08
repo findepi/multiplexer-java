@@ -15,6 +15,12 @@
 
 package multiplexer.jmx.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -23,7 +29,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
 import multiplexer.jmx.backend.AbstractBackend;
 import multiplexer.jmx.client.ConnectException;
 import multiplexer.jmx.client.IncomingMessageData;
@@ -37,36 +42,36 @@ import multiplexer.jmx.test.TestConstants.PeerTypes;
 import multiplexer.jmx.test.util.JmxServerRunner;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.TextFormat.ParseException;
 
 /**
  * @author Piotr Findeisen
  */
-public class TestThreadsShutdown extends TestCase {
+public class TestThreadsShutdown {
 
 	private int initialActiveCount;
 	private Thread[] threads;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		
+	@Before
+	public void setUp() throws Exception {
 		System.gc();
 		Thread.sleep(50);
 		System.gc();
 		Thread.sleep(50);
-		
+
 		initialActiveCount = Thread.activeCount();
 		threads = new Thread[initialActiveCount + 1];
 		int numberCopied = Thread.enumerate(threads);
 		assertEquals(initialActiveCount, numberCopied);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-
+	@After
+	public void tearDown() throws Exception {
 		System.gc();
 		Thread.sleep(50);
 		System.gc();
@@ -107,14 +112,17 @@ public class TestThreadsShutdown extends TestCase {
 		// activeCount);
 	}
 
+	@Test
 	public void testNothing() {
 	}
 
+	@Test
 	public void testJmxClientNoConnections() throws InterruptedException {
 		JmxClient client = new JmxClient(PeerTypes.TEST_CLIENT);
 		client.shutdown();
 	}
 
+	@Test
 	public void testJmxClientConnecting() throws ConnectException,
 		InterruptedException {
 		JmxClient client = new JmxClient(PeerTypes.TEST_CLIENT);
@@ -127,6 +135,7 @@ public class TestThreadsShutdown extends TestCase {
 		client.shutdown();
 	}
 
+	@Test
 	public void testJmxClientAsyncConnectingNoWait() throws ConnectException,
 		InterruptedException {
 		JmxClient client = new JmxClient(PeerTypes.TEST_CLIENT);
@@ -134,6 +143,7 @@ public class TestThreadsShutdown extends TestCase {
 		client.shutdown();
 	}
 
+	@Test
 	public void testJmxClientAsyncConnecting() throws ConnectException,
 		InterruptedException {
 		JmxClient client = new JmxClient(PeerTypes.TEST_CLIENT);
@@ -142,20 +152,24 @@ public class TestThreadsShutdown extends TestCase {
 		client.shutdown();
 	}
 
+	@Test
 	public void testJmxServerRunner() throws Exception {
 		JmxServerRunner serverRunner = new JmxServerRunner();
 		serverRunner.start();
 		serverRunner.stop();
 	}
 
+	@Test
 	public void testJmxServerNoDaemon() throws InterruptedException {
 		testJmxServer(false);
 	}
 
+	@Test
 	public void testJmxServerDaemon() throws InterruptedException {
 		testJmxServer(true);
 	}
 
+	@Test
 	public void testJmxServerDefaultDaemon() throws InterruptedException {
 		testJmxServer(null);
 	}
@@ -177,6 +191,7 @@ public class TestThreadsShutdown extends TestCase {
 		assertFalse("server thread is still alive", serverThread.isAlive());
 	}
 
+	@Test
 	public void testJmxClientAndServer() throws ParseException,
 		FileNotFoundException, IOException, InterruptedException,
 		ConnectException {
@@ -188,6 +203,7 @@ public class TestThreadsShutdown extends TestCase {
 		serverRunner.stop();
 	}
 
+	@Test
 	public void testJmxClientServerAndMessage() throws ParseException,
 		FileNotFoundException, IOException, InterruptedException,
 		ConnectException, NoPeerForTypeException {
@@ -211,6 +227,7 @@ public class TestThreadsShutdown extends TestCase {
 		serverRunner.stop();
 	}
 
+	@Test
 	public void testJmxClientServerAndBackend() throws ParseException,
 		FileNotFoundException, IOException, InterruptedException,
 		ConnectException, NoPeerForTypeException {
@@ -231,6 +248,7 @@ public class TestThreadsShutdown extends TestCase {
 		serverRunner.stop();
 	}
 
+	@Test
 	public void testJmxClientServerBackendAndQuery() throws ParseException,
 		FileNotFoundException, IOException, InterruptedException,
 		ConnectException, NoPeerForTypeException, OperationFailedException {
@@ -238,6 +256,7 @@ public class TestThreadsShutdown extends TestCase {
 		testJmxClientServerBackendAndQuery(1);
 	}
 
+	@Test
 	public void testJmxClientServerBackendAndMultipleQuery()
 		throws ParseException, FileNotFoundException, IOException,
 		InterruptedException, ConnectException, NoPeerForTypeException,

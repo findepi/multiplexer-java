@@ -15,6 +15,11 @@
 
 package multiplexer.jmx.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
@@ -45,6 +50,7 @@ import org.jboss.netty.channel.socket.SocketChannel;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.handler.codec.protobuf.ProtobufDecoder;
 import org.jboss.netty.handler.codec.protobuf.ProtobufEncoder;
+import org.junit.Test;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ByteString.Output;
@@ -56,10 +62,12 @@ import com.google.protobuf.ByteString.Output;
 public class TestMultiplexerProtocolHandlerWithServer extends
 	JmxServerProvidingTestCase {
 
+	@Test
 	public void testSimpleNettyConnectionWithLEBuffers() throws Exception {
 		testSimpleNettyConnection(true);
 	}
 
+	@Test
 	public void testSimpleNettyConnectionWithoutLEBuffers() throws Exception {
 		testSimpleNettyConnection(false);
 	}

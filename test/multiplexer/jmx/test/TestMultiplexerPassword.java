@@ -24,6 +24,8 @@ import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.test.TestConstants.PeerTypes;
 import multiplexer.jmx.test.util.JmxServerRunner;
 
+import org.junit.Test;
+
 import com.google.protobuf.ByteString;
 
 /**
@@ -31,21 +33,25 @@ import com.google.protobuf.ByteString;
  */
 public class TestMultiplexerPassword extends TestCase {
 
+	@Test
 	public void testNoPasswords() throws Exception {
 		// should work
 		testMultiplexerPassword("", "");
 	}
 
+	@Test
 	public void testBothHasPassword() throws Exception {
 		final String password = "some password";
 		testMultiplexerPassword(password, password);
 	}
 
+	@Test
 	public void testOnlyServerHasPassword() throws Exception {
 		// server should forbid
 		testMultiplexerPassword("some password", "");
 	}
 
+	@Test
 	public void testOnlyClientHasPassword() throws Exception {
 		// client should disconnect
 		testMultiplexerPassword("", "some password");

@@ -24,12 +24,14 @@ import junit.framework.TestCase;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
+import org.junit.Test;
 
 /**
  * @author Piotr Findeisen
  */
 public class TestByteBufferSerialization extends TestCase {
 
+	@Test
 	public void testByteBufferSerialization() {
 		byte[] a = new byte[] { 'a', 'l', 'a' };
 		CRC32 crc = new CRC32();
@@ -44,6 +46,7 @@ public class TestByteBufferSerialization extends TestCase {
 			169 - 256, 69 }));
 	}
 
+	@Test
 	public void testNettyBufferSimplest() {
 		ByteBuffer bb = ByteBuffer.allocate(4);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
@@ -61,13 +64,13 @@ public class TestByteBufferSerialization extends TestCase {
 		assertEquals(b.readByte(), 0);
 	}
 
+	@Test
 	public void testNettyBufferSerialization() {
 		byte[] a = new byte[] { 'a', 'l', 'a' };
 		CRC32 crc = new CRC32();
 		crc.update(a);
 
-		ChannelBuffer b = ChannelBuffers.buffer(ByteOrder.LITTLE_ENDIAN,
-			8);
+		ChannelBuffer b = ChannelBuffers.buffer(ByteOrder.LITTLE_ENDIAN, 8);
 		b.writeInt(a.length);
 		b.writeInt((int) crc.getValue());
 

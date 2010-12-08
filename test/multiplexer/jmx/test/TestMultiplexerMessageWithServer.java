@@ -32,6 +32,8 @@ import multiplexer.protocol.Constants;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Protocol.WelcomeMessage;
 
+import org.junit.Test;
+
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ByteString.Output;
 
@@ -40,7 +42,8 @@ import com.google.protobuf.ByteString.Output;
  */
 public class TestMultiplexerMessageWithServer extends
 	JmxServerProvidingTestCase {
-
+	
+	@Test
 	public void testSimpleConnection() throws Exception {
 
 		final int PYTHON_TEST_SERVER = TestConstants.PeerTypes.TEST_SERVER;
