@@ -117,6 +117,10 @@ public class ConnectionsMap {
 		channelsByType.put(peerType, channel);
 		return oldChannel;
 	}
+	
+	public synchronized Integer getChannelPeerType(Channel channel) {
+		return peerTypeByChannel.get(channel);
+	}
 
 	/**
 	 * Removes the {@link Channel} previously added with {@link #addNew} or
@@ -139,7 +143,6 @@ public class ConnectionsMap {
 			// The channel was registered with `add`.
 			channelsByType.remove(type, channel);
 			channelsByPeerId.inverse().remove(channel);
-			peerTypeByChannel.remove(channel);
 			removed = true;
 		}
 		return removed;

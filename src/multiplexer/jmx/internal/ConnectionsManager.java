@@ -15,6 +15,7 @@
 
 package multiplexer.jmx.internal;
 
+import static com.google.common.base.Objects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static multiplexer.jmx.util.Channels.awaitSemiInterruptibly;
 
@@ -106,7 +107,7 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 
 	private final Map<Channel, SocketAddress> endpointByChannel = new WeakHashMap<Channel, SocketAddress>();
 
-	private volatile MultiplexerMessage cachedMultiplexerMessage;
+	private volatile MultiplexerMessage cachedWelcomeMessage;
 
 	// TODO document property use
 	private volatile ByteString multiplexerPassword = ByteString
@@ -269,15 +270,17 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 	public void channelDisconnected(Channel channel) {
 		assert !channel.isConnected();
 		if (shuttingDown) {
-			logger.debug("channel {} is disconnected now ({} shutdown)",
-				channel, this);
+			if (logger.isDebugEnabled())
+				logger.debug("channel {} is disconnected now ({} shutdown)",
+					toString(channel), this);
 			return;
 		}
 		SocketAddress address = endpointByChannel.get(channel);
 		if (address != null) {
-			logger.warn(
-				"channel {} is disconnected now in {}, reconnecting to {}",
-				new Object[] { channel, this, address });
+			if (logger.isWarnEnabled())
+				logger.warn(
+					"channel {} is disconnected now in {}, reconnecting to {}",
+					new Object[] { toString(channel), this, address });
 
 			// Warning: unconditionally calling asyncConnect here leads to busy
 			// waiting (connecting) when the server accepts TCP connections but
@@ -288,21 +291,23 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 			// TODO enable fast reconnect while preventing busy wait (see above)
 			// asyncConnect(address);
 		} else {
-			logger.warn("channel {} is disconnected now in {}", channel, this);
+			if (logger.isWarnEnabled())
+				logger.warn("channel {} is disconnected now in {}",
+					toString(channel), this);
 		}
 	}
 
 	private MultiplexerMessage createWelcomeMessage() {
-		if (cachedMultiplexerMessage != null)
-			return cachedMultiplexerMessage;
+		if (cachedWelcomeMessage != null)
+			return cachedWelcomeMessage;
 		WelcomeMessage welcomeMessage = WelcomeMessage.newBuilder().setType(
 			instanceType).setId(instanceId).setMultiplexerPassword(
 			multiplexerPassword).build();
 		logger.debug("created welcome message\n{}", welcomeMessage);
 		ByteString message = welcomeMessage.toByteString();
-		cachedMultiplexerMessage = createMessage(message,
+		cachedWelcomeMessage = createMessage(message,
 			MessageTypes.CONNECTION_WELCOME);
-		return cachedMultiplexerMessage;
+		return cachedWelcomeMessage;
 	}
 
 	public void messageReceived(MultiplexerMessage message, Channel channel) {
@@ -523,6 +528,14 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 			str.append(", shut");
 		str.append(")");
 		return str.toString();
+	}
+
+	private String toString(Channel channel) {
+		if (channel == null)
+			return "null";
+		return channel + "[type="
+			+ firstNonNull(connectionsMap.getChannelPeerType(channel), "?")
+			+ "]";
 	}
 
 	/**
