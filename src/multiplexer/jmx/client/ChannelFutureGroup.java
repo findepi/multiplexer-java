@@ -15,6 +15,8 @@
 
 package multiplexer.jmx.client;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -125,7 +127,7 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * 
 	 */
 	public void addListener(ChannelFutureListener listener) {
-		assert (listener != null) : "addListener";
+		checkNotNull(listener);
 		boolean notifyNow = false;
 		synchronized (this) {
 			if (isDone()) {
@@ -308,9 +310,8 @@ public final class ChannelFutureGroup implements ChannelFuture {
 	 * Removes specified {@code Listener} from the {@code ChannelFutureGroup}.
 	 */
 	public void removeListener(ChannelFutureListener listener) {
-		assert (listener != null) : "removeListener";
 		synchronized (this) {
-			listeners.remove(listener);
+			listeners.remove(checkNotNull(listener));
 		}
 	}
 

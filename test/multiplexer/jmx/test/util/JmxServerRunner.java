@@ -15,6 +15,9 @@
 
 package multiplexer.jmx.test.util;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -23,13 +26,13 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.Map;
 
+import multiplexer.jmx.server.JmxServer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.TextFormat.ParseException;
-
-import multiplexer.jmx.server.JmxServer;
 
 /**
  * @author Piotr Findeisen
@@ -52,7 +55,7 @@ public final class JmxServerRunner {
 	public void start(final Map<String, Object> options) throws ParseException,
 		FileNotFoundException, IOException, InterruptedException {
 
-		assert server == null;
+		checkState(server == null);
 
 		server = new JmxServer(new InetSocketAddress(0));
 		server.setTransferUpdateIntervalMillis(1000);
@@ -69,13 +72,13 @@ public final class JmxServerRunner {
 			if (!server.hasStarted()) {
 				server.wait(5000);
 			}
-			assert server.hasStarted() : JmxServer.class.getSimpleName()
-				+ " failed to start.";
+			checkState(server.hasStarted(), JmxServer.class.getSimpleName()
+				+ " failed to start.");
 		}
 	}
 
 	public int getLocalServerPort() {
-		assert server != null;
+		checkNotNull(server);
 		return server.getLocalPort();
 	}
 
@@ -90,8 +93,10 @@ public final class JmxServerRunner {
 	}
 
 	public void stop(boolean check) {
-		assert !check || server != null;
-		assert !check || serverThread.isAlive();
+		if (check) {
+			checkState(server != null);
+			checkState(serverThread.isAlive());
+		}
 
 		server.shutdown();
 		try {

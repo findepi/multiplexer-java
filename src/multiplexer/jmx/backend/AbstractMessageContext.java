@@ -15,13 +15,14 @@
 
 package multiplexer.jmx.backend;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static multiplexer.jmx.util.Stacks.stackTraceToByteString;
+
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Protocol.MultiplexerMessage.Builder;
 
 import com.google.protobuf.ByteString;
-
-import static multiplexer.jmx.util.Stacks.stackTraceToByteString;
 
 /**
  * Partial implementation of {@link MessageContext}.
@@ -74,7 +75,7 @@ public abstract class AbstractMessageContext implements MessageContext {
 	 * com.google.protobuf.ByteString)
 	 */
 	public Builder createResponse(int packetType, ByteString message) {
-		assert message != null;
+		checkNotNull(message);
 		return createResponse(packetType).setMessage(message);
 	}
 

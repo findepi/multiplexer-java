@@ -15,6 +15,8 @@
 
 package multiplexer.jmx.backend;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.net.SocketAddress;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -22,8 +24,8 @@ import multiplexer.jmx.client.ConnectException;
 import multiplexer.jmx.client.IncomingMessageData;
 import multiplexer.jmx.client.JmxClient;
 import multiplexer.jmx.exceptions.NoPeerForTypeException;
-import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Constants.MessageTypes;
+import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 import org.jboss.netty.channel.ChannelFuture;
 import org.slf4j.Logger;
@@ -121,7 +123,7 @@ public abstract class AbstractBackend implements Runnable {
 		throws Exception;
 
 	public void run() {
-		assert thread == null;
+		checkState(thread == null);
 		thread = Thread.currentThread();
 		try {
 			try {

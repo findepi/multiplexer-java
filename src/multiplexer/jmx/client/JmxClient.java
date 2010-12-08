@@ -15,6 +15,7 @@
 
 package multiplexer.jmx.client;
 
+import static com.google.common.base.Preconditions.checkState;
 import static multiplexer.jmx.util.Queues.pollUninterruptibly;
 
 import java.net.SocketAddress;
@@ -141,7 +142,7 @@ public class JmxClient {
 	 *            {@link MultiplexerMessage}.
 	 */
 	public MultiplexerMessage createMessage(MultiplexerMessage.Builder message) {
-		assert message.hasType();
+		checkState(message.hasType());
 		return connectionsManager.createMessage(message);
 	}
 

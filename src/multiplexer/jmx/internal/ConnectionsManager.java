@@ -15,6 +15,7 @@
 
 package multiplexer.jmx.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static multiplexer.jmx.util.Channels.awaitSemiInterruptibly;
 
 import java.lang.ref.WeakReference;
@@ -206,8 +207,7 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 		assert bootstrap instanceof ClientBootstrap;
 		ChannelFuture connectOperation = ((ClientBootstrap) bootstrap)
 			.connect(address);
-		final Channel channel = connectOperation.getChannel();
-		assert channel != null;
+		final Channel channel = checkNotNull(connectOperation.getChannel());
 		endpointByChannel.put(channel, address);
 
 		final ChannelFuture registrationFuture = Channels.future(channel, true);
