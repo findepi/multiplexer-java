@@ -4,19 +4,9 @@
 	<classpathentry kind="src" path="examples"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="libs/netty-3.1.0.GA.jar" sourcepath="libs/netty-3.1.0.GA-sources.jar">
+	<classpathentry kind="lib" path="libs/netty-3.2.3.Final.jar" sourcepath="libs/netty-3.2.3.Final-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://www.jboss.org/file-access/default/members/netty/freezone/api/3.1/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="libs/google-collect-1.0-rc2.jar" sourcepath="libs/google-collect-src-1.0-rc2.zip">
-		<attributes>
-			<attribute name="javadoc_location" value="http://google-collections.googlecode.com/svn/trunk/javadoc/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="libs/protobuf-java-2.1.0.jar" sourcepath="libs/protobuf-java-2.1.0-src.zip">
-		<attributes>
-			<attribute name="javadoc_location" value="http://code.google.com/apis/protocolbuffers/docs/reference/java/"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/slf4j-api-1.5.8.jar" sourcepath="libs/slf4j-api-1.5.8-sources.jar"/>
@@ -25,5 +15,15 @@
 	<classpathentry kind="lib" path="libs/args4j-2.0.10.jar" sourcepath="libs/args4j-2.0.10-src.zip"/>
 	<classpathentry kind="lib" path="libs/junit-4.6.jar" sourcepath="libs/junit-4.6-src.jar"/>
 	<classpathentry kind="lib" path="libs/freemarker-2.3.15.jar" sourcepath="libs/freemarker-2.3.15-src.zip"/>
+	<classpathentry kind="lib" path="libs/protobuf-java-2.2.0.jar" sourcepath="libs/protobuf-java-2.2.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://code.google.com/apis/protocolbuffers/docs/reference/java/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="libs/guava-r07.jar" sourcepath="libs/guava-src-r07.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="http://guava-libraries.googlecode.com/svn/trunk/javadoc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

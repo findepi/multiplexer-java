@@ -15,15 +15,16 @@
 
 package multiplexer.jmx.internal;
 
+import static multiplexer.jmx.internal.RawMessageFrame.getCrc32;
+
 import java.nio.ByteOrder;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelPipelineCoverage;
+import org.jboss.netty.channel.ChannelHandler.Sharable;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
-import static multiplexer.jmx.internal.RawMessageFrame.getCrc32;
 
 /**
  * RawMessageFrameEncoder is responsible for creating frames in the format
@@ -36,7 +37,7 @@ import static multiplexer.jmx.internal.RawMessageFrame.getCrc32;
  *
  * @author Piotr Findeisen
  */
-@ChannelPipelineCoverage("all")
+@Sharable
 public class RawMessageFrameEncoder extends OneToOneEncoder {
 
 	private static final int HEADER_LENGTH = 8;

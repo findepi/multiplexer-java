@@ -322,4 +322,7 @@ public final class ChannelFutureGroup implements ChannelFuture {
 		throw new RuntimeException("Not implemented.");
 	}
 
+	public boolean setProgress(long amount, long current, long total) {
+		return false;
+	}
 }

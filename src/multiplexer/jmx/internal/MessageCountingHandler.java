@@ -20,14 +20,14 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelPipelineCoverage;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.channel.ChannelHandler.Sharable;
 
 /**
  * @author Piotr Findeisen
  */
-@ChannelPipelineCoverage("all")
+@Sharable
 public class MessageCountingHandler implements ChannelUpstreamHandler,
 	ChannelDownstreamHandler {
 

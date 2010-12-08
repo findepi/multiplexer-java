@@ -35,15 +35,16 @@
 
   <path id="project.tools.path">
     <pathelement location="${build.dir}" />
-    <pathelement location="${libs}/protobuf-java-2.1.0.jar" />
+    <pathelement location="${libs}/protobuf-java-2.2.0.jar" />
     <pathelement location="${libs}/args4j-2.0.10.jar" />
     <pathelement location="${libs}/freemarker-2.3.15.jar" />
+    <pathelement location="${libs}/guava-r07.jar" />
   </path>
 
   <filelist id="project.jar.dependencies" dir="${basedir}">
-    <file name="${libs}/protobuf-java-2.1.0.jar" />
-    <file name="${libs}/netty-3.1.0.GA.jar" />
-    <file name="${libs}/google-collect-1.0-rc2.jar" />
+    <file name="${libs}/protobuf-java-2.2.0.jar" />
+    <file name="${libs}/netty-3.2.3.Final.jar" />
+    <file name="${libs}/guava-r07.jar" />
     <file name="${libs}/trove-2.0.4.jar" />
     <file name="${libs}/args4j-2.0.10.jar" />
     <file name="${libs}/freemarker-2.3.15.jar" />
@@ -86,6 +87,9 @@
     <attribute name="outdir" />
     <element name="compile-additional-args" optional="true" />
     <sequential>
+      <copy todir="${build.dir}">
+        <fileset dir="${src}" includes="**/*.template" />
+      </copy>
       <javac srcdir="${src}"
              destdir="${build.dir}"
              encoding="utf8"
@@ -423,6 +427,8 @@
     <delete dir="${libs.unpacked.dir}" />
     <delete dir="${doc.dir}" />
     <delete dir="${dist.dir}" />
+    <delete file="${constants.src}" />
+    <delete file="${test.constants.src}" />
   </target>
 
 </project>

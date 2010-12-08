@@ -19,12 +19,12 @@ import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelPipelineCoverage;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelHandler;
+import org.jboss.netty.channel.ChannelHandler.Sharable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ import com.google.protobuf.ByteString;
  * @author Kasia Findeisen
  * @author Piotr Findeisen
  */
-@ChannelPipelineCoverage("all")
+@Sharable
 public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
 	private static final Logger logger = LoggerFactory
