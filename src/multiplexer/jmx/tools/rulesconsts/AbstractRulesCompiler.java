@@ -15,13 +15,16 @@
 
 package multiplexer.jmx.tools.rulesconsts;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Writer;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +34,7 @@ import multiplexer.protocol.Protocol.MultiplexerMessageDescription;
 import multiplexer.protocol.Protocol.MultiplexerPeerDescription;
 import multiplexer.protocol.Protocol.MultiplexerRules;
 
+import com.google.common.collect.Maps;
 import com.google.protobuf.TextFormat;
 
 import freemarker.ext.beans.BeansWrapper;
@@ -128,12 +132,9 @@ public abstract class AbstractRulesCompiler implements
 				+ "' does not exist or is not a directory.");
 		}
 
-		new File(options.outputFile).getParentFile().mkdirs();
-
-		Writer writer = new FileWriter(options.outputFile);
 		Template codeTemplate = loadConstantsSourceTemplate();
 
-		Map<String, Object> templateContext = new HashMap<String, Object>();
+		Map<String, Object> templateContext = Maps.newHashMap();
 		// standard definitions
 		templateContext.put("MessageTypes", MessageTypes.class.getName());
 		templateContext.put("PeerTypes", PeerTypes.class.getName());
@@ -144,20 +145,26 @@ public abstract class AbstractRulesCompiler implements
 		templateContext.put("peerTypes", group.getPeerTypes());
 		templateContext.put("messageTypes", group.getMessageTypes());
 
+		StringWriter writer = new StringWriter();
 		try {
 			codeTemplate.process(templateContext, writer);
 		} catch (TemplateException e) {
 			throw new RuntimeException("Malformed template.", e);
 		}
-		writer.close();
+		File outputFile = new File(options.outputFile);
+		outputFile.getParentFile().mkdirs();
+		FileWriter fileWriter = new FileWriter(outputFile);
+		fileWriter.write(writer.toString());
+		fileWriter.close();
 	}
 
 	private Template loadConstantsSourceTemplate() throws IOException {
 		Configuration templateConfiguration = new Configuration();
 		templateConfiguration.setObjectWrapper(new BeansWrapper());
+		InputStream templateStream = checkNotNull(AbstractRulesCompiler.class
+			.getResourceAsStream(getConstantsTemplateResourceName()));
 		Template codeTemplate = new Template("Constants",
-			new InputStreamReader(AbstractRulesCompiler.class
-				.getResourceAsStream(getConstantsTemplateResourceName())),
+			new InputStreamReader(templateStream),
 			templateConfiguration);
 		return codeTemplate;
 	}
