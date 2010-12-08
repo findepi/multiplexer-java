@@ -64,16 +64,14 @@ public class TestQuery extends JmxServerProvidingTestCase {
 		};
 
 		// connect backend and run in new thread
-		backend.connect(new InetSocketAddress(InetAddress.getLocalHost(),
-			getLocalServerPort()));
+		backend.connect(getLocalServerAddress());
 		Thread backendThread = new Thread(backend);
 		backendThread.setName("backend main thread");
 		backendThread.start();
 
 		// connect
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
-		client.connect(new InetSocketAddress(InetAddress.getLocalHost(),
-			getLocalServerPort()));
+		client.connect(getLocalServerAddress());
 
 		// query
 		final ByteString queryString = ByteString.copyFromUtf8("Lama ma kota.");
