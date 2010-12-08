@@ -266,7 +266,7 @@
   <!-- - - - - - - - - - - - - - - - - - 
           target: build-test
          - - - - - - - - - - - - - - - - - -->
-  <target name="build-test" depends="init,test-sources,build">
+  <target name="build-test" depends="init,build,test-sources">
     <mkdir dir="${build.dir}" />
     <javac srcdir="${test.src}"
            destdir="${build.dir}"
