@@ -18,11 +18,7 @@ package multiplexer.jmx.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-
-import org.junit.Test;
 
 import multiplexer.jmx.backend.AbstractBackend;
 import multiplexer.jmx.client.ConnectException;
@@ -33,6 +29,8 @@ import multiplexer.jmx.exceptions.OperationFailedException;
 import multiplexer.jmx.test.util.JmxServerProvidingTestCase;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
+
+import org.junit.Test;
 
 import com.google.protobuf.ByteString;
 
@@ -155,8 +153,7 @@ public class TestQuery extends JmxServerProvidingTestCase {
 		};
 
 		// connect backend 1 and run in new thread
-		backend1.connect(new InetSocketAddress(InetAddress.getLocalHost(),
-			getLocalServerPort()));
+		backend1.connect(getLocalServerAddress());
 		Thread backend1Thread = new Thread(backend1);
 		backend1Thread.setName("backend1 main thread");
 		backend1Thread.start();
@@ -177,16 +174,14 @@ public class TestQuery extends JmxServerProvidingTestCase {
 		};
 
 		// connect backend 2 and run in new thread
-		backend2.connect(new InetSocketAddress(InetAddress.getLocalHost(),
-			getLocalServerPort()));
+		backend2.connect(getLocalServerAddress());
 		Thread backend2Thread = new Thread(backend2);
 		backend2Thread.setName("backend2 main thread");
 		backend2Thread.start();
 
 		// connect
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
-		client.connect(new InetSocketAddress(InetAddress.getLocalHost(),
-			getLocalServerPort()));
+		client.connect(getLocalServerAddress());
 
 		// query
 		IncomingMessageData msgData = client.query(ByteString

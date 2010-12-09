@@ -21,8 +21,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
@@ -46,16 +44,15 @@ import com.google.protobuf.ByteString;
 public class TestConnectivity extends JmxServerProvidingTestCase {
 
 	@Test
-	public void testJmxServerStartup() {
-		assertTrue(getLocalServerPort() > 0);
+	public void testJmxServerStartup() throws UnknownHostException {
+		assertTrue(getLocalServerAddress().getPort() > 0);
 	}
 
 	@Test
 	public void testConnect() throws UnknownHostException,
 		InterruptedException, ConnectException {
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
-		client.connect(new InetSocketAddress(InetAddress.getLocalHost(),
-			getLocalServerPort()));
+		client.connect(getLocalServerAddress());
 		client.shutdown();
 	}
 
@@ -65,8 +62,7 @@ public class TestConnectivity extends JmxServerProvidingTestCase {
 
 		// connect
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
-		client.connect(new InetSocketAddress(InetAddress.getLocalHost(),
-			getLocalServerPort()));
+		client.connect(getLocalServerAddress());
 
 		// create message
 		MultiplexerMessage.Builder builder = MultiplexerMessage.newBuilder();
@@ -108,16 +104,14 @@ public class TestConnectivity extends JmxServerProvidingTestCase {
 		};
 
 		// connect backend and run in new thread
-		backend.connect(new InetSocketAddress(InetAddress.getLocalHost(),
-			getLocalServerPort()));
+		backend.connect(getLocalServerAddress());
 		Thread backendThread = new Thread(backend);
 		backendThread.setName("backend main thread");
 		backendThread.start();
 
 		// connect
 		JmxClient client = new JmxClient(TestConstants.PeerTypes.TEST_CLIENT);
-		client.connect(new InetSocketAddress(InetAddress.getLocalHost(),
-			getLocalServerPort()));
+		client.connect(getLocalServerAddress());
 
 		// create message
 		MultiplexerMessage.Builder builder = MultiplexerMessage.newBuilder();

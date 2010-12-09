@@ -27,7 +27,7 @@ import org.junit.Before;
 public class JmxServerProvidingTestCase {
 
 	private JmxServerRunner jmxServerRunner;
-	
+
 	@Before
 	public void startJmxServer() throws Exception {
 		jmxServerRunner = new JmxServerRunner();
@@ -38,10 +38,6 @@ public class JmxServerProvidingTestCase {
 	public void stopJmxServer() throws Exception {
 		jmxServerRunner.stop();
 		jmxServerRunner = null;
-	}
-
-	protected int getLocalServerPort() {
-		return jmxServerRunner.getLocalServerPort();
 	}
 
 	protected InetSocketAddress getLocalServerAddress()

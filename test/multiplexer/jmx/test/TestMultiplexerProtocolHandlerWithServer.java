@@ -20,7 +20,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Random;
@@ -83,8 +82,7 @@ public class TestMultiplexerProtocolHandlerWithServer extends
 		ChannelFactory factory = new NioClientSocketChannelFactory(Executors
 			.newCachedThreadPool(), Executors.newCachedThreadPool());
 		SimpleNettyConnection c = new SimpleNettyConnection(factory,
-			new InetSocketAddress("localhost", getLocalServerPort()),
-			useLittleEndianBuffers);
+			getLocalServerAddress(), useLittleEndianBuffers);
 
 		// send out invitation
 		System.out.println("sending welcome message");

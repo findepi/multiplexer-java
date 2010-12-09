@@ -18,7 +18,6 @@ package multiplexer.jmx.test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -51,8 +50,7 @@ public class TestMultiplexerMessageWithServer extends
 		final int MULTIPLEXER = Constants.PeerTypes.MULTIPLEXER;
 		final int PYTHON_TEST_REQUEST = TestConstants.MessageTypes.TEST_REQUEST;
 
-		SimpleConnection c = new SimpleConnection(new InetSocketAddress(
-			"localhost", getLocalServerPort()));
+		SimpleConnection c = new SimpleConnection(getLocalServerAddress());
 
 		// send out invitation
 		System.out.println("sending welcome message");
