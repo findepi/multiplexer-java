@@ -68,13 +68,6 @@ public class RawMessageFrameDecoder extends
 			if (buffer.order() == ByteOrder.BIG_ENDIAN) {
 				length = Integer.reverseBytes(length);
 			}
-			checkpoint(RawMessageDecoderState.READ_CRC32);
-		case READ_CRC32:
-			crc = buffer.readInt();
-			if (buffer.order() == ByteOrder.BIG_ENDIAN) {
-				crc = Integer.reverseBytes(crc);
-			}
-			logger.trace("next message length = {}, crc = {}", length, crc);
 			if (length < 0) {
 				Channels.close(channel);
 				throw new Exception("length must be positive, not " + length);
@@ -84,17 +77,21 @@ public class RawMessageFrameDecoder extends
 				throw new Exception("length must be less than "
 					+ MAX_MESSAGE_SIZE + ", not " + length);
 			}
+			checkpoint(RawMessageDecoderState.READ_CRC32);
+		case READ_CRC32:
+			crc = buffer.readInt();
+			if (buffer.order() == ByteOrder.BIG_ENDIAN) {
+				crc = Integer.reverseBytes(crc);
+			}
+			logger.trace("next message length = {}, crc = {}", length, crc);
 			checkpoint(RawMessageDecoderState.READ_MESSAGE);
 		case READ_MESSAGE:
 			ChannelBuffer message = buffer.readBytes(length);
 			assert message.readableBytes() == length;
 			checkpoint(RawMessageDecoderState.READ_LENGTH);
 			if (!checkCrc(message)) {
-				logger
-					.warn(
-						"message of length {} with invalid checksum received over {}",
-						length, channel);
-				Channels.close(channel);
+				throw new Exception(
+						"message of length " + length + " with invalid checksum " + crc + " received over " + channel);
 			}
 			return message;
 		default:

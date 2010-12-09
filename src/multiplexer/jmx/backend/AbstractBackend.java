@@ -15,6 +15,7 @@
 
 package multiplexer.jmx.backend;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.net.SocketAddress;
@@ -59,8 +60,7 @@ import com.google.protobuf.ByteString;
  */
 public abstract class AbstractBackend implements Runnable {
 
-	private static final Logger logger = LoggerFactory
-		.getLogger(AbstractBackend.class);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractBackend.class);
 
 	/**
 	 * A handler to Multiplexer server connections.
@@ -119,8 +119,7 @@ public abstract class AbstractBackend implements Runnable {
 	 * @throws Exception
 	 * @see AbstractBackend
 	 */
-	abstract protected void handleMessage(MultiplexerMessage message)
-		throws Exception;
+	abstract protected void handleMessage(MultiplexerMessage message) throws Exception;
 
 	public void run() {
 		checkState(thread == null);
@@ -134,10 +133,7 @@ public abstract class AbstractBackend implements Runnable {
 				if (isCancelled()) {
 					return;
 				} else {
-					logger
-						.warn(
-							"worker interruped, use AbstractBackend.cancel to stop the backend cleanly",
-							e);
+					logger.warn("worker interruped, use AbstractBackend.cancel to stop the backend cleanly", e);
 					throw e;
 				}
 			}
@@ -150,26 +146,19 @@ public abstract class AbstractBackend implements Runnable {
 		try {
 			connection.flush();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.warn("final flush interruped", e);
 		}
 		try {
 			connection.shutdown();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.warn("shutdown interruped", e);
 		}
 	}
 
 	private void runOne() throws Exception {
-		lastIncomingRequest = connection.receive();
-		if (lastIncomingRequest == null) {
-			throw new NullPointerException("lastIncomingRequest");
-		}
-		lastMessage = lastIncomingRequest.getMessage();
-		if (lastMessage == null) {
-			throw new NullPointerException("lastMessage");
-		}
-		currentContext = new DefaultMessageContext(lastMessage, connection,
-			lastIncomingRequest.getConnection());
+		lastIncomingRequest = checkNotNull(connection.receive(), "lastIncomingRequest");
+		lastMessage = checkNotNull(lastIncomingRequest.getMessage(), "lastMessage");
+		currentContext = new DefaultMessageContext(lastMessage, connection, lastIncomingRequest.getConnection());
 
 		try {
 			switch (lastMessage.getType()) {
@@ -186,19 +175,16 @@ public abstract class AbstractBackend implements Runnable {
 					noResponse();
 				} else {
 					assert lastMessage.getId() != 0;
-					MultiplexerMessage.Builder response = createResponse()
-						.setType(MessageTypes.PING).setMessage(
-							lastMessage.getMessage());
-					assert response.hasReferences()
-						&& response.getReferences() != 0;
+					MultiplexerMessage.Builder response = createResponse().setType(MessageTypes.PING).setMessage(
+						lastMessage.getMessage());
+					assert response.hasReferences() && response.getReferences() != 0;
 					reply(response);
 				}
 				break;
 
 			default:
 				if (lastMessage.getType() <= MessageTypes.MAX_MULTIPLEXER_META_PACKET) {
-					logger.warn("Unable to handle meta packet of type {}",
-						lastMessage.getType());
+					logger.warn("Unable to handle meta packet of type {}", lastMessage.getType());
 				} else {
 					handleOrdinaryMessage();
 				}
@@ -217,8 +203,7 @@ public abstract class AbstractBackend implements Runnable {
 		boolean responseMissing;
 		try {
 			handleMessage(lastMessage);
-			responseMissing = !currentContext.hasSentResponse()
-				&& currentContext.isResponseRequired();
+			responseMissing = !currentContext.hasSentResponse() && currentContext.isResponseRequired();
 		} catch (Exception e) {
 			logger.warn("handleMessage threw: {}", e.getMessage());
 			reportError(e);
@@ -235,8 +220,7 @@ public abstract class AbstractBackend implements Runnable {
 		currentContext.reportError(e);
 	}
 
-	protected void reportError(String explanation)
-		throws NoPeerForTypeException {
+	protected void reportError(String explanation) throws NoPeerForTypeException {
 		assert currentContext != null;
 		currentContext.reportError(explanation);
 	}
@@ -257,8 +241,7 @@ public abstract class AbstractBackend implements Runnable {
 		return currentContext.createResponse(packetType);
 	}
 
-	protected MultiplexerMessage.Builder createResponse(int packetType,
-		ByteString message) {
+	protected MultiplexerMessage.Builder createResponse(int packetType, ByteString message) {
 		return currentContext.createResponse(packetType, message);
 	}
 

@@ -30,11 +30,9 @@ import org.slf4j.LoggerFactory;
  * @author Piotr Findeisen
  */
 @Sharable
-public class ChannelBufferFactorySettingHandler implements
-	ChannelUpstreamHandler {
+public class ChannelBufferFactorySettingHandler implements ChannelUpstreamHandler {
 
-	private static final Logger logger = LoggerFactory
-		.getLogger(ChannelBufferFactorySettingHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(ChannelBufferFactorySettingHandler.class);
 
 	/**
 	 * Internal.
@@ -48,9 +46,8 @@ public class ChannelBufferFactorySettingHandler implements
 		this.factory = factory;
 	}
 
-	public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e)
-		throws Exception {
-		logger.debug("CBFSH welcomes {}", ctx.getChannel());
+	public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e) throws Exception {
+		logger.debug("ChannelBufferFactorySettingHandler welcomes {}", ctx.getChannel());
 		e.getChannel().getConfig().setBufferFactory(factory);
 		ctx.getPipeline().remove(this);
 		ctx.sendUpstream(e);
