@@ -10,7 +10,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/slf4j-api-1.5.8.jar" sourcepath="libs/slf4j-api-1.5.8-sources.jar"/>
-	<classpathentry kind="lib" path="libs/slf4j-jdk14-1.5.8.jar" sourcepath="libs/slf4j-jdk14-1.5.8-sources.jar"/>
+	<classpathentry kind="lib" path="libs/slf4j-simple-1.5.8.jar" sourcepath="libs/slf4j-simple-1.5.8-sources.jar"/>
 	<classpathentry kind="lib" path="libs/trove-2.0.4.jar" sourcepath="libs/trove-src-2.0.4.jar"/>
 	<classpathentry kind="lib" path="libs/args4j-2.0.10.jar" sourcepath="libs/args4j-2.0.10-src.zip"/>
 	<classpathentry kind="lib" path="libs/junit-4.6.jar" sourcepath="libs/junit-4.6-src.jar"/>
