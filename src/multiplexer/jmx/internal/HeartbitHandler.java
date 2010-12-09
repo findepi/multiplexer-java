@@ -15,6 +15,7 @@
 
 package multiplexer.jmx.internal;
 
+import static org.jboss.netty.buffer.ChannelBuffers.wrappedBuffer;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 
@@ -35,31 +36,29 @@ import org.slf4j.LoggerFactory;
 @Sharable
 public class HeartbitHandler implements ChannelUpstreamHandler {
 
-	private static final Logger logger = LoggerFactory
-		.getLogger(HeartbitHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(HeartbitHandler.class);
 
-	public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e)
-		throws Exception {
+	private static final byte[] heartbitMessage = MultiplexerMessage.newBuilder().setType(MessageTypes.HEARTBIT)
+		.build().toByteArray();
+
+	public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e) throws Exception {
 
 		if (e instanceof IdleStateEvent) {
 			// The channel was idle for too long.
 			IdleStateEvent evt = (IdleStateEvent) e;
+			double idleTimeSecs = (System.currentTimeMillis() - evt.getLastActivityTimeMillis()) / 1000.0;
 			if (evt.getState() == IdleState.READER_IDLE) {
 				// No incoming HEARTBITs nor any other messages.
-				double idleTimeSecs = (System.currentTimeMillis() - evt
-					.getLastActivityTimeMillis()) / 1000.0;
-				logger.warn("Peer idle for {}s, closing connection.",
-					idleTimeSecs);
+				logger.warn("Peer idle for {}s, closing connection.", idleTimeSecs);
 				Channels.close(e.getChannel());
 
 			} else if (evt.getState() == IdleState.WRITER_IDLE) {
 				// No messages sent out, let's send a HEARTBIT.
-				Channels.write(ctx.getChannel(), MultiplexerMessage
-					.newBuilder().setType(MessageTypes.HEARTBIT).build());
+				logger.info("I was idle for {}s, sending HEARTBIT", idleTimeSecs);
+				Channels.write(ctx.getChannel(), wrappedBuffer(heartbitMessage));
 
 			} else {
-				throw new AssertionError("We do not set " + IdleState.ALL_IDLE
-					+ " idle timeouts.");
+				throw new AssertionError("We do not set " + IdleState.ALL_IDLE + " idle timeouts.");
 			}
 			return;
 		}
