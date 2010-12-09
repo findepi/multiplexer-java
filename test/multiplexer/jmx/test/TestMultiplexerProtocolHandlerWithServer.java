@@ -245,6 +245,10 @@ public class TestMultiplexerProtocolHandlerWithServer extends JmxServerProviding
 			if (this.channel != null)
 				assertSame(channel, this.channel);
 		}
+		
+		public void channelConnected(Channel channel) {
+			assertSame(channel, this.channel);			
+		}
 
 		public void channelDisconnected(Channel channel) {
 			assertSame(channel, this.channel);

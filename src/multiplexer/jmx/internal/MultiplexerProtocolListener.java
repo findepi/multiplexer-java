@@ -37,6 +37,15 @@ public interface MultiplexerProtocolListener {
 	 *            from which the message was read
 	 */
 	public void messageReceived(MultiplexerMessage message, Channel channel);
+	
+	/**
+	 * Invoked when the {@link MultiplexerProtocolHandler} receives the
+	 * information about a {@link Channel} being connected.
+	 * 
+	 * @param channel
+	 *            the connected channel
+	 */
+	public void channelConnected(Channel channel);
 
 	/**
 	 * Invoked when the {@link MultiplexerProtocolHandler} receives the

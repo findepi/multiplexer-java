@@ -266,6 +266,10 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 		logger.info("{} now has open channel {}", this, channel);
 		connectionsMap.addNew(channel);
 	}
+	
+	public void channelConnected(Channel channel) {
+		logger.info("{} now has connected channel {}", this, channel);
+	}
 
 	public void channelDisconnected(Channel channel) {
 		assert !channel.isConnected();

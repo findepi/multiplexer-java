@@ -40,27 +40,29 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
 	private static final int DEBUG_MESSAGE_MAX_LENGTH = 256;
 
-	private static final Logger logger = LoggerFactory
-		.getLogger(MultiplexerProtocolHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(MultiplexerProtocolHandler.class);
 
-	private MultiplexerProtocolListener protocolListener;
+	private final MultiplexerProtocolListener protocolListener;
 
-	public MultiplexerProtocolHandler(
-		MultiplexerProtocolListener protocolListener) {
+	public MultiplexerProtocolHandler(MultiplexerProtocolListener protocolListener) {
 		this.protocolListener = protocolListener;
 	}
 
 	@Override
-	public void channelDisconnected(ChannelHandlerContext ctx,
-		ChannelStateEvent e) throws Exception {
+	public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
 
 		protocolListener.channelDisconnected(e.getChannel());
 		ctx.sendUpstream(e);
 	}
 
 	@Override
-	public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e)
-		throws Exception {
+	public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
+		protocolListener.channelConnected(e.getChannel());
+		ctx.sendUpstream(e);
+	}
+
+	@Override
+	public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
 
 		protocolListener.channelOpen(e.getChannel());
 		ctx.sendUpstream(e);
@@ -107,14 +109,12 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 		Channels.close(channel);
 	}
 
-	private static MultiplexerMessage makeShortDebugMessage(
-		MultiplexerMessage message) {
+	private static MultiplexerMessage makeShortDebugMessage(MultiplexerMessage message) {
 		if (message.getMessage().size() < DEBUG_MESSAGE_MAX_LENGTH) {
 			return message;
 		} else {
 			return message.toBuilder().setMessage(
-				ByteString.copyFromUtf8("<message length="
-					+ message.getMessage().size() + ">")).build();
+				ByteString.copyFromUtf8("<message length=" + message.getMessage().size() + ">")).build();
 		}
 	}
 }
