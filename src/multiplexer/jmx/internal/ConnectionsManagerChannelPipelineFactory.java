@@ -37,15 +37,15 @@ public class ConnectionsManagerChannelPipelineFactory implements
 	private final Timer timer;
 
 	// Encoders
-	final private RawMessageFrameEncoder rawMessageEncoder = new RawMessageFrameEncoder();
-	final private ProtobufEncoder multiplexerMessageEncoder = new ProtobufEncoder();
+	private static final RawMessageFrameEncoder rawMessageEncoder = new RawMessageFrameEncoder();
+	private static final ProtobufEncoder multiplexerMessageEncoder = new ProtobufEncoder();
 	// Decoders
-	final private ProtobufDecoder multiplexerMessageDecoder = new ProtobufDecoder(
+	private static final ProtobufDecoder multiplexerMessageDecoder = new ProtobufDecoder(
 		Protocol.MultiplexerMessage.getDefaultInstance());
 	// Heartbits
-	final private HeartbitHandler heartbitHandler = new HeartbitHandler();
+	private static final HeartbitHandler heartbitHandler = new HeartbitHandler();
 	// Protocol handler
-	final private MultiplexerProtocolHandler multiplexerProtocolHandler;
+	private final MultiplexerProtocolHandler multiplexerProtocolHandler;
 
 	ConnectionsManagerChannelPipelineFactory(Timer timer,
 		MultiplexerProtocolListener protocolListener) {
