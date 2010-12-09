@@ -45,6 +45,8 @@ import multiplexer.protocol.Protocol.MultiplexerMessage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.TextFormat.ParseException;
@@ -53,6 +55,8 @@ import com.google.protobuf.TextFormat.ParseException;
  * @author Piotr Findeisen
  */
 public class TestThreadsShutdown {
+
+	private static final Logger logger = LoggerFactory.getLogger(TestThreadsShutdown.class);
 
 	private int initialActiveCount;
 	private Thread[] threads;
@@ -81,8 +85,7 @@ public class TestThreadsShutdown {
 		Thread[] threads = new Thread[activeCount + 1];
 		int numberCopied = Thread.enumerate(threads);
 		if (numberCopied != activeCount) {
-			System.err.println("# of threds changed from " + activeCount
-				+ " to " + numberCopied + " during enumeration.");
+			logger.error("# of threds changed from " + activeCount + " to " + numberCopied + " during enumeration.");
 		}
 
 		Set<Thread> activeThreads = new HashSet<Thread>(Arrays.asList(threads));
@@ -90,22 +93,16 @@ public class TestThreadsShutdown {
 			if (th == null)
 				continue;
 			if (!activeThreads.contains(th))
-				fail("Thread " + th + " is no longer alive (active now = "
-					+ activeCount + ", at startup = " + initialActiveCount
-					+ ")");
+				fail("Thread " + th + " is no longer alive (active now = " + activeCount + ", at startup = " + initialActiveCount + ")");
 		}
 
-		Set<Thread> activeAtStartup = new HashSet<Thread>(Arrays
-			.asList(this.threads));
+		Set<Thread> activeAtStartup = new HashSet<Thread>(Arrays.asList(this.threads));
 		for (Thread th : threads) {
 			if (th == null)
 				continue;
 			if (!activeAtStartup.contains(th))
-				fail("Thread "
-					+ th
-					+ " was not active at startup but is active now (active now = "
-					+ activeCount + ", at startup = " + initialActiveCount
-					+ ")");
+				fail("Thread " + th + " was not active at startup but is active now (active now = " + activeCount + ", at startup = "
+					+ initialActiveCount + ")");
 		}
 
 		// assertEquals("this should not be triggered", initialActiveCount,
@@ -123,8 +120,7 @@ public class TestThreadsShutdown {
 	}
 
 	@Test
-	public void testJmxClientConnecting() throws ConnectException,
-		InterruptedException {
+	public void testJmxClientConnecting() throws ConnectException, InterruptedException {
 		JmxClient client = new JmxClient(PeerTypes.TEST_CLIENT);
 		try {
 			client.connect(new InetSocketAddress("127.0.0.1", 1));
@@ -136,16 +132,14 @@ public class TestThreadsShutdown {
 	}
 
 	@Test
-	public void testJmxClientAsyncConnectingNoWait() throws ConnectException,
-		InterruptedException {
+	public void testJmxClientAsyncConnectingNoWait() throws ConnectException, InterruptedException {
 		JmxClient client = new JmxClient(PeerTypes.TEST_CLIENT);
 		client.asyncConnect(new InetSocketAddress("127.0.0.1", 1));
 		client.shutdown();
 	}
 
 	@Test
-	public void testJmxClientAsyncConnecting() throws ConnectException,
-		InterruptedException {
+	public void testJmxClientAsyncConnecting() throws ConnectException, InterruptedException {
 		JmxClient client = new JmxClient(PeerTypes.TEST_CLIENT);
 		client.asyncConnect(new InetSocketAddress("127.0.0.1", 1));
 		Thread.sleep(100);
@@ -192,9 +186,7 @@ public class TestThreadsShutdown {
 	}
 
 	@Test
-	public void testJmxClientAndServer() throws ParseException,
-		FileNotFoundException, IOException, InterruptedException,
-		ConnectException {
+	public void testJmxClientAndServer() throws ParseException, FileNotFoundException, IOException, InterruptedException, ConnectException {
 		JmxServerRunner serverRunner = new JmxServerRunner();
 		serverRunner.start();
 		JmxClient client = new JmxClient(PeerTypes.TEST_CLIENT);
@@ -204,19 +196,16 @@ public class TestThreadsShutdown {
 	}
 
 	@Test
-	public void testJmxClientServerAndMessage() throws ParseException,
-		FileNotFoundException, IOException, InterruptedException,
+	public void testJmxClientServerAndMessage() throws ParseException, FileNotFoundException, IOException, InterruptedException,
 		ConnectException, NoPeerForTypeException {
 
 		JmxServerRunner serverRunner = new JmxServerRunner();
 		serverRunner.start();
 		JmxClient client = new JmxClient(PeerTypes.TEST_CLIENT);
 		client.connect(serverRunner.getLocalServerAddress());
-		MultiplexerMessage message = client.createMessageBuilder().setMessage(
-			ByteString.copyFromUtf8("test string")).setType(
+		MultiplexerMessage message = client.createMessageBuilder().setMessage(ByteString.copyFromUtf8("test string")).setType(
 			MessageTypes.TEST_REQUEST).setTo(client.getInstanceId()).build();
-		assertEquals(ByteString.copyFromUtf8("test string"), message
-			.getMessage());
+		assertEquals(ByteString.copyFromUtf8("test string"), message.getMessage());
 		client.send(message, SendingMethod.THROUGH_ONE);
 		IncomingMessageData incoming = client.receive(1, TimeUnit.SECONDS);
 		assertNotNull(incoming);
@@ -228,8 +217,7 @@ public class TestThreadsShutdown {
 	}
 
 	@Test
-	public void testJmxClientServerAndBackend() throws ParseException,
-		FileNotFoundException, IOException, InterruptedException,
+	public void testJmxClientServerAndBackend() throws ParseException, FileNotFoundException, IOException, InterruptedException,
 		ConnectException, NoPeerForTypeException {
 
 		JmxServerRunner serverRunner = new JmxServerRunner();
@@ -249,26 +237,21 @@ public class TestThreadsShutdown {
 	}
 
 	@Test
-	public void testJmxClientServerBackendAndQuery() throws ParseException,
-		FileNotFoundException, IOException, InterruptedException,
+	public void testJmxClientServerBackendAndQuery() throws ParseException, FileNotFoundException, IOException, InterruptedException,
 		ConnectException, NoPeerForTypeException, OperationFailedException {
 
 		testJmxClientServerBackendAndQuery(1);
 	}
 
 	@Test
-	public void testJmxClientServerBackendAndMultipleQuery()
-		throws ParseException, FileNotFoundException, IOException,
-		InterruptedException, ConnectException, NoPeerForTypeException,
-		OperationFailedException {
+	public void testJmxClientServerBackendAndMultipleQuery() throws ParseException, FileNotFoundException, IOException,
+		InterruptedException, ConnectException, NoPeerForTypeException, OperationFailedException {
 
 		testJmxClientServerBackendAndQuery(1000);
 	}
 
-	public void testJmxClientServerBackendAndQuery(int times)
-		throws ParseException, FileNotFoundException, IOException,
-		InterruptedException, ConnectException, NoPeerForTypeException,
-		OperationFailedException {
+	public void testJmxClientServerBackendAndQuery(int times) throws ParseException, FileNotFoundException, IOException,
+		InterruptedException, ConnectException, NoPeerForTypeException, OperationFailedException {
 
 		JmxServerRunner serverRunner = new JmxServerRunner();
 		serverRunner.start();
@@ -283,8 +266,7 @@ public class TestThreadsShutdown {
 
 		final ByteString queryString = ByteString.copyFromUtf8("test message");
 		for (int i = 0; i < times; i++) {
-			IncomingMessageData msgData = client.query(queryString,
-				TestConstants.MessageTypes.TEST_REQUEST, 2000);
+			IncomingMessageData msgData = client.query(queryString, TestConstants.MessageTypes.TEST_REQUEST, 2000);
 			assertEquals(queryString, msgData.getMessage().getMessage());
 		}
 
@@ -295,11 +277,9 @@ public class TestThreadsShutdown {
 	}
 
 	private AbstractBackend createEchoBackend() {
-		AbstractBackend backend = new AbstractBackend(
-			TestConstants.PeerTypes.TEST_SERVER) {
+		AbstractBackend backend = new AbstractBackend(TestConstants.PeerTypes.TEST_SERVER) {
 			@Override
-			protected void handleMessage(MultiplexerMessage message)
-				throws Exception {
+			protected void handleMessage(MultiplexerMessage message) throws Exception {
 				// reply with the same message, directly to the sender
 				reply(createResponse(message.getType(), message.getMessage()));
 			}

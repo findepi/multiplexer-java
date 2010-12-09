@@ -50,6 +50,8 @@ import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.handler.codec.protobuf.ProtobufDecoder;
 import org.jboss.netty.handler.codec.protobuf.ProtobufEncoder;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ByteString.Output;
@@ -58,8 +60,9 @@ import com.google.protobuf.ByteString.Output;
  * @author Kasia Findeisen
  * @author Piotr Findeisen
  */
-public class TestMultiplexerProtocolHandlerWithServer extends
-	JmxServerProvidingTestCase {
+public class TestMultiplexerProtocolHandlerWithServer extends JmxServerProvidingTestCase {
+
+	private static final Logger logger = LoggerFactory.getLogger(TestMultiplexerProtocolHandlerWithServer.class);
 
 	@Test
 	public void testSimpleNettyConnectionWithLEBuffers() throws Exception {
@@ -71,29 +74,25 @@ public class TestMultiplexerProtocolHandlerWithServer extends
 		testSimpleNettyConnection(false);
 	}
 
-	private void testSimpleNettyConnection(boolean useLittleEndianBuffers)
-		throws Exception {
+	private void testSimpleNettyConnection(boolean useLittleEndianBuffers) throws Exception {
 
 		final int PYTHON_TEST_SERVER = TestConstants.PeerTypes.TEST_SERVER;
 		final int CONNECTION_WELCOME = Constants.MessageTypes.CONNECTION_WELCOME;
 		final int MULTIPLEXER = Constants.PeerTypes.MULTIPLEXER;
 		final int PYTHON_TEST_REQUEST = TestConstants.MessageTypes.TEST_REQUEST;
 
-		ChannelFactory factory = new NioClientSocketChannelFactory(Executors
-			.newCachedThreadPool(), Executors.newCachedThreadPool());
-		SimpleNettyConnection c = new SimpleNettyConnection(factory,
-			getLocalServerAddress(), useLittleEndianBuffers);
+		ChannelFactory factory = new NioClientSocketChannelFactory(Executors.newCachedThreadPool(), Executors.newCachedThreadPool());
+		SimpleNettyConnection c = new SimpleNettyConnection(factory, getLocalServerAddress(), useLittleEndianBuffers);
 
 		// send out invitation
-		System.out.println("sending welcome message");
-		ByteString message = WelcomeMessage.newBuilder().setType(
-			PYTHON_TEST_SERVER).setId(c.getInstanceId()).build().toByteString();
+		logger.info("sending welcome message");
+		ByteString message = WelcomeMessage.newBuilder().setType(PYTHON_TEST_SERVER).setId(c.getInstanceId()).build().toByteString();
 		c.sendMessage(message, CONNECTION_WELCOME).future.await();
 
 		// receive the invitation
-		System.out.println("waiting for welcome message");
+		logger.info("waiting for welcome message");
 		MultiplexerMessage mxmsg = c.receiveMessage();
-		System.out.println("validating welcome message");
+		logger.info("validating welcome message");
 		assertEquals(mxmsg.getType(), CONNECTION_WELCOME);
 		WelcomeMessage peer = WelcomeMessage.parseFrom(mxmsg.getMessage());
 		assertEquals(peer.getType(), MULTIPLEXER);
@@ -101,8 +100,7 @@ public class TestMultiplexerProtocolHandlerWithServer extends
 
 		// send a stupid search_query
 		ArrayList<Byte> sq = new ArrayList<Byte>();
-		for (byte d : "this is a search query with null (\\x00) bytes and other "
-			.getBytes())
+		for (byte d : "this is a search query with null (\\x00) bytes and other ".getBytes())
 			sq.add(d);
 		for (int i = Byte.MIN_VALUE; i <= Byte.MAX_VALUE; i++)
 			sq.add((byte) i);
@@ -111,11 +109,11 @@ public class TestMultiplexerProtocolHandlerWithServer extends
 		for (byte d : sq)
 			sqo.write(d);
 
-		System.out.println("sending sample search query");
+		logger.info("sending sample search query");
 		long id = c.sendMessage(sqo.toByteString(), PYTHON_TEST_REQUEST).messageId;
-		System.out.println("waiting for sample search query");
+		logger.info("waiting for sample search query");
 		mxmsg = c.receiveMessage();
-		System.out.println("validating sample search query");
+		logger.info("validating sample search query");
 		assertEquals(mxmsg.getId(), id);
 		assertEquals(mxmsg.getType(), PYTHON_TEST_REQUEST);
 		assertEquals(mxmsg.getMessage(), sqo.toByteString());
@@ -128,11 +126,11 @@ public class TestMultiplexerProtocolHandlerWithServer extends
 			lqo.write(rand.nextInt());
 		ByteString query = lqo.toByteString();
 		assertEquals(query.size(), size);
-		System.out.println("sending large search query");
+		logger.info("sending large search query");
 		id = c.sendMessage(query, PYTHON_TEST_REQUEST).messageId;
-		System.out.println("waiting for large search query");
+		logger.info("waiting for large search query");
 		mxmsg = c.receiveMessage();
-		System.out.println("validating large search query");
+		logger.info("validating large search query");
 		assertEquals(mxmsg.getId(), id);
 		assertEquals(mxmsg.getType(), PYTHON_TEST_REQUEST);
 		assertEquals(mxmsg.getMessage(), query);
@@ -141,8 +139,7 @@ public class TestMultiplexerProtocolHandlerWithServer extends
 		factory.releaseExternalResources();
 	}
 
-	public static class SimpleNettyConnection implements
-		MultiplexerProtocolListener {
+	public static class SimpleNettyConnection implements MultiplexerProtocolListener {
 
 		private final long instanceId;
 		private boolean connected = false;
@@ -151,26 +148,22 @@ public class TestMultiplexerProtocolHandlerWithServer extends
 
 		private volatile SocketChannel channel;
 
-		public SimpleNettyConnection(ChannelFactory factory,
-			SocketAddress address, boolean useLittleEndianBuffers)
+		public SimpleNettyConnection(ChannelFactory factory, SocketAddress address, boolean useLittleEndianBuffers)
 			throws InterruptedException {
 
 			instanceId = new Random().nextLong();
 
-			ChannelFuture connectFuture = asyncConnect(factory, address,
-				useLittleEndianBuffers);
+			ChannelFuture connectFuture = asyncConnect(factory, address, useLittleEndianBuffers);
 			connectFuture.addListener(new ChannelFutureListener() {
 
-				public void operationComplete(ChannelFuture future)
-					throws Exception {
+				public void operationComplete(ChannelFuture future) throws Exception {
 					assertTrue(future.isSuccess());
 				}
 			});
 			connectFuture.await();
 		}
 
-		private ChannelFuture asyncConnect(ChannelFactory factory,
-			SocketAddress address, boolean useLittleEndianBuffers) {
+		private ChannelFuture asyncConnect(ChannelFactory factory, SocketAddress address, boolean useLittleEndianBuffers) {
 			assert !connected;
 			assert !connecting;
 			connecting = true;
@@ -184,34 +177,27 @@ public class TestMultiplexerProtocolHandlerWithServer extends
 
 			// Configuration
 			if (useLittleEndianBuffers) {
-				pipeline
-					.addFirst(
-						"littleEndianEndiannessSetter",
-						ChannelBufferFactorySettingHandler.LITTLE_ENDIAN_BUFFER_FACTORY_SETTER);
+				pipeline.addFirst("littleEndianEndiannessSetter", ChannelBufferFactorySettingHandler.LITTLE_ENDIAN_BUFFER_FACTORY_SETTER);
 			}
 
 			// Encoders
 			pipeline.addLast("rawMessageEncoder", new RawMessageFrameEncoder());
-			pipeline
-				.addLast("multiplexerMessageEncoder", new ProtobufEncoder());
+			pipeline.addLast("multiplexerMessageEncoder", new ProtobufEncoder());
 
 			// Decoders
 			pipeline.addLast("rawMessageDecoder", new RawMessageFrameDecoder());
-			pipeline.addLast("multiplexerMessageDecoder", new ProtobufDecoder(
-				Protocol.MultiplexerMessage.getDefaultInstance()));
+			pipeline.addLast("multiplexerMessageDecoder", new ProtobufDecoder(Protocol.MultiplexerMessage.getDefaultInstance()));
 
 			// Protocol handler
-			pipeline.addLast("multiplexerProtocolHandler",
-				new MultiplexerProtocolHandler(this));
+			pipeline.addLast("multiplexerProtocolHandler", new MultiplexerProtocolHandler(this));
 
 			ChannelFuture connectOperation = bootstrap.connect(address);
 			channel = (SocketChannel) connectOperation.getChannel();
 			connectOperation.addListener(new ChannelFutureListener() {
 
-				public void operationComplete(ChannelFuture future)
-					throws Exception {
+				public void operationComplete(ChannelFuture future) throws Exception {
 
-					System.err.println("connected");
+					logger.info("connected");
 					assert future.isDone();
 					assert !connected;
 					assert connecting;
@@ -237,9 +223,8 @@ public class TestMultiplexerProtocolHandlerWithServer extends
 		}
 
 		public SendingResult sendMessage(ByteString message, int type) {
-			MultiplexerMessage mxmsg = MultiplexerMessage.newBuilder().setId(
-				new Random().nextLong()).setFrom(getInstanceId()).setType(type)
-				.setMessage(message).build();
+			MultiplexerMessage mxmsg = MultiplexerMessage.newBuilder().setId(new Random().nextLong()).setFrom(getInstanceId())
+				.setType(type).setMessage(message).build();
 
 			return new SendingResult(channel.write(mxmsg), mxmsg.getId());
 		}
@@ -272,8 +257,7 @@ public class TestMultiplexerProtocolHandlerWithServer extends
 
 		@Override
 		public String toString() {
-			return SimpleNettyConnection.class.getSimpleName() + "(id="
-				+ instanceId + ")";
+			return SimpleNettyConnection.class.getSimpleName() + "(id=" + instanceId + ")";
 		}
 	}
 }

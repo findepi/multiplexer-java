@@ -303,7 +303,7 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 		}
 		if (serverThread == null) {
 			// Perform the IO outside of synchronized block.
-			System.err.println("There is no serverThread to be shut down.");
+			logger.warn("There is no serverThread to be shut down.");
 		}
 	}
 

@@ -329,9 +329,6 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 			}
 
 			// Check multiplexerPassword
-			System.err.println((channel + " my: "
-				+ multiplexerPassword.toStringUtf8() + " their: " + welcome
-				.getMultiplexerPassword().toStringUtf8()));
 			if (multiplexerPassword.size() > 0
 				&& !multiplexerPassword
 					.equals(welcome.getMultiplexerPassword())) {

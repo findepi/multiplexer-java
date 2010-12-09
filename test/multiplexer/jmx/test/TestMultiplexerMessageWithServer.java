@@ -32,6 +32,8 @@ import multiplexer.protocol.Protocol.MultiplexerMessage;
 import multiplexer.protocol.Protocol.WelcomeMessage;
 
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.ByteString.Output;
@@ -41,7 +43,10 @@ import com.google.protobuf.ByteString.Output;
  */
 public class TestMultiplexerMessageWithServer extends
 	JmxServerProvidingTestCase {
-	
+
+	private static final Logger logger = LoggerFactory
+		.getLogger(TestMultiplexerMessageWithServer.class);
+
 	@Test
 	public void testSimpleConnection() throws Exception {
 
@@ -53,15 +58,15 @@ public class TestMultiplexerMessageWithServer extends
 		SimpleConnection c = new SimpleConnection(getLocalServerAddress());
 
 		// send out invitation
-		System.out.println("sending welcome message");
+		logger.info("sending welcome message");
 		ByteString message = WelcomeMessage.newBuilder().setType(
 			PYTHON_TEST_SERVER).setId(c.getInstanceId()).build().toByteString();
 		c.send_message(message, CONNECTION_WELCOME);
 
 		// receive the invitation
-		System.out.println("waiting for welcome message");
+		logger.info("waiting for welcome message");
 		MultiplexerMessage mxmsg = c.receive_message();
-		System.out.println("validating welcome message");
+		logger.info("validating welcome message");
 		assert mxmsg.getType() == CONNECTION_WELCOME;
 		WelcomeMessage peer = WelcomeMessage.parseFrom(mxmsg.getMessage());
 		assert peer.getType() == MULTIPLEXER;
@@ -79,11 +84,11 @@ public class TestMultiplexerMessageWithServer extends
 		for (byte d : sq)
 			sqo.write(d);
 
-		System.out.println("sending sample search query");
+		logger.info("sending sample search query");
 		long id = c.send_message(sqo.toByteString(), PYTHON_TEST_REQUEST);
-		System.out.println("waiting for sample search query");
+		logger.info("waiting for sample search query");
 		mxmsg = c.receive_message();
-		System.out.println("validating sample search query");
+		logger.info("validating sample search query");
 		assert mxmsg.getId() == id;
 		assert mxmsg.getType() == PYTHON_TEST_REQUEST;
 		assert mxmsg.getMessage().equals(sqo.toByteString());
@@ -126,7 +131,7 @@ public class TestMultiplexerMessageWithServer extends
 				.setMessage(message).build();
 
 			byte[] body = mxmsg.toByteArray();
-			System.out.println("sending " + body.length + " bytes ("
+			logger.info("sending " + body.length + " bytes ("
 				+ message.size() + " meaningful)");
 			ByteBuffer buffer = ByteBuffer
 				.allocate(header_length + body.length);
@@ -158,7 +163,7 @@ public class TestMultiplexerMessageWithServer extends
 			body_sum.update(body);
 			assert (int) body_sum.getValue() == crc32;
 			MultiplexerMessage mxmsg = MultiplexerMessage.parseFrom(body);
-			System.out.println("received " + body.length + " bytes ("
+			logger.info("received " + body.length + " bytes ("
 				+ mxmsg.getMessage().size() + " meaningful)");
 			return mxmsg;
 		}
