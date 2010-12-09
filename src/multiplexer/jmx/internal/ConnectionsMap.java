@@ -163,7 +163,7 @@ public class ConnectionsMap {
 
 		List<Channel> list = channelsByType.get(peerType);
 		if (list == null || list.size() == 0)
-			throw new NoPeerForTypeException();
+			throw new NoPeerForTypeException("" + peerType);
 
 		Channel anyChannel;
 		while (list.size() > 0) {
@@ -173,7 +173,7 @@ public class ConnectionsMap {
 				return anyChannel;
 			}
 		}
-		throw new NoPeerForTypeException();
+		throw new NoPeerForTypeException("" + peerType);
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class ConnectionsMap {
 	public Iterator<Channel> getAll(int peerType) throws NoPeerForTypeException {
 		List<Channel> list = channelsByType.get(peerType);
 		if (list == null || list.size() == 0)
-			throw new NoPeerForTypeException();
+			throw new NoPeerForTypeException("" + peerType);
 		return list.iterator();
 	}
 
@@ -207,7 +207,7 @@ public class ConnectionsMap {
 			channel = channelsByPeerId.get(peerId);
 		}
 		if (channel == null)
-			throw new NoPeerForPeerIdException();
+			throw new NoPeerForPeerIdException("" + peerId);
 
 		return channel;
 	}

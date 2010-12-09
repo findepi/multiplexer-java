@@ -54,7 +54,7 @@ public class HeartbitHandler implements ChannelUpstreamHandler {
 
 			} else if (evt.getState() == IdleState.WRITER_IDLE) {
 				// No messages sent out, let's send a HEARTBIT.
-				logger.info("I was idle for {}s over {}, sending HEARTBIT", idleTimeSecs, e.getChannel());
+				logger.debug("I was idle for {}s over {}, sending HEARTBIT", idleTimeSecs, e.getChannel());
 				Channels.write(e.getChannel(), wrappedBuffer(heartbitMessage));
 
 			} else {
@@ -67,6 +67,7 @@ public class HeartbitHandler implements ChannelUpstreamHandler {
 			Object message = ((MessageEvent) e).getMessage();
 			if (message instanceof MultiplexerMessage
 				&& ((MultiplexerMessage) message).getType() == MessageTypes.HEARTBIT) {
+				logger.debug("Received HEARTBIT over {}", e.getChannel());
 				// Don't pass on incoming HEARTBITs, they already served their
 				// purpose.
 				return;

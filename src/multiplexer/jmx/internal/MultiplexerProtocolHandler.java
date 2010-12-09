@@ -77,10 +77,12 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 		}
 
 		MultiplexerMessage message = (MultiplexerMessage) e.getMessage();
+		logger.debug("Received over {} {} msg.type={}", new Object[] { e.getChannel(), protocolListener,
+			message.getType() });
+		if (logger.isTraceEnabled()) {
+			logger.trace("Received over {}\n{}", e.getChannel(), makeShortDebugMessage(message));
+		}
 		if (message.getType() != MessageTypes.HEARTBIT) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Received over {}\n{}", e.getChannel(), makeShortDebugMessage(message));
-			}
 			protocolListener.messageReceived(message, e.getChannel());
 		}
 	}
@@ -88,11 +90,12 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 	@Override
 	public void writeRequested(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
 
-		if (logger.isDebugEnabled() && e.getMessage() instanceof MultiplexerMessage) {
+		if ((logger.isDebugEnabled() || logger.isTraceEnabled()) && (e.getMessage() instanceof MultiplexerMessage)) {
 			MultiplexerMessage message = (MultiplexerMessage) e.getMessage();
-
-			if (message.getType() != MessageTypes.HEARTBIT) {
-				logger.debug("Writing over {}\n{}", e.getChannel(), makeShortDebugMessage(message));
+			logger.debug("Writing over {} {}, msg.type={}", new Object[] { e.getChannel(), protocolListener,
+				message.getType() });
+			if (logger.isTraceEnabled()) {
+				logger.trace("Writing over {}\n{}", e.getChannel(), makeShortDebugMessage(message));
 			}
 		}
 

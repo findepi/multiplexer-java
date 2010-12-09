@@ -413,7 +413,8 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 	public void onMessageReceived(MultiplexerMessage message,
 		Connection connection) {
 
-		logger.debug("message received\n{}\n", message);
+		logger.debug("message received, type=" + message.getType());
+		logger.trace("message received\n{}\n", message);
 
 		// routing based on to
 		if (message.hasTo()) {
@@ -501,8 +502,10 @@ public class JmxServer implements MessageReceivedListener, Runnable {
 					break;
 				}
 			}
-			logger.warn("don't know what to do with message type {} ({})",
-				message.getType(), getMessageTypeName(message.getType()));
+			if (logger.isWarnEnabled()) {
+				logger.warn("don't know what to do with message type {} ({})",
+					message.getType(), getMessageTypeName(message.getType()));
+			}
 			break;
 		}
 	}

@@ -20,7 +20,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static multiplexer.jmx.util.Channels.awaitSemiInterruptibly;
 
 import java.lang.ref.WeakReference;
-import java.math.BigInteger;
 import java.net.SocketAddress;
 import java.util.Iterator;
 import java.util.Map;
@@ -63,7 +62,6 @@ import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.TextFormat;
 
 /**
  * A class for connections management, instantiated by any Multiplexer server's
@@ -156,10 +154,10 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 	public ConnectionsManager(final int instanceType, Executor bossExecutor,
 		Executor workerExecutor) {
 
-		this(instanceType, new ClientBootstrap(
-			new NioClientSocketChannelFactory(bossExecutor, workerExecutor)));
+		this(instanceType, new ClientBootstrap(new NioClientSocketChannelFactory(
+			bossExecutor, workerExecutor)));
 	}
-
+	
 	public ConnectionsManager(final int instanceType, Bootstrap bootstrap) {
 
 		this.instanceType = instanceType;
@@ -506,6 +504,7 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 				return;
 			shuttingDown = true;
 		}
+		logger.info("{} is shutting down", this);
 		// Timer stop is also invoked from
 		// IdleStateHandler.releaseExternalResources() if any Channels are
 		// created.
@@ -521,10 +520,11 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 
 	@Override
 	public String toString() {
+		// TODO cache it, like in org.jboss.netty.channel.AbstractChannel
 		StringBuilder str = new StringBuilder(128);
 		str.append(ConnectionsManager.class.getSimpleName()).append("(type=")
-			.append(instanceType).append(", id=").append(
-				unsignedToString(instanceId));
+			.append(instanceType).append(", id=0x").append(
+				Long.toHexString(instanceId));
 		if (shuttingDown)
 			str.append(", shut");
 		str.append(")");
@@ -537,23 +537,6 @@ public class ConnectionsManager implements MultiplexerProtocolListener {
 		return channel + "[type="
 			+ firstNonNull(connectionsMap.getChannelPeerType(channel), "?")
 			+ "]";
-	}
-
-	/**
-	 * Convert an unsigned 64-bit integer to a string. Copied shamelessly from
-	 * {@link TextFormat}.
-	 */
-	private static String unsignedToString(long value) {
-		if (value >= 0) {
-			return Long.toString(value);
-		} else {
-			/*
-			 * Pull off the most-significant bit so that BigInteger doesn't
-			 * think the number is negative, then set it again using setBit().
-			 */
-			return BigInteger.valueOf(value & 0x7FFFFFFFFFFFFFFFL).setBit(63)
-				.toString();
-		}
 	}
 
 	@Override
