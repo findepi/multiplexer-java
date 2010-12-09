@@ -47,7 +47,7 @@ public class ChannelBufferFactorySettingHandler implements ChannelUpstreamHandle
 	}
 
 	public void handleUpstream(ChannelHandlerContext ctx, ChannelEvent e) throws Exception {
-		logger.debug("ChannelBufferFactorySettingHandler welcomes {}", ctx.getChannel());
+		logger.debug("ChannelBufferFactorySettingHandler welcomes {}", e.getChannel());
 		e.getChannel().getConfig().setBufferFactory(factory);
 		ctx.getPipeline().remove(this);
 		ctx.sendUpstream(e);

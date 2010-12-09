@@ -49,13 +49,13 @@ public class HeartbitHandler implements ChannelUpstreamHandler {
 			double idleTimeSecs = (System.currentTimeMillis() - evt.getLastActivityTimeMillis()) / 1000.0;
 			if (evt.getState() == IdleState.READER_IDLE) {
 				// No incoming HEARTBITs nor any other messages.
-				logger.warn("Peer idle for {}s, closing connection.", idleTimeSecs);
+				logger.warn("Peer idle for {}s over {}, closing connection.", idleTimeSecs, e.getChannel());
 				Channels.close(e.getChannel());
 
 			} else if (evt.getState() == IdleState.WRITER_IDLE) {
 				// No messages sent out, let's send a HEARTBIT.
-				logger.info("I was idle for {}s, sending HEARTBIT", idleTimeSecs);
-				Channels.write(ctx.getChannel(), wrappedBuffer(heartbitMessage));
+				logger.info("I was idle for {}s over {}, sending HEARTBIT", idleTimeSecs, e.getChannel());
+				Channels.write(e.getChannel(), wrappedBuffer(heartbitMessage));
 
 			} else {
 				throw new AssertionError("We do not set " + IdleState.ALL_IDLE + " idle timeouts.");

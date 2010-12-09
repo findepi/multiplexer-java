@@ -18,6 +18,7 @@ package multiplexer.jmx.internal;
 import multiplexer.protocol.Constants.MessageTypes;
 import multiplexer.protocol.Protocol.MultiplexerMessage;
 
+import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.Channels;
@@ -36,6 +37,8 @@ import com.google.protobuf.ByteString;
  */
 @Sharable
 public class MultiplexerProtocolHandler extends SimpleChannelHandler {
+
+	private static final int DEBUG_MESSAGE_MAX_LENGTH = 256;
 
 	private static final Logger logger = LoggerFactory
 		.getLogger(MultiplexerProtocolHandler.class);
@@ -74,26 +77,20 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 		MultiplexerMessage message = (MultiplexerMessage) e.getMessage();
 		if (message.getType() != MessageTypes.HEARTBIT) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Received\n{}", makeShortDebugMessage(message));
+				logger.debug("Received over {}\n{}", e.getChannel(), makeShortDebugMessage(message));
 			}
-			protocolListener.messageReceived(message, ctx.getChannel());
+			protocolListener.messageReceived(message, e.getChannel());
 		}
 	}
 
 	@Override
-	public void writeRequested(ChannelHandlerContext ctx, MessageEvent e)
-		throws Exception {
-		
-		if (!(e.getMessage() instanceof MultiplexerMessage)) {
-			ctx.sendDownstream(e);
-			return;
-		}
+	public void writeRequested(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
 
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && e.getMessage() instanceof MultiplexerMessage) {
 			MultiplexerMessage message = (MultiplexerMessage) e.getMessage();
 
 			if (message.getType() != MessageTypes.HEARTBIT) {
-				logger.debug("Writing\n{}", makeShortDebugMessage(message));
+				logger.debug("Writing over {}\n{}", e.getChannel(), makeShortDebugMessage(message));
 			}
 		}
 
@@ -102,21 +99,17 @@ public class MultiplexerProtocolHandler extends SimpleChannelHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
+		Channel channel = e.getChannel();
 		if (logger.isWarnEnabled()) {
-			logger
-				.warn("Unhandled exception on "
-					+ ctx.getChannel()
-					+ ", open="
-					+ (ctx.getChannel() != null ? ctx.getChannel().isOpen()
-						: "null") + ", manager=" + protocolListener, e
-					.getCause());
+			logger.warn("Unhandled exception on " + channel + ", open=" + (channel != null ? channel.isOpen() : "null")
+				+ ", manager=" + protocolListener, e.getCause());
 		}
-		Channels.close(e.getChannel());
+		Channels.close(channel);
 	}
 
 	private static MultiplexerMessage makeShortDebugMessage(
 		MultiplexerMessage message) {
-		if (message.getMessage().size() < 256) {
+		if (message.getMessage().size() < DEBUG_MESSAGE_MAX_LENGTH) {
 			return message;
 		} else {
 			return message.toBuilder().setMessage(
