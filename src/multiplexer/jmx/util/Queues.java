@@ -26,18 +26,24 @@ public class Queues {
 	private Queues() {
 	}
 
-	public static <E> E pollUninterruptibly(BlockingQueue<E> queue, TimeoutCounter timer) {
-		while (true) {
-			long remainingMillis = timer.getRemainingMillis();
-			if (remainingMillis <= 0)
-				break;
-			try {
-				return queue.poll(remainingMillis, TimeUnit.MILLISECONDS);
-			} catch (InterruptedException e) {
-				// no-op
+	public static <E> E pollUninterruptibly(BlockingQueue<E> queue,
+			TimeoutCounter timer) {
+		boolean interrupted = false;
+		try {
+			while (true) {
+				long remainingMillis = timer.getRemainingMillis();
+				if (remainingMillis <= 0)
+					return null;
+				try {
+					return queue.poll(remainingMillis, TimeUnit.MILLISECONDS);
+				} catch (InterruptedException e) {
+					interrupted = true;
+				}
 			}
+		} finally {
+			if (interrupted)
+				Thread.currentThread().interrupt();
 		}
-		return null;
 	}
 
 	public static <E> E pollUninterruptibly(BlockingQueue<E> queue, long timeoutMillis) {
